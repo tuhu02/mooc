@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('password_otps', function (Blueprint $table) {
             $table->id();
-            $table->string('otp');
+            $table->string('otp', 6);
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamp('expires_at');
+            $table->timestamp('used_at')->nullable();
             $table->timestamps();
         });
     }
