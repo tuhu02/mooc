@@ -1,14 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\PasswordOtp;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 
 class PasswordResetController extends Controller
@@ -51,23 +53,32 @@ class PasswordResetController extends Controller
         $passwordOtp = PasswordOtp::where('otp' , $request->otp)->where('expires_at', '>=', Carbon::now())->first();
 
         if(!$passwordOtp){
-            return respon()->json(['message' => 'OTP is not valid']);
+            return response()->json(['message' => 'OTP is not valid']);
         }
 
         $passwordOtp->token = Str::random(60);
         $passwordOtp->save();
 
         return response()->json([
-            'message' => 'OTP VALID',
+            'message' => 'OTP verified successfully.',
             'reset-token' => $passwordOtp->token
         ]);
     }
 
     public function resetPassword(Request $request){
-        $request->validate([
-            'reset_token' => 'required',
-            'password' => 'required|min:8|confirmed',
-        ]);
+        try {
+            $request->validate([
+                'reset_token' => 'required',
+                'password' => 'required|min:8|confirmed',
+            ]);
+        } catch (ValidationException $e) {
+            Log::warning('Password reset validation failed', [
+                'errors' => $e->errors(),
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+            throw $e;
+        }
 
         $passwordOtp = PasswordOtp::where('token', $request->reset_token)->where('expires_at', '>=', Carbon::now())->first();
 

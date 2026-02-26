@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { Trophy, BookOpen, Award, FileText, Folder, LayoutGrid } from 'lucide-react';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -22,6 +22,26 @@ const mainNavItems: NavItem[] = [
         href: dashboard(),
         icon: LayoutGrid,
     },
+    {
+        title: 'My Courses',
+        href: '/courses',
+        icon: BookOpen,
+    },
+    {
+        title: 'Assignments',
+        href: '/assignments',
+        icon: FileText,
+    },
+    {
+        title: 'Certificates',
+        href: '/certificates',
+        icon: Award,
+    },
+    {
+        title: 'Achievement',
+        href: '/achievement',
+        icon: Trophy
+    }
 ];
 
 const footerNavItems: NavItem[] = [
