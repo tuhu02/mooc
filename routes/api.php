@@ -16,3 +16,5 @@ Route::post('/register', RegisterController::class);
 Route::post('/login', LoginController::class);
 Route::post('/logout', LogoutController::class)->middleware('auth:sanctum');
 Route::post('/reset-password', [PasswordResetController::class, 'sendOtp']);
+Route::post('/otp-check', [PasswordResetController::class, 'checkOtp']);
+Route::post('/new-password', [PasswordResetController::class, 'resetPassword']);
