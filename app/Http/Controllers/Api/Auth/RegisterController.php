@@ -20,7 +20,6 @@ class RegisterController extends Controller
         } catch (ValidationException $e) {
             Log::warning('Registration validation failed', [
                 'errors' => $e->errors(),
-                'input' => $request->except('password', 'password_confirmation'),
                 'ip' => $request->ip(),
                 'user_agent' => $request->userAgent(),
             ]);
@@ -33,12 +32,10 @@ class RegisterController extends Controller
             'password' => bcrypt($request->password),
         ]);
 
-        $token = $user->createToken('apimooc')->plainTextToken;
+        $user->sendEmailVerificationNotification();
 
         return response()->json([
-            'message' => 'Register Berhasil',
-            'user' => $user,
-            'token' => $token
+            'message' => 'Register berhasil. Silakan cek email untuk verifikasi terlebih dahulu.'
         ], 201);
     }
 }

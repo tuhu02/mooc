@@ -53,7 +53,7 @@ class PasswordResetController extends Controller
         $passwordOtp = PasswordOtp::where('otp' , $request->otp)->where('expires_at', '>=', Carbon::now())->first();
 
         if(!$passwordOtp){
-            return response()->json(['message' => 'OTP is not valid']);
+            return response()->json(['message' => 'OTP is not valid'],400);
         }
 
         $passwordOtp->token = Str::random(60);

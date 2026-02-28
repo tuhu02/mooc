@@ -21,7 +21,6 @@ class LoginController extends Controller
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::warning('Login validation failed', [
                 'errors' => $e->errors(),
-                'email' => $request->email,
                 'ip' => $request->ip(),
                 'user_agent' => $request->userAgent(),
             ]);
@@ -38,9 +37,17 @@ class LoginController extends Controller
         }
 
         $user = auth()->user();
+        
+        if (!$user->hasVerifiedEmail()) {
+            auth()->logout();
+
+            return response()->json([
+                'message' => 'Email belum diverifikasi'
+            ], 403);
+        }
 
         return response()->json([
-            'token' => $user->createToken('apimooc')->plainTextToken
+            'token' => $user->createToken('auth-token')->plainTextToken
         ]);
     }
 } 
