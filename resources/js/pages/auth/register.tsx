@@ -58,7 +58,7 @@ export default function Register() {
                             </div>
 
                             <div className='grid gap-2'>
-                                <Label>Institution</Label>
+                                <Label htmlFor="institutions">Institution</Label>
                                 <Input
                                     id="institutions"
                                     type="text"
@@ -68,6 +68,12 @@ export default function Register() {
                                     name="institutions"
                                     placeholder="Universitas Negeri xxxxx"
                                 />
+                                <datalist id="universities">
+                                    <option value="Universitas Negeri Jakarta" />
+                                    <option value="Universitas Negeri Surabaya" />
+                                    <option value="Universitas Negeri Yogyakarta" />
+                                    <option value="Universitas Negeri Malang" />
+                                </datalist>
                             </div>
 
                             <div className="grid gap-2">
