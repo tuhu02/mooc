@@ -9,6 +9,9 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Carbon;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -55,5 +58,30 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function passwordOtps(){
         return $this->hasMany(PasswordOtp::class);
+    }
+
+    public function institutions(){
+        return $this->hasMany(Institution::class);
+    }
+
+
+    public function sendEmailVerificationNotification()
+    {
+        if (request()->is('api/*')) {
+
+            $verificationUrl = URL::temporarySignedRoute(
+                'api.verification.verify',
+                Carbon::now()->addMinutes(60),
+                [
+                    'id' => $this->getKey(),
+                    'hash' => sha1($this->getEmailForVerification()),
+                ]
+            );
+
+            $this->notify(new \App\Notifications\ApiVerifyEmailNotification($verificationUrl));
+
+        } else {
+            $this->notify(new VerifyEmail);
+        }
     }
 }

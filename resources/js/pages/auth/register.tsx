@@ -57,13 +57,26 @@ export default function Register() {
                                 <InputError message={errors.email} />
                             </div>
 
+                            <div className='grid gap-2'>
+                                <Label>Institution</Label>
+                                <Input
+                                    id="institutions"
+                                    type="text"
+                                    required
+                                    tabIndex={3}
+                                    autoComplete="institutions"
+                                    name="institutions"
+                                    placeholder="Universitas Negeri xxxxx"
+                                />
+                            </div>
+
                             <div className="grid gap-2">
                                 <Label htmlFor="password">Password</Label>
                                 <Input
                                     id="password"
                                     type="password"
                                     required
-                                    tabIndex={3}
+                                    tabIndex={4}
                                     autoComplete="new-password"
                                     name="password"
                                     placeholder="Password"
@@ -79,7 +92,7 @@ export default function Register() {
                                     id="password_confirmation"
                                     type="password"
                                     required
-                                    tabIndex={4}
+                                    tabIndex={5}
                                     autoComplete="new-password"
                                     name="password_confirmation"
                                     placeholder="Confirm password"

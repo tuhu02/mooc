@@ -35,7 +35,8 @@ class RegisterController extends Controller
         $user->sendEmailVerificationNotification();
 
         return response()->json([
-            'message' => 'Register berhasil. Silakan cek email untuk verifikasi terlebih dahulu.'
+            'message' => 'Registration successful. Please check your email to verify your account.',
+            'user' => $user
         ], 201);
     }
 }
