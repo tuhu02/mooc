@@ -18,7 +18,7 @@ Route::get('/email/verify', function () {
     return response()->json([
         'message' => 'Your email is not verified yet. Please check your email.'
     ], 403);
-})->name('verification.notice');
+})->name('api.verification.notice');
 
 // Route untuk verifikasi email
 Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {

@@ -14,8 +14,23 @@ class InstitutionsSeeder extends Seeder
 
     public function run(): void
     {
-        Institution::create([
-            'name' => 'Universitas Pembangunan Nasional',
-        ]);
+        $institutions = [
+            ['name' => 'Universitas Pembangunan Nasional'],
+            ['name' => 'Universitas Indonesia'],
+            ['name' => 'Universitas Gadjah Mada'],
+            ['name' => 'Institut Teknologi Bandung'],
+            ['name' => 'Institut Pertanian Bogor'],
+            ['name' => 'Universitas Brawijaya'],
+            ['name' => 'Universitas Airlangga'],
+            ['name' => 'Universitas Diponegoro'],
+            ['name' => 'Universitas Padjadjaran'],
+            ['name' => 'Universitas Sebelas Maret'],
+            ['name' => 'Universitas Hasanuddin'],
+            ['name' => 'Institut Teknologi Sepuluh Nopember'],
+        ];
+
+        foreach($institutions as $institution){
+            Institution::create($institution);
+        }
     }
 }

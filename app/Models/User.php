@@ -12,6 +12,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Carbon;
+use App\Notifications\ApiVerifyEmailNotification;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -27,6 +28,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
+        'institution_id'
     ];
 
     /**
@@ -78,7 +80,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 ]
             );
 
-            $this->notify(new \App\Notifications\ApiVerifyEmailNotification($verificationUrl));
+            $this->notify(new ApiVerifyEmailNotification($verificationUrl));
 
         } else {
             $this->notify(new VerifyEmail);

@@ -8,8 +8,15 @@ import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/auth-layout';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
+import { useEffect, useState } from 'react';
+import { error } from 'console';
 
-export default function Register() {
+interface Institution {
+    id: number;
+    name: string;
+}
+
+export default function Register({ institutions }: { institutions: Institution[]}) {
     return (
         <AuthLayout
             title="Create an account"
@@ -67,13 +74,15 @@ export default function Register() {
                                     autoComplete="institutions"
                                     name="institutions"
                                     placeholder="Universitas Negeri xxxxx"
+                                    list="universities"
                                 />
                                 <datalist id="universities">
-                                    <option value="Universitas Negeri Jakarta" />
-                                    <option value="Universitas Negeri Surabaya" />
-                                    <option value="Universitas Negeri Yogyakarta" />
-                                    <option value="Universitas Negeri Malang" />
+                                    {institutions.map((inst) => (
+                                        <option key={inst.id} value={inst.name} />
+                                    ))}
                                 </datalist>
+
+                                <InputError message={errors.institutions} />
                             </div>
 
                             <div className="grid gap-2">
@@ -110,7 +119,7 @@ export default function Register() {
 
                             <Button
                                 type="submit"
-                                className="mt-2 w-full bg-mooc-dark hover:bg-mooc-base"
+                                className="mt-2 w-full bg-foreground hover:bg-secondary-foreground"
                                 tabIndex={5}
                                 data-test="register-user-button"
                             >

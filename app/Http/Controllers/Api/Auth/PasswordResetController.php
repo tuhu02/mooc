@@ -94,6 +94,6 @@ class PasswordResetController extends Controller
 
         return response()->json([
             'message' => 'Password has been successfully reset.',
-        ], 200);
+        ]);
     }
 }
