@@ -1,7 +1,7 @@
 import { Form } from '@inertiajs/react';
 import { useRef } from 'react';
-import Heading from '@/components/heading';
-import InputError from '@/components/input-error';
+import Heading from '@/components/user/heading';
+import InputError from '@/components/user/input-error';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,

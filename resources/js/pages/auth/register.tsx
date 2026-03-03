@@ -1,6 +1,6 @@
 import { Form, Head } from '@inertiajs/react';
-import InputError from '@/components/input-error';
-import TextLink from '@/components/text-link';
+import InputError from '@/components/user/input-error';
+import TextLink from '@/components/user/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,6 +10,8 @@ import { login } from '@/routes';
 import { store } from '@/routes/register';
 import { useEffect, useState } from 'react';
 import { error } from 'console';
+import { InstitutionCombobox } from "@/components/ui/InstitutionCombobox"
+
 
 interface Institution {
     id: number;
@@ -17,6 +19,8 @@ interface Institution {
 }
 
 export default function Register({ institutions }: { institutions: Institution[]}) {
+    const [institutionId, setInstitutionId] = useState<number | null>(null)
+
     return (
         <AuthLayout
             title="Create an account"
@@ -65,24 +69,11 @@ export default function Register({ institutions }: { institutions: Institution[]
                             </div>
 
                             <div className='grid gap-2'>
-                                <Label htmlFor="institutions">Institution</Label>
-                                <Input
-                                    id="institutions"
-                                    type="text"
-                                    required
-                                    tabIndex={3}
-                                    autoComplete="institutions"
-                                    name="institutions"
-                                    placeholder="Universitas Negeri xxxxx"
-                                    list="universities"
+                                <InstitutionCombobox
+                                    institutions={institutions}
+                                    value={institutionId}
+                                    onChange={setInstitutionId}
                                 />
-                                <datalist id="universities">
-                                    {institutions.map((inst) => (
-                                        <option key={inst.id} value={inst.name} />
-                                    ))}
-                                </datalist>
-
-                                <InputError message={errors.institutions} />
                             </div>
 
                             <div className="grid gap-2">

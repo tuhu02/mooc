@@ -22,18 +22,14 @@ class CreateNewUser implements CreatesNewUsers
     {
         Validator::make($input, [
             ...$this->profileRules(),
-            'institutions' => ['required', 'string', 'max:255'],
+            'institution_id' => 'required|exists:institutions,id',
             'password' => $this->passwordRules(),
         ])->validate();
-
-        $institution = Institution::firstOrCreate([
-            'name' => trim($input['institutions'])
-        ]);
 
         return User::create([
             'name' => $input['name'],
             'email' => $input['email'],
-            'institution_id' => $institution->id,
+            'institution_id' => $input->institution_id,
             'password' => $input['password'],
         ]);
     }
