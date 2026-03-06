@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
-use App\Models\PasswordOtp;
+use App\Models\Otp;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -15,28 +15,30 @@ use Illuminate\Validation\ValidationException;
 
 class PasswordResetController extends Controller
 {
-    public function sendOtp(Request $request){
+    public function sendOtp(Request $request)
+    {
         $request->validate([
             'email' => 'required|email',
         ]);
 
         $user = User::where('email', $request->email)->first();
 
-        if(!$user){
+        if (!$user) {
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        PasswordOtp::where('user_id', $user->id)->delete();
+        // Delete old unused OTPs for this user
+        Otp::where('user_id', $user->id)->whereNull('used_at')->delete();
 
-        $otp = rand(100000, 999999);
+        $otpCode = rand(100000, 999999);
 
-        $passwordOtp = PasswordOtp::create([
+        $otp = Otp::create([
             'user_id' => $user->id,
-            'otp' => $otp,
+            'otp' => $otpCode,
             'expires_at' => Carbon::now()->addMinutes(5),
         ]);
 
-        Mail::raw("Your OTP Code: $otp. Expired in 5 minutes", function ($message) use ($user){
+        Mail::raw("Your OTP Code: $otpCode. Expired in 5 minutes", function ($message) use ($user) {
             $message->to($user->email)->subject('OTP Reset Password');
         });
 
@@ -45,27 +47,32 @@ class PasswordResetController extends Controller
         ]);
     }
 
-    public function checkOtp(Request $request){
+    public function checkOtp(Request $request)
+    {
         $request->validate([
-            'otp' => 'required',
+            'otp' => 'required|string|size:6',
         ]);
-        
-        $passwordOtp = PasswordOtp::where('otp' , $request->otp)->where('expires_at', '>=', Carbon::now())->first();
 
-        if(!$passwordOtp){
-            return response()->json(['message' => 'OTP is not valid'],400);
+        $otp = Otp::where('otp', $request->otp)
+            ->where('expires_at', '>=', Carbon::now())
+            ->whereNull('used_at')
+            ->first();
+
+        if (!$otp) {
+            return response()->json(['message' => 'OTP is not valid or has expired'], 400);
         }
 
-        $passwordOtp->token = Str::random(60);
-        $passwordOtp->save();
+        $otp->token = Str::random(60);
+        $otp->save();
 
         return response()->json([
             'message' => 'OTP verified successfully.',
-            'reset-token' => $passwordOtp->token
+            'reset-token' => $otp->token
         ]);
     }
 
-    public function resetPassword(Request $request){
+    public function resetPassword(Request $request)
+    {
         try {
             $request->validate([
                 'reset_token' => 'required',
@@ -80,17 +87,21 @@ class PasswordResetController extends Controller
             throw $e;
         }
 
-        $passwordOtp = PasswordOtp::where('token', $request->reset_token)->where('expires_at', '>=', Carbon::now())->first();
+        $otp = Otp::where('token', $request->reset_token)
+            ->where('expires_at', '>=', Carbon::now())
+            ->first();
 
-        if(!$passwordOtp){
+        if (!$otp) {
             return response()->json(['message' => 'Invalid or expired token'], 400);
         }
 
-        $user = User::find($passwordOtp->user_id);
+        $user = User::find($otp->user_id);
         $user->password = bcrypt($request->password);
         $user->save();
 
-        $passwordOtp->delete();
+        // Mark OTP as used instead of deleting
+        $otp->used_at = Carbon::now();
+        $otp->save();
 
         return response()->json([
             'message' => 'Password has been successfully reset.',

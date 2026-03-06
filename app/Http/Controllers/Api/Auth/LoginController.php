@@ -38,14 +38,6 @@ class LoginController extends Controller
         }
 
         $user = auth()->user();
-        
-        // if (!$user->hasVerifiedEmail()) {
-        //     auth()->logout();
-
-        //     return response()->json([
-        //         'message' => 'Email belum diverifikasi'
-        //     ], 403);
-        // }
 
         return response()->json([
             'token' => $user->createToken('auth-token')->plainTextToken

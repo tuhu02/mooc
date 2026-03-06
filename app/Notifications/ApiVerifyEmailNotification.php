@@ -10,13 +10,13 @@ use Illuminate\Notifications\Notification;
 class ApiVerifyEmailNotification extends Notification
 {
     use Queueable;
-    protected $verificationUrl;
+    protected $otp;
     /**
      * Create a new notification instance.
      */
-    public function __construct($verificationUrl)
+    public function __construct($otp)
     {
-        $this->verificationUrl = $verificationUrl;
+        $this->otp = $otp;
     }
 
     /**
@@ -38,9 +38,9 @@ class ApiVerifyEmailNotification extends Notification
             ->subject('Verify Your Email Address')
             ->greeting('Hello ' . $notifiable->name . ' 👋')
             ->line('Thank you for registering with our application.')
-            ->line('Please click the button below to verify your email address.')
-            ->action('Verify Email Address', $this->verificationUrl)
-            ->line('This verification link will expire in 60 minutes.')
+            ->line('Please use the following OTP code to verify your email address:')
+            ->line('**OTP Code: ' . $this->otp . '**')
+            ->line('This OTP code will expire in 60 minutes.')
             ->line('If you did not create an account, no further action is required.');
     }
 

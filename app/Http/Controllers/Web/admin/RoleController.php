@@ -12,13 +12,13 @@ class RoleController extends Controller
 {
     public function index(){
         $roles = Role::select('id', 'name')->get();
-        return Inertia::render('admin/roles/roles-index', [
+        return Inertia::render('admin/roles/index', [
             'roles' => $roles
         ]);
     }
 
-    public function add(){
-        return Inertia::render('admin/roles/roles-add');
+    public function create(){
+        return Inertia::render('admin/roles/create');
     }
 
     public function store(Request $request)

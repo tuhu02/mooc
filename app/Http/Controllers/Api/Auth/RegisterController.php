@@ -10,7 +10,8 @@ use Illuminate\Validation\ValidationException;
 
 class RegisterController extends Controller
 {
-    public function __invoke(Request $request){
+    public function __invoke(Request $request)
+    {
         try {
             $request->validate([
                 'name' => 'required|string|max:255',
@@ -37,7 +38,7 @@ class RegisterController extends Controller
         $user->sendEmailVerificationNotification();
 
         return response()->json([
-            'message' => 'Registration successful. Please check your email to verify your account.',
+            'message' => 'Registration successful. Please check your email for the OTP code to verify your account.',
             'user' => $user
         ]);
     }
