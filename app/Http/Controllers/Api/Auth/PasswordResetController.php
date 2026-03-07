@@ -28,13 +28,14 @@ class PasswordResetController extends Controller
         }
 
         // Delete old unused OTPs for this user
-        Otp::where('user_id', $user->id)->whereNull('used_at')->delete();
+        Otp::where('user_id', $user->id)->where('type', 'forgot_password')->whereNull('used_at')->delete();
 
         $otpCode = rand(100000, 999999);
 
         $otp = Otp::create([
             'user_id' => $user->id,
             'otp' => $otpCode,
+            'type' => 'forgot_password',
             'expires_at' => Carbon::now()->addMinutes(5),
         ]);
 
@@ -55,6 +56,7 @@ class PasswordResetController extends Controller
 
         $otp = Otp::where('otp', $request->otp)
             ->where('expires_at', '>=', Carbon::now())
+            ->where('type', 'forgot_password')
             ->whereNull('used_at')
             ->first();
 
@@ -62,8 +64,10 @@ class PasswordResetController extends Controller
             return response()->json(['message' => 'OTP is not valid or has expired'], 400);
         }
 
-        $otp->token = Str::random(60);
-        $otp->save();
+        if (!$otp->token) {
+            $otp->token = Str::random(60);
+            $otp->save();
+        }
 
         return response()->json([
             'message' => 'OTP verified successfully.',
@@ -88,7 +92,9 @@ class PasswordResetController extends Controller
         }
 
         $otp = Otp::where('token', $request->reset_token)
+            ->where('type', 'forgot_password')
             ->where('expires_at', '>=', Carbon::now())
+            ->whereNull('used_at')
             ->first();
 
         if (!$otp) {
@@ -99,7 +105,6 @@ class PasswordResetController extends Controller
         $user->password = bcrypt($request->password);
         $user->save();
 
-        // Mark OTP as used instead of deleting
         $otp->used_at = Carbon::now();
         $otp->save();
 

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use App\Http\Resources\UserResource;
 
 class RegisterController extends Controller
 {
@@ -39,7 +40,7 @@ class RegisterController extends Controller
 
         return response()->json([
             'message' => 'Registration successful. Please check your email for the OTP code to verify your account.',
-            'user' => $user
+            'user' => new UserResource($user),
         ]);
     }
 }

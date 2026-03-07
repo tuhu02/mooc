@@ -6,12 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use App\Http\Resources\UserResource;
 
 class LoginController extends Controller
 {
-    /**
-     * Handle the incoming request.
-     */
     public function __invoke(Request $request)
     {
         try {
@@ -40,7 +38,8 @@ class LoginController extends Controller
         $user = auth()->user();
 
         return response()->json([
-            'token' => $user->createToken('auth-token')->plainTextToken
+            'token' => $user->createToken('auth-token')->plainTextToken,
+            'user' => new UserResource($user)
         ]);
     }
 } 

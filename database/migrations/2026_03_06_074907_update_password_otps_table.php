@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::rename('password_otps', 'otps');
 
-        Schema::table('otps' , function(Blueprint $table){
-            $table->string('type')->after('otp');
+        Schema::table('otps', function (Blueprint $table) {
+            $table->string('type')->nullable()->after('otp');
         });
     }
 
@@ -23,7 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::rename('otps', 'password_otps', function(Blueprint $table){
+        Schema::rename('otps', 'password_otps', function (Blueprint $table) {
             $table->dropColumn('type');
         });
     }

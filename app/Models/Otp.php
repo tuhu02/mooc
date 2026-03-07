@@ -10,7 +10,8 @@ class Otp extends Model
         'user_id',
         'otp',
         'expires_at',
-        'used_at'
+        'used_at',
+        'type',
     ];
 
     protected $casts = [

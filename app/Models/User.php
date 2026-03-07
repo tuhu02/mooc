@@ -59,14 +59,21 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function sendEmailVerificationNotification()
     {
-        $otp = rand(100000, 999999);
+        $isApiRequest = request()->is('api/*') || request()->expectsJson();
         
-        $this->otps()->create([
-            'otp' => $otp,
-            'expires_at' => Carbon::now()->addMinutes(60),
-        ]);
+        if ($isApiRequest) {
+            $otp = rand(100000, 999999);
+            
+            $this->otps()->create([
+                'otp' => $otp,
+                'type' => 'email_verification',
+                'expires_at' => Carbon::now()->addMinutes(60),
+            ]);
 
-        $this->notify(new ApiVerifyEmailNotification($otp));
+            $this->notify(new ApiVerifyEmailNotification($otp));
+        } else {
+            $this->notify(new VerifyEmail);
+        }
     }
 
     public function otps(){

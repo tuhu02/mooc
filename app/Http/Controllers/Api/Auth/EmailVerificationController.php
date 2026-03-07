@@ -8,6 +8,7 @@ use App\Models\Otp;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use App\Http\Resources\UserResource;
 
 class EmailVerificationController extends Controller
 {
@@ -28,6 +29,7 @@ class EmailVerificationController extends Controller
 
         $otp = Otp::where('user_id', $user->id)
             ->where('otp', $request->otp)
+            ->where('type', 'email_verification')
             ->where('expires_at', '>=', Carbon::now())
             ->whereNull('used_at')
             ->first();
@@ -53,7 +55,7 @@ class EmailVerificationController extends Controller
         return response()->json([
             'message' => 'Email verified successfully',
             'token' => $token,
-            'user' => $user
+            'user' => new UserResource($user),
         ]);
     }
 
@@ -71,8 +73,7 @@ class EmailVerificationController extends Controller
             ], 400);
         }
 
-        // Delete old unused OTPs
-        $user->otps()->whereNull('used_at')->delete();
+        $user->otps()->where('type', 'email_verification')->whereNull('used_at')->delete();
 
         $user->sendEmailVerificationNotification();
 
