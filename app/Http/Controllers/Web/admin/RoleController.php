@@ -10,34 +10,28 @@ use Illuminate\Support\Facades\Redirect;
 
 class RoleController extends Controller
 {
-    public function index(){
-        $roles = Role::select('id', 'name')->get();
+    public function index()
+    {
+        $roles = Role::select('id', 'name')->where('name', '!=', 'admin')->get();
         return Inertia::render('admin/roles/index', [
             'roles' => $roles
         ]);
     }
 
-    public function create(){
+    public function create()
+    {
         return Inertia::render('admin/roles/create');
     }
 
     public function store(Request $request)
     {
-        // 1. Validasi input
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:roles,name',
-        ], [
-            // Custom pesan error (opsional)
-            'name.unique' => 'Nama role ini sudah ada, gunakan nama lain.',
-            'name.required' => 'Nama role wajib diisi.',
         ]);
 
-        // 2. Simpan ke database
         Role::create($validated);
 
-        // 3. Redirect kembali dengan pesan sukses (opsional)
-        // Inertia akan otomatis menangkap flash message jika dikonfigurasi
-        return Redirect::route('admin.roles.index')->with('success', 'Role berhasil ditambahkan!');
+        return Redirect::route('admin.roles.index')->with('success', 'Role has been successfully added!');
     }
 
     public function edit(Role $role)
@@ -49,18 +43,12 @@ class RoleController extends Controller
 
     public function update(Request $request, Role $role)
     {
-        // 1. Validasi input
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:roles,name,' . $role->id,
-        ], [
-            'name.unique' => 'Nama role ini sudah ada, gunakan nama lain.',
-            'name.required' => 'Nama role wajib diisi.',
         ]);
 
-        // 2. Update role
         $role->update($validated);
 
-        // 3. Redirect dengan pesan sukses
         return Redirect::route('admin.roles.index')->with('success', 'Role berhasil diperbarui!');
     }
 
@@ -70,6 +58,4 @@ class RoleController extends Controller
 
         return redirect()->back()->with('success', 'Role deleted successfully!');
     }
-
-
 }

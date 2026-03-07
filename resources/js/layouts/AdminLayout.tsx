@@ -8,7 +8,6 @@ export default function AdminLayout({ children }: PropsWithChildren) {
         <SidebarProvider>
             <AppSidebar />
             {children}
-            <Toaster position="top-right" />
         </SidebarProvider>
     );
 }
