@@ -27,7 +27,6 @@ class PasswordResetController extends Controller
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        // Delete old unused OTPs for this user
         Otp::where('user_id', $user->id)->where('type', 'forgot_password')->whereNull('used_at')->delete();
 
         $otpCode = rand(100000, 999999);

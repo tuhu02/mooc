@@ -18,7 +18,7 @@ class RegisterController extends Controller
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users,email',
                 'password' => 'required|string|min:8|confirmed',
-                'institution_id' => 'required|exists:institutions,id',
+                'institution' => 'required|string|max:50',
             ]);
         } catch (ValidationException $e) {
             Log::warning('Registration validation failed', [
@@ -33,7 +33,7 @@ class RegisterController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
-            'institution_id' => $request->institution_id,
+            'institution' => $request->institution,
         ]);
 
         $user->sendEmailVerificationNotification();

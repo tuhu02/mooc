@@ -5,7 +5,7 @@ use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Web\admin\RoleController;
+use App\Http\Controllers\Web\Admin\RoleController;
 
 Route::get('/', function () {
     return Inertia::render('welcome', [
