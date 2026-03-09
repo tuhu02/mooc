@@ -58,11 +58,7 @@ class EmailVerificationController extends Controller
 
     public function resendOtp(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email|exists:users,email',
-        ]);
-
-        $user = User::where('email', $request->email)->first();
+        $user = $request->user();
 
         if ($user->hasVerifiedEmail()) {
             return response()->json([
