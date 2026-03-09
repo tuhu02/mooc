@@ -29,11 +29,8 @@ import {
 } from '@/routes/admin/roles';
 import { toast } from 'sonner';
 import { useEffect } from 'react';
+import { Role } from '@/types';
 
-type Role = {
-    id: number;
-    name: string;
-};
 
 export default function Page() {
     const { roles } = usePage<{ roles: Role[] }>().props;
@@ -54,7 +51,7 @@ export default function Page() {
             });
         }
     };
-    
+
     return (
         <AdminLayout>
             <SidebarInset>

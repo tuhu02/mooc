@@ -2,6 +2,7 @@ import { AppSidebar } from '@/components/admin/app-sidebar';
 import { Toaster } from '@/components/ui/sonner';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { type PropsWithChildren } from 'react';
+import { router } from '@inertiajs/react'
 
 export default function AdminLayout({ children }: PropsWithChildren) {
     return (

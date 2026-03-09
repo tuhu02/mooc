@@ -38,8 +38,11 @@ class RegisterController extends Controller
 
         $user->sendEmailVerificationNotification();
 
+        $token = $user->createToken('auth-token')->plainTextToken;
+
         return response()->json([
             'message' => 'Registration successful. Please check your email for the OTP code to verify your account.',
+            'token' => $token,
             'user' => new UserResource($user),
         ]);
     }

@@ -15,11 +15,10 @@ class EmailVerificationController extends Controller
     public function verifyEmail(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|exists:users,email',
             'otp' => 'required|string|size:6',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = $request->user();
 
         if ($user->hasVerifiedEmail()) {
             return response()->json([
@@ -45,7 +44,6 @@ class EmailVerificationController extends Controller
         $otp->used_at = Carbon::now();
         $otp->save();
 
-        $token = $user->createToken('auth-token')->plainTextToken;
 
         Log::info('Email verified successfully', [
             'user_id' => $user->id,
@@ -54,7 +52,6 @@ class EmailVerificationController extends Controller
 
         return response()->json([
             'message' => 'Email verified successfully',
-            'token' => $token,
             'user' => new UserResource($user),
         ]);
     }

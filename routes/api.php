@@ -18,8 +18,8 @@ Route::post('/login', LoginController::class);
 Route::post('/logout', LogoutController::class)->middleware('auth:sanctum');
 
 // Email Verification Routes
-Route::post('/email/verify-otp', [EmailVerificationController::class, 'verifyEmail'])->name('api.verification.verify');
-Route::post('/email/resend-otp', [EmailVerificationController::class, 'resendOtp'])->middleware('throttle:6,1')->name('api.verification.resend');
+Route::post('/email/verify-otp', [EmailVerificationController::class, 'verifyEmail'])->name('api.verification.verify')->middleware('auth:sanctum');
+Route::post('/email/resend-otp', [EmailVerificationController::class, 'resendOtp'])->middleware('throttle:6,1','auth:sanctum')->name('api.verification.resend');
 
 // Password Reset Routes
 Route::post('/reset-password', [PasswordResetController::class, 'sendOtp']);
