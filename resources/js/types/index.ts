@@ -15,5 +15,4 @@ export type User = {
     address: string;
     gender: string;
     date_of_birth: string;
-
 }

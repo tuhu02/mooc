@@ -27,8 +27,6 @@ import {
     edit,
     destroy as destroyRoute,
 } from '@/routes/admin/users';
-import { toast } from 'sonner';
-import { useEffect } from 'react';
 import { User } from '@/types';
 
 
@@ -37,13 +35,6 @@ export default function Page() {
 
     const { delete: destroy, processing } = useForm();
 
-    const { flash } = usePage<{ flash?: { success?: string } }>().props;
-
-    useEffect(() => {
-        if (flash?.success) {
-            toast.success(flash.success);
-        }
-    }, [flash]);
     const handleDelete = (id: number) => {
         if (confirm('Are you sure you want to delete this user?')) {
             destroy(destroyRoute.url(id), {

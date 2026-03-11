@@ -14,28 +14,15 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useForm, usePage } from '@inertiajs/react';
 import { index } from '@/routes/admin/users';
-
-interface User {
-    id: number;
-    name: string;
-    email: string;
-    institution: string;
-    gender: string | null;
-    date_of_birth: string | null;
-    address: string | null;
-}
+import type { User } from '@/types';
 
 interface PageProps {
     user: User;
-    flash?: {
-        success?: string;
-        error?: string;
-    };
     [key: string]: any;
 }
 
 export default function EditUserPage() {
-    const { user, flash } = usePage<PageProps>().props;
+    const { user } = usePage<PageProps>().props;
 
     const { data, setData, put, processing, errors } = useForm({
         name: user.name,
@@ -89,18 +76,6 @@ export default function EditUserPage() {
                         <h1 className="text-center text-2xl font-semibold">
                             Edit User
                         </h1>
-
-                        {flash?.success && (
-                            <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm font-medium text-green-600">
-                                {flash.success}
-                            </div>
-                        )}
-
-                        {flash?.error && (
-                            <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-600">
-                                {flash.error}
-                            </div>
-                        )}
 
                         <Field className="grid gap-2">
                             <FieldLabel htmlFor="name">Name</FieldLabel>

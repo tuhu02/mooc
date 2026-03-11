@@ -15,14 +15,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useForm, usePage } from '@inertiajs/react';
 import { index } from '@/routes/admin/roles';
+import { Role } from '@/types';
 
-// 1. Definisikan interface untuk Role
-interface Role {
-    id: number;
-    name: string;
-}
-
-// 2. Definisikan interface untuk PageProps
 interface PageProps {
     role: Role;
     flash: {
@@ -33,8 +27,7 @@ interface PageProps {
 }
 
 export default function EditRolePage() {
-    // 3. Gunakan interface PageProps
-    const { role, flash } = usePage<PageProps>().props;
+    const { role } = usePage<PageProps>().props;
 
     const { data, setData, put, processing, errors } = useForm({
         name: role.name,
@@ -42,7 +35,6 @@ export default function EditRolePage() {
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        // Gunakan PUT method untuk update
         put(`/admin/roles/${role.id}`, {
             preserveScroll: true,
         });
@@ -82,20 +74,6 @@ export default function EditRolePage() {
                         <h1 className="text-center text-2xl font-semibold">
                             Edit Role
                         </h1>
-
-                        {/* Flash message sukses */}
-                        {flash?.success && (
-                            <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm font-medium text-green-600">
-                                {flash.success}
-                            </div>
-                        )}
-
-                        {/* Flash message error */}
-                        {flash?.error && (
-                            <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-600">
-                                {flash.error}
-                            </div>
-                        )}
 
                         <Field className="grid gap-2">
                             <FieldLabel htmlFor="name">Name</FieldLabel>

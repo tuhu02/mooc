@@ -16,17 +16,11 @@ import { Button } from '@/components/ui/button';
 import { useForm, usePage } from '@inertiajs/react';
 import { index } from '@/routes/admin/users';
 
-// 1. Definisikan interface untuk tipe data Props dari Inertia
 interface PageProps {
-    flash: {
-        success?: string;
-        error?: string;
-    };
-    [key: string]: any; // Untuk props lain seperti 'auth', dll.
+    [key: string]: any; 
 }
 
 export default function Page() {
-    // 2. Gunakan interface tadi saat memanggil usePage
     const { props } = usePage<PageProps>();
     const { flash } = props;
 
