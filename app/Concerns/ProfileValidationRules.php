@@ -17,6 +17,9 @@ trait ProfileValidationRules
         return [
             'name' => $this->nameRules(),
             'email' => $this->emailRules($userId),
+            'gender' => $this->genderRules(),
+            'date_of_birth' => $this->dateOfBirthRules(),
+            'address' => $this->addressRules(),
         ];
     }
 
@@ -46,5 +49,35 @@ trait ProfileValidationRules
                 ? Rule::unique(User::class)
                 : Rule::unique(User::class)->ignore($userId),
         ];
+    }
+
+    /**
+     * Get the validation rules used to validate gender.
+     *
+     * @return array<int, string>
+     */
+    protected function genderRules(): array
+    {
+        return ['nullable', 'string', 'max:50'];
+    }
+
+    /**
+     * Get the validation rules used to validate date of birth.
+     *
+     * @return array<int, string>
+     */
+    protected function dateOfBirthRules(): array
+    {
+        return ['nullable', 'date', 'before_or_equal:today'];
+    }
+
+    /**
+     * Get the validation rules used to validate address.
+     *
+     * @return array<int, string>
+     */
+    protected function addressRules(): array
+    {
+        return ['nullable', 'string', 'max:1000'];
     }
 }

@@ -28,7 +28,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
-        'institution'
+        'institution',
+        'address',
+        'gender',
+        'date_of_birth'
     ];
 
     /**
@@ -78,9 +81,5 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function otps(){
         return $this->hasMany(Otp::class);
-    }
-
-    public function institutions(){
-        return $this->hasMany(Institution::class);
     }
 }

@@ -1,0 +1,310 @@
+import AdminLayout from '@/layouts/AdminLayout';
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
+import { Separator } from '@/components/ui/separator';
+import { SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
+
+import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { useForm, usePage } from '@inertiajs/react';
+import { index } from '@/routes/admin/users';
+
+// 1. Definisikan interface untuk tipe data Props dari Inertia
+interface PageProps {
+    flash: {
+        success?: string;
+        error?: string;
+    };
+    [key: string]: any; // Untuk props lain seperti 'auth', dll.
+}
+
+export default function Page() {
+    // 2. Gunakan interface tadi saat memanggil usePage
+    const { props } = usePage<PageProps>();
+    const { flash } = props;
+
+    const { data, setData, post, processing, errors, reset } = useForm({
+        name: '',
+        email: '',
+        institution: '',
+        gender: '',
+        date_of_birth: '',
+        address: '',
+        password: '',
+        password_confirmation: '',
+    });
+
+    const submit = (e: React.FormEvent) => {
+        e.preventDefault();
+        post('/admin/users', {
+            onSuccess: () => reset(),
+        });
+    };
+
+    return (
+        <AdminLayout>
+            <SidebarInset>
+                <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+                    <div className="flex items-center gap-2">
+                        <SidebarTrigger className="-ml-1" />
+                        <Separator
+                            orientation="vertical"
+                            className="mr-2 h-4"
+                        />
+                        <Breadcrumb>
+                            <BreadcrumbList>
+                                <BreadcrumbItem className="hidden md:block">
+                                    <BreadcrumbLink href={index.url()}>
+                                        User
+                                    </BreadcrumbLink>
+                                </BreadcrumbItem>
+                                <BreadcrumbSeparator className="hidden md:block" />
+                                <BreadcrumbItem>
+                                    <BreadcrumbPage>Add User</BreadcrumbPage>
+                                </BreadcrumbItem>
+                            </BreadcrumbList>
+                        </Breadcrumb>
+                    </div>
+                </header>
+
+                {/* 3. Menambahkan items-center & justify-center agar form di tengah */}
+                <div className="flex flex-1 items-center justify-center p-4">
+                    <form
+                        onSubmit={submit}
+                        className="w-full max-w-md space-y-6"
+                    >
+                        <h1 className="text-center text-2xl font-semibold">
+                            Add User
+                        </h1>
+
+                        {/* 4. Gunakan Optional Chaining (?.) untuk menampilkan pesan sukses */}
+                        {flash?.success && (
+                            <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm font-medium text-green-600">
+                                {flash.success}
+                            </div>
+                        )}
+
+                        <Field className="grid gap-2">
+                            <FieldLabel htmlFor="name">Name</FieldLabel>
+                            <Input
+                                id="name"
+                                value={data.name}
+                                onChange={(e) =>
+                                    setData('name', e.target.value)
+                                }
+                                placeholder="Enter Name"
+                                className={
+                                    errors.name
+                                        ? 'border-red-500 focus-visible:ring-red-500'
+                                        : ''
+                                }
+                            />
+
+                            {errors.name && (
+                                <p className="text-sm font-medium text-red-500">
+                                    {errors.name}
+                                </p>
+                            )}
+
+                            <FieldDescription>
+                                Choose a unique name.
+                            </FieldDescription>
+                        </Field>
+
+                        <Field className="grid gap-2">
+                            <FieldLabel htmlFor="email">Email</FieldLabel>
+                            <Input
+                                id="email"
+                                type="email"
+                                value={data.email}
+                                onChange={(e) =>
+                                    setData('email', e.target.value)
+                                }
+                                placeholder="Enter Email"
+                                className={
+                                    errors.email
+                                        ? 'border-red-500 focus-visible:ring-red-500'
+                                        : ''
+                                }
+                            />
+
+                            {errors.email && (
+                                <p className="text-sm font-medium text-red-500">
+                                    {errors.email}
+                                </p>
+                            )}
+
+                            <FieldDescription>
+                                Choose a unique email.
+                            </FieldDescription>
+                        </Field>
+
+                        <Field className="grid gap-2">
+                            <FieldLabel htmlFor="institution">
+                                Institution
+                            </FieldLabel>
+                            <Input
+                                id="institution"
+                                value={data.institution}
+                                onChange={(e) =>
+                                    setData('institution', e.target.value)
+                                }
+                                placeholder="University, School, or Company"
+                                className={
+                                    errors.institution
+                                        ? 'border-red-500 focus-visible:ring-red-500'
+                                        : ''
+                                }
+                            />
+
+                            {errors.institution && (
+                                <p className="text-sm font-medium text-red-500">
+                                    {errors.institution}
+                                </p>
+                            )}
+                        </Field>
+
+                        <Field className="grid gap-2">
+                            <FieldLabel htmlFor="gender">Gender</FieldLabel>
+                            <Input
+                                id="gender"
+                                value={data.gender}
+                                onChange={(e) =>
+                                    setData('gender', e.target.value)
+                                }
+                                placeholder="Male, Female, etc."
+                                className={
+                                    errors.gender
+                                        ? 'border-red-500 focus-visible:ring-red-500'
+                                        : ''
+                                }
+                            />
+
+                            {errors.gender && (
+                                <p className="text-sm font-medium text-red-500">
+                                    {errors.gender}
+                                </p>
+                            )}
+                        </Field>
+
+                        <Field className="grid gap-2">
+                            <FieldLabel htmlFor="date_of_birth">
+                                Date of Birth
+                            </FieldLabel>
+                            <Input
+                                id="date_of_birth"
+                                type="date"
+                                value={data.date_of_birth}
+                                onChange={(e) =>
+                                    setData('date_of_birth', e.target.value)
+                                }
+                                className={
+                                    errors.date_of_birth
+                                        ? 'border-red-500 focus-visible:ring-red-500'
+                                        : ''
+                                }
+                            />
+
+                            {errors.date_of_birth && (
+                                <p className="text-sm font-medium text-red-500">
+                                    {errors.date_of_birth}
+                                </p>
+                            )}
+                        </Field>
+
+                        <Field className="grid gap-2">
+                            <FieldLabel htmlFor="address">Address</FieldLabel>
+                            <Input
+                                id="address"
+                                value={data.address}
+                                onChange={(e) =>
+                                    setData('address', e.target.value)
+                                }
+                                placeholder="Enter Address"
+                                className={
+                                    errors.address
+                                        ? 'border-red-500 focus-visible:ring-red-500'
+                                        : ''
+                                }
+                            />
+
+                            {errors.address && (
+                                <p className="text-sm font-medium text-red-500">
+                                    {errors.address}
+                                </p>
+                            )}
+                        </Field>
+
+                        <Field className="grid gap-2">
+                            <FieldLabel htmlFor="password">Password</FieldLabel>
+                            <Input
+                                id="password"
+                                type="password"
+                                value={data.password}
+                                onChange={(e) =>
+                                    setData('password', e.target.value)
+                                }
+                                placeholder="Enter Password"
+                                className={
+                                    errors.password
+                                        ? 'border-red-500 focus-visible:ring-red-500'
+                                        : ''
+                                }
+                            />
+
+                            {errors.password && (
+                                <p className="text-sm font-medium text-red-500">
+                                    {errors.password}
+                                </p>
+                            )}
+                        </Field>
+
+                        <Field className="grid gap-2">
+                            <FieldLabel htmlFor="password_confirmation">
+                                Password Confirmation
+                            </FieldLabel>
+                            <Input
+                                id="password_confirmation"
+                                type="password"
+                                value={data.password_confirmation}
+                                onChange={(e) =>
+                                    setData(
+                                        'password_confirmation',
+                                        e.target.value,
+                                    )
+                                }
+                                placeholder="Enter Password Confirmation"
+                                className={
+                                    errors.password_confirmation
+                                        ? 'border-red-500 focus-visible:ring-red-500'
+                                        : ''
+                                }
+                            />
+
+                            {errors.password_confirmation && (
+                                <p className="text-sm font-medium text-red-500">
+                                    {errors.password_confirmation}
+                                </p>
+                            )}
+                        </Field>
+
+                        <Button
+                            type="submit"
+                            className="w-full"
+                            disabled={processing}
+                        >
+                            {processing ? 'Saving...' : 'Save User'}
+                        </Button>
+                    </form>
+                </div>
+            </SidebarInset>
+        </AdminLayout>
+    );
+}

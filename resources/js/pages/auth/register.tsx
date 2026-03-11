@@ -8,19 +8,8 @@ import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/auth-layout';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
-import { useEffect, useState } from 'react';
-import { error } from 'console';
-import { InstitutionCombobox } from "@/components/ui/InstitutionCombobox"
 
-
-interface Institution {
-    id: number;
-    name: string;
-}
-
-export default function Register({ institutions }: { institutions: Institution[]}) {
-    const [institutionId, setInstitutionId] = useState<number | null>(null)
-
+export default function Register() {
     return (
         <AuthLayout
             title="Create an account"
@@ -68,12 +57,15 @@ export default function Register({ institutions }: { institutions: Institution[]
                                 <InputError message={errors.email} />
                             </div>
 
-                            <div className='grid gap-2'>
-                                <InstitutionCombobox
-                                    institutions={institutions}
-                                    value={institutionId}
-                                    onChange={setInstitutionId}
+                            <div className="grid gap-2">
+                                <Label htmlFor="institution">Institution</Label>
+                                <Input
+                                    id="institution"
+                                    type="text"
+                                    name="institution"
+                                    placeholder="University, School, or Company"
                                 />
+                                <InputError message={errors.institution} />
                             </div>
 
                             <div className="grid gap-2">

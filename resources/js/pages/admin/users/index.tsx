@@ -26,17 +26,14 @@ import {
     create,
     edit,
     destroy as destroyRoute,
-} from '@/routes/admin/roles';
+} from '@/routes/admin/users';
 import { toast } from 'sonner';
 import { useEffect } from 'react';
+import { User } from '@/types';
 
-type Role = {
-    id: number;
-    name: string;
-};
 
 export default function Page() {
-    const { roles } = usePage<{ roles: Role[] }>().props;
+    const { users } = usePage<{ users: User[] }>().props;
 
     const { delete: destroy, processing } = useForm();
 
@@ -48,13 +45,13 @@ export default function Page() {
         }
     }, [flash]);
     const handleDelete = (id: number) => {
-        if (confirm('Are you sure you want to delete this role?')) {
+        if (confirm('Are you sure you want to delete this user?')) {
             destroy(destroyRoute.url(id), {
                 preserveScroll: true,
             });
         }
     };
-    
+
     return (
         <AdminLayout>
             <SidebarInset>
@@ -69,12 +66,12 @@ export default function Page() {
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
                                     <BreadcrumbLink href={index.url()}>
-                                        Role
+                                        User
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator className="hidden md:block" />
                                 <BreadcrumbItem>
-                                    <BreadcrumbPage>All Roles</BreadcrumbPage>
+                                    <BreadcrumbPage>All Users</BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
                         </Breadcrumb>
@@ -82,13 +79,13 @@ export default function Page() {
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                     <div className="flex justify-between">
-                        <h1 className="text-xl font-semibold">Manage Role</h1>
+                        <h1 className="text-xl font-semibold">Manage Users</h1>
                         <Link href={create.url()}>
                             <Button className="w-auto">Tambah</Button>
                         </Link>
                     </div>
                     <Table>
-                        <TableCaption>A list of Roles</TableCaption>
+                        <TableCaption>A list of Users</TableCaption>
                         <TableHeader>
                             <TableRow>
                                 <TableHead>Name</TableHead>
@@ -96,9 +93,9 @@ export default function Page() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {roles.map((role, index) => (
-                                <TableRow key={role.id}>
-                                    <TableCell>{role.name}</TableCell>
+                            {users.map((user, index) => (
+                                <TableRow key={user.id}>
+                                    <TableCell>{user.name}</TableCell>
                                     <TableCell>
                                         <div className="flex gap-2">
                                             <Button
@@ -107,7 +104,7 @@ export default function Page() {
                                                 size="sm"
                                                 disabled={processing}
                                             >
-                                                <Link href={edit.url(role.id)}>
+                                                <Link href={edit.url(user.id)}>
                                                     <Pencil className="mr-2 h-4 w-4" />
                                                     Edit
                                                 </Link>
@@ -117,7 +114,7 @@ export default function Page() {
                                                 size="sm"
                                                 disabled={processing}
                                                 onClick={() =>
-                                                    handleDelete(role.id)
+                                                    handleDelete(user.id)
                                                 }
                                             >
                                                 <Trash2 className="mr-2 h-4 w-4" />

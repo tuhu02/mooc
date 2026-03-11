@@ -91,6 +91,62 @@ export default function Profile({
                                     />
                                 </div>
 
+                                <div className="grid gap-2">
+                                    <Label htmlFor="gender">Gender</Label>
+
+                                    <Input
+                                        id="gender"
+                                        type="text"
+                                        className="mt-1 block w-full"
+                                        defaultValue={auth.user.gender}
+                                        name="gender"
+                                        placeholder="Male / Female"
+                                    />
+
+                                    <InputError
+                                        className="mt-2"
+                                        message={errors.gender}
+                                    />
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="date_of_birth">
+                                        Date Of Birth
+                                    </Label>
+
+                                    <Input
+                                        id="date_of_birth"
+                                        type="date"
+                                        className="mt-1 block w-full"
+                                        defaultValue={auth.user.date_of_birth}
+                                        name="date_of_birth"
+                                    />
+
+                                    <InputError
+                                        className="mt-2"
+                                        message={errors.date_of_birth}
+                                    />
+                                </div>
+
+                                {/* Address */}
+                                <div className="grid gap-2">
+                                    <Label htmlFor="address">Address</Label>
+
+                                    <Input
+                                        id="address"
+                                        type="text"
+                                        className="mt-1 block w-full"
+                                        defaultValue={auth.user.address}
+                                        name="address"
+                                        placeholder="Your address"
+                                    />
+
+                                    <InputError
+                                        className="mt-2"
+                                        message={errors.address}
+                                    />
+                                </div>
+
                                 {mustVerifyEmail &&
                                     auth.user.email_verified_at === null && (
                                         <div>
