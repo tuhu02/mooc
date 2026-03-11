@@ -14,15 +14,10 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useForm, usePage } from '@inertiajs/react';
 import { index } from '@/routes/admin/users';
-import type { User } from '@/types';
-
-interface PageProps {
-    user: User;
-    [key: string]: any;
-}
+import { PageProps, User } from '@/types';
 
 export default function EditUserPage() {
-    const { user } = usePage<PageProps>().props;
+    const { user } = usePage<PageProps & { role: User }>().props;
 
     const { data, setData, put, processing, errors } = useForm({
         name: user.name,

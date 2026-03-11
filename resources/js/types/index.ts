@@ -16,3 +16,8 @@ export type User = {
     gender: string;
     date_of_birth: string;
 }
+
+export type PageProps = {
+    role: Role;
+    user: User;
+};

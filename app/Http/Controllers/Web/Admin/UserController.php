@@ -47,7 +47,7 @@ class UserController extends Controller
 
         User::create($validated);
 
-        return Redirect::route('admin.users.index')->with('success', 'User berhasil ditambahkan!');
+        return Redirect::route('admin.users.index')->with('success', 'User has been successfully added!');
     }
 
     /**

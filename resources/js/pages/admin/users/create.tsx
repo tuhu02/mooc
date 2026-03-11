@@ -13,18 +13,11 @@ import { SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useForm, usePage } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
 import { index } from '@/routes/admin/users';
 
-interface PageProps {
-    [key: string]: any; 
-}
-
 export default function Page() {
-    const { props } = usePage<PageProps>();
-    const { flash } = props;
-
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors } = useForm({
         name: '',
         email: '',
         institution: '',
@@ -37,9 +30,7 @@ export default function Page() {
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/admin/users', {
-            onSuccess: () => reset(),
-        });
+        post('/admin/users');
     };
 
     return (
@@ -68,7 +59,6 @@ export default function Page() {
                     </div>
                 </header>
 
-                {/* 3. Menambahkan items-center & justify-center agar form di tengah */}
                 <div className="flex flex-1 items-center justify-center p-4">
                     <form
                         onSubmit={submit}
@@ -77,13 +67,6 @@ export default function Page() {
                         <h1 className="text-center text-2xl font-semibold">
                             Add User
                         </h1>
-
-                        {/* 4. Gunakan Optional Chaining (?.) untuk menampilkan pesan sukses */}
-                        {flash?.success && (
-                            <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm font-medium text-green-600">
-                                {flash.success}
-                            </div>
-                        )}
 
                         <Field className="grid gap-2">
                             <FieldLabel htmlFor="name">Name</FieldLabel>

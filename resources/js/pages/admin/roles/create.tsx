@@ -13,26 +13,18 @@ import { SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useForm, usePage } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
 import { index } from '@/routes/admin/roles';
 
-interface PageProps {
-    [key: string]: any; 
-}
 
 export default function Page() {
-    const { props } = usePage<PageProps>();
-    const { flash } = props;
-
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors } = useForm({
         name: '',
     });
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/admin/roles/', {
-            onSuccess: () => reset(),
-        });
+        post('/admin/roles');
     };
 
     return (
@@ -61,7 +53,6 @@ export default function Page() {
                     </div>
                 </header>
 
-                {/* 3. Menambahkan items-center & justify-center agar form di tengah */}
                 <div className="flex flex-1 items-center justify-center p-4">
                     <form
                         onSubmit={submit}
@@ -71,12 +62,6 @@ export default function Page() {
                             Add Role
                         </h1>
 
-                        {/* 4. Gunakan Optional Chaining (?.) untuk menampilkan pesan sukses */}
-                        {flash?.success && (
-                            <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm font-medium text-green-600">
-                                {flash.success}
-                            </div>
-                        )}
 
                         <Field className="grid gap-2">
                             <FieldLabel htmlFor="name">Name</FieldLabel>
@@ -87,7 +72,6 @@ export default function Page() {
                                     setData('name', e.target.value)
                                 }
                                 placeholder="Enter role name"
-                                // 5. Beri warna merah pada border jika ada error validasi
                                 className={
                                     errors.name
                                         ? 'border-red-500 focus-visible:ring-red-500'

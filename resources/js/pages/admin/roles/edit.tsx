@@ -15,19 +15,10 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useForm, usePage } from '@inertiajs/react';
 import { index } from '@/routes/admin/roles';
-import { Role } from '@/types';
-
-interface PageProps {
-    role: Role;
-    flash: {
-        success?: string;
-        error?: string;
-    };
-    [key: string]: any;
-}
+import { PageProps, Role } from '@/types';
 
 export default function EditRolePage() {
-    const { role } = usePage<PageProps>().props;
+    const { role } = usePage<PageProps & { role: Role }>().props;
 
     const { data, setData, put, processing, errors } = useForm({
         name: role.name,
