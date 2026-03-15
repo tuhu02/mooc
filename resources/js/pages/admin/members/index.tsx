@@ -26,12 +26,12 @@ import {
     create,
     edit,
     destroy as destroyRoute,
-} from '@/routes/admin/users';
-import { User } from '@/types';
+} from '@/routes/admin/members';
+import { Member } from '@/types';
 
 
 export default function Page() {
-    const { users } = usePage<{ users: User[] }>().props;
+    const { members } = usePage<{ members: Member[] }>().props;
 
     const { delete: destroy, processing } = useForm();
 
@@ -57,12 +57,12 @@ export default function Page() {
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
                                     <BreadcrumbLink href={index.url()}>
-                                        User
+                                        Member
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator className="hidden md:block" />
                                 <BreadcrumbItem>
-                                    <BreadcrumbPage>All Users</BreadcrumbPage>
+                                    <BreadcrumbPage>All Members</BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
                         </Breadcrumb>
@@ -70,7 +70,7 @@ export default function Page() {
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                     <div className="flex justify-between">
-                        <h1 className="text-xl font-semibold">Manage Users</h1>
+                        <h1 className="text-xl font-semibold">Manage Members</h1>
                         <Link href={create.url()}>
                             <Button className="w-auto">Tambah</Button>
                         </Link>
@@ -84,9 +84,9 @@ export default function Page() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {users.map((user, index) => (
-                                <TableRow key={user.id}>
-                                    <TableCell>{user.name}</TableCell>
+                            {members.map((member, index) => (
+                                <TableRow key={member.id}>
+                                    <TableCell>{member.user.name}</TableCell>
                                     <TableCell>
                                         <div className="flex gap-2">
                                             <Button
@@ -95,7 +95,7 @@ export default function Page() {
                                                 size="sm"
                                                 disabled={processing}
                                             >
-                                                <Link href={edit.url(user.id)}>
+                                                <Link href={edit.url(member.id)}>
                                                     <Pencil className="mr-2 h-4 w-4" />
                                                     Edit
                                                 </Link>
@@ -105,7 +105,7 @@ export default function Page() {
                                                 size="sm"
                                                 disabled={processing}
                                                 onClick={() =>
-                                                    handleDelete(user.id)
+                                                    handleDelete(member.user.id)
                                                 }
                                             >
                                                 <Trash2 className="mr-2 h-4 w-4" />

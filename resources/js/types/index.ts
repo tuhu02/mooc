@@ -17,7 +17,21 @@ export type User = {
     date_of_birth: string;
 }
 
+export type Member = {
+    id: number,
+    user_id: number,
+    user: {
+        id: number;
+        name: string;
+        email: string;
+        institution: string;
+        address: string;
+        gender: string;
+        date_of_birth: string;
+    }
+}
+
 export type PageProps = {
-    role: Role;
-    user: User;
+    role?: Role;
+    member?: Member;
 };

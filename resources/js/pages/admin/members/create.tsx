@@ -14,7 +14,7 @@ import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useForm } from '@inertiajs/react';
-import { index } from '@/routes/admin/users';
+import { index } from '@/routes/admin/members';
 
 export default function Page() {
     const { data, setData, post, processing, errors } = useForm({
@@ -30,7 +30,7 @@ export default function Page() {
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/admin/users');
+        post('/admin/members');
     };
 
     return (
@@ -65,7 +65,7 @@ export default function Page() {
                         className="w-full max-w-md space-y-6"
                     >
                         <h1 className="text-center text-2xl font-semibold">
-                            Add User
+                            Add Member
                         </h1>
 
                         <Field className="grid gap-2">

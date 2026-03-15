@@ -13,26 +13,28 @@ import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useForm, usePage } from '@inertiajs/react';
-import { index } from '@/routes/admin/users';
+import { index } from '@/routes/admin/members';
 import { PageProps, User } from '@/types';
 
-export default function EditUserPage() {
-    const { user } = usePage<PageProps & { role: User }>().props;
+export default function EditMemberPage() {
+    const { member } = usePage<
+        PageProps & { member: { id: number; user: User } }
+    >().props;
 
     const { data, setData, put, processing, errors } = useForm({
-        name: user.name,
-        email: user.email,
-        institution: user.institution ?? '',
-        gender: user.gender ?? '',
-        date_of_birth: user.date_of_birth ?? '',
-        address: user.address ?? '',
+        name: member.user.name,
+        email: member.user.email,
+        institution: member.user.institution ?? '',
+        gender: member.user.gender ?? '',
+        date_of_birth: member.user.date_of_birth ?? '',
+        address: member.user.address ?? '',
         password: '',
         password_confirmation: '',
     });
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        put(`/admin/users/${user.id}`, {
+        put(`/admin/members/${member.id}`, {
             preserveScroll: true,
         });
     };
@@ -51,12 +53,12 @@ export default function EditUserPage() {
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
                                     <BreadcrumbLink href={index.url()}>
-                                        User
+                                        Member
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator className="hidden md:block" />
                                 <BreadcrumbItem>
-                                    <BreadcrumbPage>Edit User</BreadcrumbPage>
+                                    <BreadcrumbPage>Edit Member</BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
                         </Breadcrumb>
@@ -69,7 +71,7 @@ export default function EditUserPage() {
                         className="w-full max-w-md space-y-6"
                     >
                         <h1 className="text-center text-2xl font-semibold">
-                            Edit User
+                            Edit Member
                         </h1>
 
                         <Field className="grid gap-2">
@@ -280,7 +282,7 @@ export default function EditUserPage() {
                                 className="flex-1"
                                 disabled={processing}
                             >
-                                {processing ? 'Saving...' : 'Update User'}
+                                {processing ? 'Saving...' : 'Update Member'}
                             </Button>
                             <Button
                                 type="button"

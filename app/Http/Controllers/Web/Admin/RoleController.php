@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
+
+use function Pest\Laravel\session;
 
 class RoleController extends Controller
 {
@@ -31,7 +34,9 @@ class RoleController extends Controller
 
         Role::create($validated);
 
-        return Redirect::route('admin.roles.index')->with('success', 'Role has been successfully added!');
+        Inertia::flash('message', 'Role has been successfully added!');
+
+        return Redirect::route('admin.roles.index');
     }
 
     public function edit(Role $role)
@@ -49,7 +54,9 @@ class RoleController extends Controller
 
         $role->update($validated);
 
-        return Redirect::route('admin.roles.index')->with('success', 'Role berhasil diperbarui!');
+        Inertia::flash('message', 'Role has been successfully updated!');
+
+        return Redirect::route('admin.roles.index');
     }
 
     public function destroy(Role $role)

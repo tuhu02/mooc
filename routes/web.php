@@ -1,12 +1,12 @@
 <?php
 
+use App\Http\Controllers\Web\Admin\MemberController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Web\Admin\RoleController;
-use App\Http\Controllers\Web\Admin\UserController;
 
 Route::get('/', function () {
     return Inertia::render('welcome', [
@@ -26,7 +26,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     })->name('dashboard');
     
     Route::resource('/roles', RoleController::class)->except(['show']);
-    Route::resource('/users', UserController::class);
+    Route::resource('/members', MemberController::class)->except(['show']);
 });
                                                                                                                                                                     
 require __DIR__.'/settings.php';
