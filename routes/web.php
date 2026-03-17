@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Web\Admin\MemberController;
+use App\Http\Controllers\Web\Admin\MentorController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -24,9 +25,10 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('dashboard', function () {
         return Inertia::render('admin/dashboard');
     })->name('dashboard');
-    
+
     Route::resource('/roles', RoleController::class)->except(['show']);
     Route::resource('/members', MemberController::class)->except(['show']);
+    Route::resource('/mentors', MentorController::class)->except(['show']);
 });
-                                                                                                                                                                    
-require __DIR__.'/settings.php';
+
+require __DIR__ . '/settings.php';

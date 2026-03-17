@@ -9,34 +9,27 @@ import {
 } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
+
 import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useForm, usePage } from '@inertiajs/react';
-import { index } from '@/routes/admin/members';
-import { PageProps, User } from '@/types';
+import { useForm } from '@inertiajs/react';
+import { index } from '@/routes/admin/mentors';
 
-export default function EditMemberPage() {
-    const { member } = usePage<
-        PageProps & { member: { id: number; user: User } }
-    >().props;
-
-    const { data, setData, put, processing, errors } = useForm({
-        name: member.user.name,
-        email: member.user.email,
-        institution: member.institution ?? '',
-        gender: member.gender ?? '',
-        date_of_birth: member.date_of_birth ?? '',
-        address: member.user.address ?? '',
+export default function Page() {
+    const { data, setData, post, processing, errors } = useForm({
+        name: '',
+        email: '',
+        avatar: null as File | null,
+        bio: '',
+        address: '',
         password: '',
         password_confirmation: '',
     });
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        put(`/admin/members/${member.id}`, {
-            preserveScroll: true,
-        });
+        post('/admin/mentors');
     };
 
     return (
@@ -53,12 +46,12 @@ export default function EditMemberPage() {
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
                                     <BreadcrumbLink href={index.url()}>
-                                        Member
+                                        Mentors
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator className="hidden md:block" />
                                 <BreadcrumbItem>
-                                    <BreadcrumbPage>Edit Member</BreadcrumbPage>
+                                    <BreadcrumbPage>Add Mentor</BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
                         </Breadcrumb>
@@ -71,7 +64,7 @@ export default function EditMemberPage() {
                         className="w-full max-w-md space-y-6"
                     >
                         <h1 className="text-center text-2xl font-semibold">
-                            Edit Member
+                            Add Mentor
                         </h1>
 
                         <Field className="grid gap-2">
@@ -119,79 +112,38 @@ export default function EditMemberPage() {
                                     {errors.email}
                                 </p>
                             )}
+
+                            <FieldDescription>
+                                Choose a unique email.
+                            </FieldDescription>
                         </Field>
 
                         <Field className="grid gap-2">
-                            <FieldLabel htmlFor="institution">
-                                Institution
-                            </FieldLabel>
+                            <FieldLabel htmlFor="avatar">Avatar</FieldLabel>
+
                             <Input
-                                id="institution"
-                                value={data.institution}
+                                id="avatar"
+                                type="file"
+                                accept="image/*"
                                 onChange={(e) =>
-                                    setData('institution', e.target.value)
-                                }
-                                placeholder="University, School, or Company"
-                                className={
-                                    errors.institution
-                                        ? 'border-red-500 focus-visible:ring-red-500'
-                                        : ''
+                                    setData(
+                                        'avatar',
+                                        e.target.files
+                                            ? e.target.files[0]
+                                            : null,
+                                    )
                                 }
                             />
 
-                            {errors.institution && (
+                            {errors.avatar && (
                                 <p className="text-sm font-medium text-red-500">
-                                    {errors.institution}
+                                    {errors.avatar}
                                 </p>
                             )}
-                        </Field>
 
-                        <Field className="grid gap-2">
-                            <FieldLabel htmlFor="gender">Gender</FieldLabel>
-                            <Input
-                                id="gender"
-                                value={data.gender}
-                                onChange={(e) =>
-                                    setData('gender', e.target.value)
-                                }
-                                placeholder="Male, Female, etc."
-                                className={
-                                    errors.gender
-                                        ? 'border-red-500 focus-visible:ring-red-500'
-                                        : ''
-                                }
-                            />
-
-                            {errors.gender && (
-                                <p className="text-sm font-medium text-red-500">
-                                    {errors.gender}
-                                </p>
-                            )}
-                        </Field>
-
-                        <Field className="grid gap-2">
-                            <FieldLabel htmlFor="date_of_birth">
-                                Date of Birth
-                            </FieldLabel>
-                            <Input
-                                id="date_of_birth"
-                                type="date"
-                                value={data.date_of_birth}
-                                onChange={(e) =>
-                                    setData('date_of_birth', e.target.value)
-                                }
-                                className={
-                                    errors.date_of_birth
-                                        ? 'border-red-500 focus-visible:ring-red-500'
-                                        : ''
-                                }
-                            />
-
-                            {errors.date_of_birth && (
-                                <p className="text-sm font-medium text-red-500">
-                                    {errors.date_of_birth}
-                                </p>
-                            )}
+                            <FieldDescription>
+                                Upload mentor profile picture.
+                            </FieldDescription>
                         </Field>
 
                         <Field className="grid gap-2">
@@ -218,9 +170,7 @@ export default function EditMemberPage() {
                         </Field>
 
                         <Field className="grid gap-2">
-                            <FieldLabel htmlFor="password">
-                                New Password
-                            </FieldLabel>
+                            <FieldLabel htmlFor="password">Password</FieldLabel>
                             <Input
                                 id="password"
                                 type="password"
@@ -228,7 +178,7 @@ export default function EditMemberPage() {
                                 onChange={(e) =>
                                     setData('password', e.target.value)
                                 }
-                                placeholder="Leave blank if unchanged"
+                                placeholder="Enter Password"
                                 className={
                                     errors.password
                                         ? 'border-red-500 focus-visible:ring-red-500'
@@ -241,10 +191,6 @@ export default function EditMemberPage() {
                                     {errors.password}
                                 </p>
                             )}
-
-                            <FieldDescription>
-                                Kosongkan jika tidak ingin mengganti password.
-                            </FieldDescription>
                         </Field>
 
                         <Field className="grid gap-2">
@@ -261,7 +207,7 @@ export default function EditMemberPage() {
                                         e.target.value,
                                     )
                                 }
-                                placeholder="Repeat new password"
+                                placeholder="Enter Password Confirmation"
                                 className={
                                     errors.password_confirmation
                                         ? 'border-red-500 focus-visible:ring-red-500'
@@ -276,23 +222,13 @@ export default function EditMemberPage() {
                             )}
                         </Field>
 
-                        <div className="flex gap-2">
-                            <Button
-                                type="submit"
-                                className="flex-1"
-                                disabled={processing}
-                            >
-                                {processing ? 'Saving...' : 'Update Member'}
-                            </Button>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                className="flex-1"
-                                onClick={() => window.history.back()}
-                            >
-                                Cancel
-                            </Button>
-                        </div>
+                        <Button
+                            type="submit"
+                            className="w-full"
+                            disabled={processing}
+                        >
+                            {processing ? 'Saving...' : 'Save Mentor'}
+                        </Button>
                     </form>
                 </div>
             </SidebarInset>

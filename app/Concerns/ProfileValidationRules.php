@@ -18,6 +18,7 @@ trait ProfileValidationRules
             'name' => $this->nameRules(),
             'email' => $this->emailRules($userId),
             'gender' => $this->genderRules(),
+            'institution' => $this->institutionRules(),
             'date_of_birth' => $this->dateOfBirthRules(),
             'address' => $this->addressRules(),
         ];
@@ -79,5 +80,10 @@ trait ProfileValidationRules
     protected function addressRules(): array
     {
         return ['nullable', 'string', 'max:1000'];
+    }
+
+    protected function institutionRules(): array
+    {
+        return ['required', 'string', 'max:50'];
     }
 }

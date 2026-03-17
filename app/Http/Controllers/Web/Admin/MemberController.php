@@ -37,10 +37,18 @@ class MemberController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $user = User::create($validated);
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => $validated['password'],
+        ]);
 
         Member::create([
             'user_id' => $user->id,
+            'institution' => $validated['institution'],
+            'gender' => $validated['gender'],
+            'date_of_birth' => $validated['date_of_birth'],
+            'address' => $validated['address'],
         ]);
 
         return Redirect::route('admin.members.index');
@@ -48,6 +56,8 @@ class MemberController extends Controller
 
     public function edit(Member $member)
     {
+        $member->load('user');
+
         return Inertia::render('admin/members/edit', [
             'member' => $member
         ]);
@@ -65,11 +75,31 @@ class MemberController extends Controller
             'password' => 'nullable|string|min:8|confirmed',
         ]);
 
-        if (empty($validated['password'])) {
-            unset($validated['password']);
+        $user = $member->user;
+
+        $user->fill([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+        ]);
+
+        if (!empty($validated['password'])) {
+            $user['password'] = $validated['password'];
         }
 
-        $member->user->update($validated);
+        if ($member->user->isDirty('email')) {
+            $member->user->email_verified_at = null;
+        }
+
+        $user->save();
+
+        $member->update([
+            'institution' => $validated['institution'],
+            'gender' => $validated['gender'],
+            'date_of_birth' => $validated['date_of_birth'],
+            'address' => $validated['address'],
+        ]);
+
+        return Redirect::route('admin.members.index');
     }
 
     public function destroy(Member $member)

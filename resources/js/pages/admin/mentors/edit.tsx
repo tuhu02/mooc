@@ -13,28 +13,26 @@ import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useForm, usePage } from '@inertiajs/react';
-import { index } from '@/routes/admin/members';
+import { index } from '@/routes/admin/mentors';
 import { PageProps, User } from '@/types';
 
-export default function EditMemberPage() {
-    const { member } = usePage<
-        PageProps & { member: { id: number; user: User } }
+export default function EditMentorPage() {
+    const { mentor } = usePage<
+        PageProps & { mentor: { id: number; user: User } }
     >().props;
 
     const { data, setData, put, processing, errors } = useForm({
-        name: member.user.name,
-        email: member.user.email,
-        institution: member.institution ?? '',
-        gender: member.gender ?? '',
-        date_of_birth: member.date_of_birth ?? '',
-        address: member.user.address ?? '',
+        name: mentor.user.name,
+        email: mentor.user.email,
+        avatar: null as File | null,
+        address: mentor.user.address ?? '',
         password: '',
         password_confirmation: '',
     });
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        put(`/admin/members/${member.id}`, {
+        put(`/admin/mentors/${mentor.id}`, {
             preserveScroll: true,
         });
     };
@@ -53,12 +51,12 @@ export default function EditMemberPage() {
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
                                     <BreadcrumbLink href={index.url()}>
-                                        Member
+                                        Mentor
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator className="hidden md:block" />
                                 <BreadcrumbItem>
-                                    <BreadcrumbPage>Edit Member</BreadcrumbPage>
+                                    <BreadcrumbPage>Edit Mentor</BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
                         </Breadcrumb>
@@ -71,7 +69,7 @@ export default function EditMemberPage() {
                         className="w-full max-w-md space-y-6"
                     >
                         <h1 className="text-center text-2xl font-semibold">
-                            Edit Member
+                            Edit Mentor
                         </h1>
 
                         <Field className="grid gap-2">
@@ -117,79 +115,6 @@ export default function EditMemberPage() {
                             {errors.email && (
                                 <p className="text-sm font-medium text-red-500">
                                     {errors.email}
-                                </p>
-                            )}
-                        </Field>
-
-                        <Field className="grid gap-2">
-                            <FieldLabel htmlFor="institution">
-                                Institution
-                            </FieldLabel>
-                            <Input
-                                id="institution"
-                                value={data.institution}
-                                onChange={(e) =>
-                                    setData('institution', e.target.value)
-                                }
-                                placeholder="University, School, or Company"
-                                className={
-                                    errors.institution
-                                        ? 'border-red-500 focus-visible:ring-red-500'
-                                        : ''
-                                }
-                            />
-
-                            {errors.institution && (
-                                <p className="text-sm font-medium text-red-500">
-                                    {errors.institution}
-                                </p>
-                            )}
-                        </Field>
-
-                        <Field className="grid gap-2">
-                            <FieldLabel htmlFor="gender">Gender</FieldLabel>
-                            <Input
-                                id="gender"
-                                value={data.gender}
-                                onChange={(e) =>
-                                    setData('gender', e.target.value)
-                                }
-                                placeholder="Male, Female, etc."
-                                className={
-                                    errors.gender
-                                        ? 'border-red-500 focus-visible:ring-red-500'
-                                        : ''
-                                }
-                            />
-
-                            {errors.gender && (
-                                <p className="text-sm font-medium text-red-500">
-                                    {errors.gender}
-                                </p>
-                            )}
-                        </Field>
-
-                        <Field className="grid gap-2">
-                            <FieldLabel htmlFor="date_of_birth">
-                                Date of Birth
-                            </FieldLabel>
-                            <Input
-                                id="date_of_birth"
-                                type="date"
-                                value={data.date_of_birth}
-                                onChange={(e) =>
-                                    setData('date_of_birth', e.target.value)
-                                }
-                                className={
-                                    errors.date_of_birth
-                                        ? 'border-red-500 focus-visible:ring-red-500'
-                                        : ''
-                                }
-                            />
-
-                            {errors.date_of_birth && (
-                                <p className="text-sm font-medium text-red-500">
-                                    {errors.date_of_birth}
                                 </p>
                             )}
                         </Field>
@@ -282,7 +207,7 @@ export default function EditMemberPage() {
                                 className="flex-1"
                                 disabled={processing}
                             >
-                                {processing ? 'Saving...' : 'Update Member'}
+                                {processing ? 'Saving...' : 'Update Mentor'}
                             </Button>
                             <Button
                                 type="button"

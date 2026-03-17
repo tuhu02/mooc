@@ -19,8 +19,13 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        $user = $request->user()->load('member');
+
         return Inertia::render('settings/profile', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+            'auth' => [
+                'user' => $user
+            ],
+            'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
         ]);
     }
@@ -30,13 +35,32 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        $userData = [
+            'name' => $request->validated()['name'],
+            'email' => $request->validated()['email'],
+        ];
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if (!empty($request->validated()['password'])) {
+            $user['password'] = $request->validated()['password'];
         }
 
-        $request->user()->save();
+        $user->fill($userData);
+
+        if ($user->isDirty('email')) {
+            $user->email_verify_at = null;
+        }
+
+        $member = $user->member;
+
+        if ($member) {
+            $member->update([
+                'institution' => $request->validated()['institution'],
+                'gender' => $request->validated()['gender'],
+                'date_of_birth' => $request->validated()['date_of_birth'],
+                'address' => $request->validated()['address'],
+            ]);
+        }
 
         return to_route('profile.edit');
     }

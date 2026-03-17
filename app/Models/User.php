@@ -28,10 +28,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
-        'institution',
         'address',
-        'gender',
-        'date_of_birth'
     ];
 
     /**
@@ -63,10 +60,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function sendEmailVerificationNotification()
     {
         $isApiRequest = request()->is('api/*') || request()->expectsJson();
-        
+
         if ($isApiRequest) {
             $otp = rand(100000, 999999);
-            
+
             $this->otps()->create([
                 'otp' => $otp,
                 'type' => 'email_verification',
@@ -79,7 +76,20 @@ class User extends Authenticatable implements MustVerifyEmail
         }
     }
 
-    public function otps(){
+    public function otps()
+    {
         return $this->hasMany(Otp::class);
+    }
+
+
+    public function member()
+    {
+        return $this->hasOne(Member::class);
+    }
+
+
+    public function mentor()
+    {
+        return $this->hasOne(Mentor::class);
     }
 }

@@ -12,6 +12,7 @@ import type { BreadcrumbItem } from '@/types';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import { edit } from '@/routes/profile';
 import { send } from '@/routes/verification';
+import type { Auth } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -27,7 +28,13 @@ export default function Profile({
     mustVerifyEmail: boolean;
     status?: string;
 }) {
-    const { auth } = usePage().props;
+    const { auth } = usePage<{
+        auth: Auth;
+        mustVerifyEmail: boolean;
+        status?: string;
+    }>().props;
+
+    
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -98,7 +105,9 @@ export default function Profile({
                                         id="gender"
                                         type="text"
                                         className="mt-1 block w-full"
-                                        defaultValue={auth.user.gender}
+                                        defaultValue={
+                                            auth.user.member?.gender || ''
+                                        }
                                         name="gender"
                                         placeholder="Male / Female"
                                     />
@@ -118,7 +127,10 @@ export default function Profile({
                                         id="date_of_birth"
                                         type="date"
                                         className="mt-1 block w-full"
-                                        defaultValue={auth.user.date_of_birth}
+                                        defaultValue={
+                                            auth.user.member?.date_of_birth ||
+                                            ''
+                                        }
                                         name="date_of_birth"
                                     />
 
@@ -136,7 +148,7 @@ export default function Profile({
                                         id="address"
                                         type="text"
                                         className="mt-1 block w-full"
-                                        defaultValue={auth.user.address}
+                                        defaultValue={auth.user.address || ''}
                                         name="address"
                                         placeholder="Your address"
                                     />
@@ -144,6 +156,25 @@ export default function Profile({
                                     <InputError
                                         className="mt-2"
                                         message={errors.address}
+                                    />
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="address">Institution</Label>
+
+                                    <Input
+                                        id="institution"
+                                        type="text"
+                                        name="institution"
+                                        defaultValue={
+                                            auth.user.member?.institution || ''
+                                        }
+                                        placeholder="Institution"
+                                    />
+
+                                    <InputError
+                                        className="mt-2"
+                                        message={errors.institution}
                                     />
                                 </div>
 

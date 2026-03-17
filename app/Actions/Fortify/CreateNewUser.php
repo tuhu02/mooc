@@ -29,14 +29,14 @@ class CreateNewUser implements CreatesNewUsers
         $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
-            'institution' => $input['institution'],
             'password' => $input['password'],
         ]);
 
-        Member::create([    
-            'user_id' => $user->id
+        Member::create([
+            'user_id' => $user->id,
+            'institution' => $input['institution'],
         ]);
-        
+
         return $user;
     }
 }
