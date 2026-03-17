@@ -67,3 +67,14 @@ export type Category = {
     id: number;
     name: string;
 }
+
+export type Course = {
+    id: number;
+    title: string;
+    thumbnail: string;
+    description: string;
+    is_active: 'active' | 'not_active';
+    mentor_id: number;
+    mentor?: Mentor;
+    categories?: Category[];
+};

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Web\Admin\AdminController;
 use App\Http\Controllers\Web\Admin\CategoryController;
+use App\Http\Controllers\Web\Admin\CourseController;
 use App\Http\Controllers\Web\Admin\MemberController;
 use App\Http\Controllers\Web\Admin\MentorController;
 use App\Http\Controllers\Web\Admin\RoleController;
@@ -33,7 +34,7 @@ Route::middleware([])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('/mentors', MentorController::class)->except(['show']);
     Route::resource('/admins', AdminController::class)->except(['show']);
     Route::resource('/categories', CategoryController::class)->except(['show']);
-
+    Route::resource('/courses', CourseController::class)->except(['show']);
 });
 
 require __DIR__ . '/settings.php';
