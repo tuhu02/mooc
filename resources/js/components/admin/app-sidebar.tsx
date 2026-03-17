@@ -15,6 +15,7 @@ import {
     SquareTerminal,
     Users,
     UserCheck,
+    UserCog,
 } from 'lucide-react';
 
 import { NavMain } from '@/components/admin/nav-main';
@@ -59,6 +60,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ],
         navMain: [
             {
+                title: 'Admins',
+                url: '/admin/admins',
+                icon: UserCog,
+                isActive: url.startsWith('/admin/admins'),
+                items: [
+                    {
+                        title: 'All Admins',
+                        url: '/admin/admins',
+                        isActive: url === '/admin/admins',
+                    },
+                    {
+                        title: 'Add Admins',
+                        url: '/admin/admins/create',
+                        isActive: url === '/admin/admins/create',
+                    },
+                ],
+            },
+            {
                 title: 'Members',
                 url: '/admin/members',
                 icon: Users,
@@ -91,6 +110,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         title: 'Add Mentor',
                         url: '/admin/mentors/create',
                         isActive: url === '/admin/roles/create',
+                    },
+                ],
+            },
+            {
+                title: 'Category',
+                url: '/admin/categories',
+                icon: GalleryVerticalEnd,
+                isActive: url.startsWith('/admin/categories'),
+                items: [
+                    {
+                        title: 'All Category',
+                        url: '/admin/categories',
+                        isActive: url === '/admin/categories',
+                    },
+                    {
+                        title: 'Add Category',
+                        url: '/admin/categories/create',
+                        isActive: url === '/admin/categories/create',
                     },
                 ],
             },

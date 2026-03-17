@@ -32,6 +32,16 @@ export type Member = {
     }
 }
 
+export type Admin = {
+    id: number,
+    user_id: number,
+    user: {
+        id: number;
+        name: string;
+        email: string;
+    }
+}
+
 export type Mentor = {
     id: number,
     institution: string,
@@ -52,3 +62,8 @@ export type PageProps = {
     member?: Member;
     mentor?: Mentor;
 };
+
+export type Category = {
+    id: number;
+    name: string;
+}

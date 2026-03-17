@@ -92,4 +92,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Mentor::class);
     }
+
+    public function admin()
+    {
+        return $this->hasOne(Admin::class);
+    }
 }
