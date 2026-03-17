@@ -1,4 +1,5 @@
 import AdminLayout from '@/layouts/AdminLayout';
+import React from 'react';
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -14,17 +15,29 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useForm, usePage } from '@inertiajs/react';
 import { index } from '@/routes/admin/mentors';
-import { PageProps, User } from '@/types';
+import { Mentor, PageProps } from '@/types';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 export default function EditMentorPage() {
-    const { mentor } = usePage<
-        PageProps & { mentor: { id: number; user: User } }
-    >().props;
+    const { mentor } = usePage<PageProps & { mentor: Mentor }>().props;
 
-    const { data, setData, put, processing, errors } = useForm({
+    const [previewAvatar, setPreviewAvatar] = React.useState<string | null>(
+        mentor.avatar ? `/storage/${mentor.avatar}` : null,
+    );
+
+    const { data, setData, post, processing, errors } = useForm<{
+        _method: string;
+        name: string;
+        email: string;
+        avatar: File | null;
+        address: string;
+        password: string;
+        password_confirmation: string;
+    }>({
+        _method: 'PUT',
         name: mentor.user.name,
         email: mentor.user.email,
-        avatar: null as File | null,
+        avatar: null,
         address: mentor.user.address ?? '',
         password: '',
         password_confirmation: '',
@@ -32,8 +45,10 @@ export default function EditMentorPage() {
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        put(`/admin/mentors/${mentor.id}`, {
+        post(`/admin/mentors/${mentor.id}`, {
             preserveScroll: true,
+            onSuccess: (page) => console.log('Success:', page),
+            onError: (errors) => console.log('Validation errors:', errors),
         });
     };
 
@@ -91,6 +106,41 @@ export default function EditMentorPage() {
                             {errors.name && (
                                 <p className="text-sm font-medium text-red-500">
                                     {errors.name}
+                                </p>
+                            )}
+                        </Field>
+
+                        <Field className="grid items-center gap-2">
+                            <FieldLabel htmlFor="avatar">Avatar</FieldLabel>
+                            <div className="flex items-center gap-4">
+                                <Avatar>
+                                    <AvatarImage
+                                        src={previewAvatar ?? undefined}
+                                        alt="Avatar"
+                                    />
+                                    <AvatarFallback>
+                                        {mentor.user.name[0]}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <Input
+                                    id="avatar"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        const file =
+                                            e.target.files?.[0] ?? null;
+                                        setData('avatar', file);
+                                        if (file) {
+                                            setPreviewAvatar(
+                                                URL.createObjectURL(file),
+                                            );
+                                        }
+                                    }}
+                                />
+                            </div>
+                            {errors.avatar && (
+                                <p className="text-sm font-medium text-red-500">
+                                    {errors.avatar}
                                 </p>
                             )}
                         </Field>

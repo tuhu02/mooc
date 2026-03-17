@@ -69,14 +69,6 @@ class MentorController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
     public function edit(Mentor $mentor)
@@ -91,16 +83,45 @@ class MentorController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Mentor $mentor)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $mentor->user_id,
+            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'address' => 'nullable|string|max:1000',
+            'password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        $user = $mentor->user;
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        $user->address = $validated['address'] ?? $user->address;
+
+        if (!empty($validated['password'])) {
+            $user->password = $validated['password'];
+        }
+
+        $user->save();
+
+        if ($request->hasFile('avatar')) {
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            $mentor->avatar = $avatarPath;
+        }
+
+        $mentor->save();
+
+        return Redirect::route('admin.mentors.index')
+            ->with('success', 'Mentor berhasil diupdate!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Mentor $mentor)
     {
-        //
+        $mentor->user->delete();
+
+        return redirect()->back();
     }
 }

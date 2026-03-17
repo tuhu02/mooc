@@ -15,6 +15,7 @@ export type User = {
     address: string;
     gender: string;
     date_of_birth: string;
+    avatar_url?: string | null;
 }
 
 export type Member = {
@@ -43,6 +44,7 @@ export type Mentor = {
         email: string;
         address: string;
     }
+    avatar?: string | null;
 }
 
 export type PageProps = {
