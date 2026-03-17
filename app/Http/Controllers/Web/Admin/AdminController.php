@@ -45,6 +45,7 @@ class AdminController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => $validated['password'],
+            'type' => 'admin'
         ]);
 
         Admin::create([

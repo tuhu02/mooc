@@ -41,6 +41,7 @@ class MemberController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => $validated['password'],
+            'type' => 'member'
         ]);
 
         Member::create([

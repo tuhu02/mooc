@@ -51,6 +51,8 @@ class MentorController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => $validated['password'],
+            'type' => 'mentor'
+
         ]);
 
         if ($request->hasFile('avatar')) {
