@@ -168,7 +168,8 @@ export default function EditCoursePage() {
                                 </p>
                             )}
                             <FieldDescription>
-                                Kosongkan jika tidak ingin mengganti thumbnail.
+                                Leave it empty if you don't want to change the
+                                thumbnail.
                             </FieldDescription>
                         </Field>
 

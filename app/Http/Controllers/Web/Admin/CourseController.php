@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
 
 class CourseController extends Controller
 {
@@ -53,8 +54,11 @@ class CourseController extends Controller
 
         $thumbnailPath = $request->file('thumbnail')->store('courses', 'public');
 
+        $slug = Course::generateUniqueSlug(Str::slug($validated['title']));
+
         $course = Course::create([
             'title' => $validated['title'],
+            'slug' => $slug,
             'mentor_id' => $validated['mentor_id'],
             'thumbnail' => $thumbnailPath,
             'description' => $validated['description'],
@@ -102,6 +106,13 @@ class CourseController extends Controller
             }
 
             $course->thumbnail = $request->file('thumbnail')->store('courses', 'public');
+        }
+
+        if ($course->title !== $validated['title']) {
+            $course->slug = Course::generateUniqueSlug(
+                Str::slug($validated['title']),
+                $course->id
+            );
         }
 
         $course->title = $validated['title'];

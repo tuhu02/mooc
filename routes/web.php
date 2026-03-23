@@ -6,17 +6,14 @@ use App\Http\Controllers\Web\Admin\CourseController;
 use App\Http\Controllers\Web\Admin\MemberController;
 use App\Http\Controllers\Web\Admin\MentorController;
 use App\Http\Controllers\Web\Admin\RoleController;
+use App\Http\Controllers\Web\WelcomeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-Route::get('/', function () {
-    return Inertia::render('welcome', [
-        'canRegister' => Features::enabled(Features::registration()),
-    ]);
-})->name('home');
+Route::get('/', WelcomeController::class)->name('welcome');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {

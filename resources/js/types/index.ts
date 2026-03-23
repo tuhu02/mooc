@@ -78,3 +78,5 @@ export type Course = {
     mentor?: Mentor;
     categories?: Category[];
 };
+
+

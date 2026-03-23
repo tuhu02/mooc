@@ -10,6 +10,7 @@ class Course extends Model
         'title',
         'thumbnail',
         'description',
+        'slug',
         'is_active',
         'mentor_id',
     ];
@@ -22,5 +23,28 @@ class Course extends Model
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'category_course');
+    }
+
+    // App\Models\Course.php
+
+    public static function generateUniqueSlug(string $slug, ?int $excludeId = null): string
+    {
+        $original = $slug;
+        $counter = 1;
+
+        while (true) {
+            $query = Course::where('slug', $slug);
+            if ($excludeId) {
+                $query->where('id', '!=', $excludeId);
+            }
+
+            if (!$query->exists()) {
+                break;
+            }
+
+            $slug = $original . '-' . $counter++;
+        }
+
+        return $slug;
     }
 }
