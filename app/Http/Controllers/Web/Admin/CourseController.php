@@ -68,7 +68,7 @@ class CourseController extends Controller
         $course->categories()->sync($validated['category_ids']);
 
         return Redirect::route('admin.courses.index')
-            ->with('success', 'Course berhasil ditambahkan!');
+            ->with('success', 'Course Successfully Created!');
     }
 
     /**
@@ -124,7 +124,7 @@ class CourseController extends Controller
         $course->categories()->sync($validated['category_ids']);
 
         return Redirect::route('admin.courses.index')
-            ->with('success', 'Course berhasil diupdate!');
+            ->with('success', 'Course Successfully updated!');
     }
 
     /**
@@ -138,6 +138,6 @@ class CourseController extends Controller
 
         $course->delete();
 
-        return redirect()->back()->with('success', 'Course berhasil dihapus!');
+        return redirect()->back()->with('success', 'Course Successfully Deleted!');
     }
 }

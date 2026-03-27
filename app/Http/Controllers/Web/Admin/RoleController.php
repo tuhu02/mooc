@@ -34,9 +34,7 @@ class RoleController extends Controller
 
         Role::create($validated);
 
-        Inertia::flash('message', 'Role has been successfully added!');
-
-        return Redirect::route('admin.roles.index');
+        return Redirect::route('admin.roles.index')->with('success', 'Role Successfully Created!');;
     }
 
     public function edit(Role $role)
@@ -54,15 +52,13 @@ class RoleController extends Controller
 
         $role->update($validated);
 
-        Inertia::flash('message', 'Role has been successfully updated!');
-
-        return Redirect::route('admin.roles.index');
+        return Redirect::route('admin.roles.index')->with('success', 'Role Successfully Updated!');;
     }
 
     public function destroy(Role $role)
     {
         $role->delete();
 
-        return redirect()->back()->with('success', 'Role deleted successfully!');
+        return redirect()->back()->with('success', 'Role Successfully Deleted!');
     }
 }

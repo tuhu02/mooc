@@ -55,7 +55,7 @@ class AdminController extends Controller
             ]);
         });
 
-        return Redirect::route('admin.admins.index');
+        return Redirect::route('admin.admins.index')->with('success', 'Admin Successfully Created!');
     }
 
     /**
@@ -98,7 +98,7 @@ class AdminController extends Controller
         });
 
         return Redirect::route('admin.admins.index')
-            ->with('success', 'Admin berhasil diupdate!');
+            ->with('success', 'Admin Successfully Updated!');
     }
 
     /**
@@ -111,6 +111,6 @@ class AdminController extends Controller
             $admin->user->delete();
         });
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Admin Successfully Deleted!');;
     }
 }

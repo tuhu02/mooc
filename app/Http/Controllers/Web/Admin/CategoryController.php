@@ -42,7 +42,7 @@ class CategoryController extends Controller
             'name' => $validated['name'],
         ]);
 
-        return Redirect::route('admin.categories.index');
+        return Redirect::route('admin.categories.index')->with('success', 'Category Has Been Created!');
     }
 
     /**
@@ -69,7 +69,7 @@ class CategoryController extends Controller
         ]);
 
         return Redirect::route('admin.categories.index')
-            ->with('success', 'Category berhasil diupdate!');
+            ->with('success', 'Category Successfully Updated!');
     }
 
     /**
@@ -79,6 +79,6 @@ class CategoryController extends Controller
     {
         $category->delete();
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Category Successfully Deleted!');;
     }
 }

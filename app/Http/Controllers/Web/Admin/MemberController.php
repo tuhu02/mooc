@@ -57,7 +57,7 @@ class MemberController extends Controller
         });
 
 
-        return Redirect::route('admin.members.index');
+        return Redirect::route('admin.members.index')->with('success', 'Member Successfully Created!');;
     }
 
     public function edit(Member $member)
@@ -107,13 +107,13 @@ class MemberController extends Controller
             ]);
         });
 
-        return Redirect::route('admin.members.index');
+        return Redirect::route('admin.members.index')->with('success', 'Member Successfully Updated!');;
     }
 
     public function destroy(Member $member)
     {
         $member->user->delete();
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Member Successfully Deleted!');;
     }
 }

@@ -15,6 +15,7 @@ use Illuminate\Support\Carbon;
 use App\Notifications\ApiVerifyEmailNotification;
 use Spatie\Permission\Traits\HasRoles;
 
+
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */

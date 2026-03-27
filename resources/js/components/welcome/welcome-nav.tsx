@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { dashboard, login, register } from '@/routes';
+import admin from '@/routes/admin';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 
@@ -9,6 +10,9 @@ type Props = {
 };
 
 export default function WelcomeNav({ auth, canRegister = true }: Props) {
+    const dashboardHref =
+        auth.user?.type === 'admin' ? admin.dashboard().url : dashboard().url;
+
     return (
         <motion.nav
             initial={{ y: -100, opacity: 0 }}
@@ -33,7 +37,7 @@ export default function WelcomeNav({ auth, canRegister = true }: Props) {
 
                 <div className="flex items-center gap-4">
                     {auth.user ? (
-                        <Link href={dashboard().url}>
+                        <Link href={dashboardHref}>
                             <Button className="rounded-full bg-black px-6 text-white hover:bg-slate-800 dark:bg-white dark:text-black dark:hover:bg-slate-200">
                                 Dashboard
                             </Button>

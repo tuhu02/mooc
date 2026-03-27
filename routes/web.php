@@ -9,9 +9,6 @@ use App\Http\Controllers\Web\Admin\RoleController;
 use App\Http\Controllers\Web\WelcomeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Laravel\Fortify\Features;
-use App\Models\User;
-use Illuminate\Http\Request;
 
 Route::get('/', WelcomeController::class)->name('welcome');
 
@@ -21,7 +18,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 });
 
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'can:manage.roles'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('admin/dashboard');
     })->name('dashboard');

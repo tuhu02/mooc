@@ -38,8 +38,6 @@ class MentorController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $avatarPath = null;
-
         DB::transaction(function () use ($validated, $request) {
             $user = User::create([
                 'name' => $validated['name'],
@@ -61,7 +59,7 @@ class MentorController extends Controller
         });
 
         return Redirect::route('admin.mentors.index')
-            ->with('success', 'Mentor berhasil ditambahkan!');
+            ->with('success', 'Mentor Successfully Created!');
     }
 
     public function edit(Mentor $mentor)
@@ -114,13 +112,13 @@ class MentorController extends Controller
         });
 
         return Redirect::route('admin.mentors.index')
-            ->with('success', 'Mentor berhasil diupdate!');
+            ->with('success', 'Mentor Successfully Updated!');
     }
 
     public function destroy(Mentor $mentor)
     {
         $mentor->user->delete();
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Mentor Successfully Deleted!');;
     }
 }
