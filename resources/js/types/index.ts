@@ -79,4 +79,19 @@ export type Course = {
     categories?: Category[];
 };
 
+export type LaravelPaginationLink = {
+    url: string | null;
+    label: string;
+    active: boolean;
+};
+
+export type LaravelPagination<T> = {
+    data: T[];
+    links: LaravelPaginationLink[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+};
+
 

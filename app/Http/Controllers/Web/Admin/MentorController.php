@@ -7,33 +7,26 @@ use Illuminate\Http\Request;
 use App\Models\Mentor;
 use Inertia\Inertia;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 
 class MentorController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $mentors = Mentor::with('user')->get();
+        $mentors = Mentor::with('user')->paginate(10);
 
         return Inertia::render('admin/mentors/index', [
             'mentors' =>  $mentors
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return Inertia::render('admin/mentors/create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -47,32 +40,30 @@ class MentorController extends Controller
 
         $avatarPath = null;
 
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => $validated['password'],
-            'type' => 'mentor'
+        DB::transaction(function () use ($validated, $request) {
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => $validated['password'],
+                'type' => 'mentor',
+            ]);
 
-        ]);
+            $avatarPath = $request->hasFile('avatar')
+                ? $request->file('avatar')->store('avatars', 'public')
+                : null;
 
-        if ($request->hasFile('avatar')) {
-            $avatarPath = $request->file('avatar')->store('avatars', 'public');
-        }
-
-        Mentor::create([
-            'user_id' => $user->id,
-            'avatar' => $avatarPath,
-            'address' => $validated['address'] ?? null,
-            'bio' => $validated['bio'] ?? null,
-        ]);
+            Mentor::create([
+                'user_id' => $user->id,
+                'avatar' => $avatarPath,
+                'address' => $validated['address'] ?? null,
+                'bio' => $validated['bio'] ?? null,
+            ]);
+        });
 
         return Redirect::route('admin.mentors.index')
             ->with('success', 'Mentor berhasil ditambahkan!');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Mentor $mentor)
     {
         $mentor->load('user');
@@ -82,9 +73,6 @@ class MentorController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Mentor $mentor)
     {
         $validated = $request->validate([
@@ -95,31 +83,40 @@ class MentorController extends Controller
             'password' => 'nullable|string|min:8|confirmed',
         ]);
 
-        $user = $mentor->user;
-        $user->name = $validated['name'];
-        $user->email = $validated['email'];
-        $user->address = $validated['address'] ?? $user->address;
+        DB::transaction(function () use ($validated, $request, $mentor) {
+            $user = $mentor->user;
 
-        if (!empty($validated['password'])) {
-            $user->password = $validated['password'];
-        }
+            $user->name = $validated['name'];
+            $user->email = $validated['email'];
 
-        $user->save();
+            if (!empty($validated['password'])) {
+                $user->password = $validated['password'];
+            }
 
-        if ($request->hasFile('avatar')) {
-            $avatarPath = $request->file('avatar')->store('avatars', 'public');
-            $mentor->avatar = $avatarPath;
-        }
+            if ($user->isDirty('email')) {
+                $user->email_verified_at = null;
+            }
 
-        $mentor->save();
+            $user->save();
+
+            if ($request->hasFile('avatar')) {
+                if ($mentor->avatar) {
+                    Storage::disk('public')->delete($mentor->avatar);
+                }
+
+                $avatarPath = $request->file('avatar')->store('avatars', 'public');
+                $mentor->avatar = $avatarPath;
+            }
+
+            $mentor->address = $validated['address'] ?? $mentor->address;
+
+            $mentor->save();
+        });
 
         return Redirect::route('admin.mentors.index')
             ->with('success', 'Mentor berhasil diupdate!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Mentor $mentor)
     {
         $mentor->user->delete();

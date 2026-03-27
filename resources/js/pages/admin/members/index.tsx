@@ -27,11 +27,11 @@ import {
     edit,
     destroy as destroyRoute,
 } from '@/routes/admin/members';
-import { Member } from '@/types';
-
+import { LaravelPagination, Member } from '@/types';
+import { PaginationComponent } from '@/components/admin/pagination-component';
 
 export default function Page() {
-    const { members } = usePage<{ members: Member[] }>().props;
+    const { members } = usePage<{ members: LaravelPagination<Member> }>().props;
 
     const { delete: destroy, processing } = useForm();
 
@@ -70,7 +70,9 @@ export default function Page() {
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                     <div className="flex justify-between">
-                        <h1 className="text-xl font-semibold">Manage Members</h1>
+                        <h1 className="text-xl font-semibold">
+                            Manage Members
+                        </h1>
                         <Link href={create.url()}>
                             <Button className="w-auto">Tambah</Button>
                         </Link>
@@ -84,7 +86,7 @@ export default function Page() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {members.map((member, index) => (
+                            {members.data.map((member, index) => (
                                 <TableRow key={member.id}>
                                     <TableCell>{member.user.name}</TableCell>
                                     <TableCell>
@@ -95,7 +97,9 @@ export default function Page() {
                                                 size="sm"
                                                 disabled={processing}
                                             >
-                                                <Link href={edit.url(member.id)}>
+                                                <Link
+                                                    href={edit.url(member.id)}
+                                                >
                                                     <Pencil className="mr-2 h-4 w-4" />
                                                     Edit
                                                 </Link>
@@ -117,6 +121,7 @@ export default function Page() {
                             ))}
                         </TableBody>
                     </Table>
+                    <PaginationComponent links={members.links} />
                     <div className="min-h-screen flex-1 rounded-xl bg-muted/50 md:min-h-min" />
                 </div>
             </SidebarInset>

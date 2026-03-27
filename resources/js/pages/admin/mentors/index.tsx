@@ -27,10 +27,11 @@ import {
     edit,
     destroy as destroyRoute,
 } from '@/routes/admin/mentors';
-import { Mentor } from '@/types';
+import { LaravelPagination, Mentor } from '@/types';
+import { PaginationComponent } from '@/components/admin/pagination-component';
 
 export default function Page() {
-    const { mentors } = usePage<{ mentors: Mentor[] }>().props;
+    const { mentors } = usePage<{ mentors: LaravelPagination<Mentor> }>().props;
 
     const { delete: destroy, processing } = useForm();
 
@@ -56,7 +57,7 @@ export default function Page() {
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
                                     <BreadcrumbLink href={index.url()}>
-                                        Mentor
+                                        Mentors
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator className="hidden md:block" />
@@ -85,7 +86,7 @@ export default function Page() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {mentors.map((mentor, index) => (
+                            {mentors.data.map((mentor, index) => (
                                 <TableRow key={mentor.id}>
                                     <TableCell>{mentor.user.name}</TableCell>
                                     <TableCell>
@@ -120,6 +121,7 @@ export default function Page() {
                             ))}
                         </TableBody>
                     </Table>
+                    <PaginationComponent links={mentors.links} />
                     <div className="min-h-screen flex-1 rounded-xl bg-muted/50 md:min-h-min" />
                 </div>
             </SidebarInset>

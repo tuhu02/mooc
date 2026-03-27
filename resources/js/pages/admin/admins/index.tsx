@@ -27,11 +27,11 @@ import {
     edit,
     destroy as destroyRoute,
 } from '@/routes/admin/admins';
-import { Admin } from '@/types';
+import { Admin, LaravelPagination } from '@/types';
+import { PaginationComponent } from '@/components/admin/pagination-component';
 
 export default function Page() {
-    const { admins } = usePage<{ admins: Admin[] }>().props;
-
+    const { admins } = usePage<{ admins: LaravelPagination<Admin> }>().props;
     const { delete: destroy, processing } = useForm();
 
     const handleDelete = (id: number) => {
@@ -41,7 +41,6 @@ export default function Page() {
             });
         }
     };
-
     return (
         <AdminLayout>
             <SidebarInset>
@@ -83,7 +82,7 @@ export default function Page() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {admins.map((admin, index) => (
+                            {admins.data.map((admin, index) => (
                                 <TableRow key={admin.id}>
                                     <TableCell>{admin.user.name}</TableCell>
                                     <TableCell>
@@ -116,6 +115,7 @@ export default function Page() {
                             ))}
                         </TableBody>
                     </Table>
+                    <PaginationComponent links={admins.links} />
                     <div className="min-h-screen flex-1 rounded-xl bg-muted/50 md:min-h-min" />
                 </div>
             </SidebarInset>
