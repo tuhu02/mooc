@@ -19,9 +19,8 @@ import {
 } from 'lucide-react';
 
 import { NavMain } from '@/components/admin/nav-main';
-import { NavProjects } from '@/components/admin/nav-projects';
 import { NavUser } from '@/components/admin/nav-user';
-import { TeamSwitcher } from '@/components/admin/team-switcher';
+
 import {
     Sidebar,
     SidebarContent,
@@ -30,34 +29,30 @@ import {
     SidebarRail,
 } from '@/components/ui/sidebar';
 import { usePage } from '@inertiajs/react';
+import AppLogoIcon from '../user/app-logo-icon';
+import { title } from 'process';
+import { Nav } from './nav';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-    const { url } = usePage();
+    const { url,props: pageProps } = usePage();
+    const user = pageProps.auth?.user;
 
-    // This is sample data.
     const data = {
         user: {
-            name: 'shadcn',
-            email: 'm@example.com',
+            name: user.name,
+            email: user.email,
             avatar: '/avatars/shadcn.jpg',
         },
-        teams: [
+
+        nav: [
             {
-                name: 'Acme Inc',
-                logo: GalleryVerticalEnd,
-                plan: 'Enterprise',
-            },
-            {
-                name: 'Acme Corp.',
-                logo: AudioWaveform,
-                plan: 'Startup',
-            },
-            {
-                name: 'Evil Corp.',
-                logo: Command,
-                plan: 'Free',
-            },
+                title: 'Dashboard',
+                url: '/admin/dashboard',
+                icon: PieChart,
+                isActive: url.startsWith('/admin/dashboard'),
+            }
         ],
+
         navMain: [
             {
                 title: 'Admins',
@@ -168,33 +163,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 ],
             },
         ],
-        projects: [
-            {
-                name: 'Design Engineering',
-                url: '#',
-                icon: Frame,
-            },
-            {
-                name: 'Sales & Marketing',
-                url: '#',
-                icon: PieChart,
-            },
-            {
-                name: 'Travel',
-                url: '#',
-                icon: Map,
-            },
-        ],
     };
 
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
-                <TeamSwitcher teams={data.teams} />
+                <div className='flex items-center gap-2 py-2 pl-2'>
+                    <AppLogoIcon className='h-5 w-5' />
+                    <span className='font-semibold'>MOOC</span>
+                </div>
             </SidebarHeader>
+    
             <SidebarContent>
+                <Nav items={data.nav}></Nav>
                 <NavMain items={data.navMain} />
-                <NavProjects projects={data.projects} />
             </SidebarContent>
             <SidebarFooter>
                 <NavUser user={data.user} />
