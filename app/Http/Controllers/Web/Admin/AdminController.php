@@ -111,6 +111,6 @@ class AdminController extends Controller
             $admin->user->delete();
         });
 
-        return redirect()->back()->with('success', 'Admin Successfully Deleted!');;
+        return redirect()->back()->with('success', 'Admin Successfully Deleted!');
     }
 }

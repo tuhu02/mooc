@@ -112,7 +112,10 @@ class MemberController extends Controller
 
     public function destroy(Member $member)
     {
-        $member->user->delete();
+        DB::transaction(function () use ($member) {
+            $member->delete();
+            $member->user->delete();
+        });
 
         return redirect()->back()->with('success', 'Member Successfully Deleted!');;
     }

@@ -25,7 +25,6 @@ class Course extends Model
         return $this->belongsToMany(Category::class, 'category_course');
     }
 
-    // App\Models\Course.php
 
     public static function generateUniqueSlug(string $slug, ?int $excludeId = null): string
     {
