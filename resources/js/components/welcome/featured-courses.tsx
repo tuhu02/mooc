@@ -81,16 +81,31 @@ export default function FeaturedCourses({ courses }: Props) {
                                     className="mb-4 h-44 w-full rounded-xl object-cover"
                                     loading="lazy"
                                 />
-                                <p className="mb-4 inline-flex rounded-full bg-slate-200 px-3 py-1 text-xs font-semibold tracking-wide text-slate-700 uppercase dark:bg-slate-800 dark:text-slate-300">
-                                    {course.categories
-                                        ?.map((category) => category.name)
-                                        .join(', ') || 'Uncategorized'}
-                                </p>
+                                <div className="mb-4 flex flex-wrap gap-2">
+                                    {course.categories &&
+                                    course.categories.length > 0 ? (
+                                        course.categories.map((category) => (
+                                            <span
+                                                key={category.id}
+                                                className="rounded-full bg-slate-200 px-3 py-1 text-xs font-semibold tracking-wide text-slate-700 uppercase dark:bg-slate-800 dark:text-slate-300"
+                                            >
+                                                {category.name}
+                                            </span>
+                                        ))
+                                    ) : (
+                                        <span className="rounded-full bg-slate-200 px-3 py-1 text-xs font-semibold text-slate-700">
+                                            Uncategorized
+                                        </span>
+                                    )}
+                                </div>
                                 <h3 className="mb-4 text-xl leading-snug font-bold text-slate-900 dark:text-white">
                                     {course.title}
                                 </h3>
                                 <p>
-                                    {course.description.length > 35 ? course.description.slice(0,35) + "..." : course.description}
+                                    {course.description.length > 35
+                                        ? course.description.slice(0, 35) +
+                                        '...'
+                                        : course.description}
                                 </p>
 
                                 <Button
