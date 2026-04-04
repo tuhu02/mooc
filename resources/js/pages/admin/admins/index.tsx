@@ -27,11 +27,11 @@ import {
     edit,
     destroy as destroyRoute,
 } from '@/routes/admin/admins';
-import { Admin, LaravelPagination } from '@/types';
-import { PaginationComponent } from '@/components/admin/pagination-component';
+import { Admin, CursorPagination } from '@/types';
+import { PaginationComponent } from '@/components/admin';
 
 export default function Page() {
-    const { admins } = usePage<{ admins: LaravelPagination<Admin> }>().props;
+    const { admins } = usePage<{ admins: CursorPagination<Admin> }>().props;
     const { delete: destroy, processing } = useForm();
 
     const handleDelete = (id: number) => {
@@ -115,7 +115,7 @@ export default function Page() {
                             ))}
                         </TableBody>
                     </Table>
-                    <PaginationComponent links={admins.links} />
+                    <PaginationComponent pagination={admins} />
                     <div className="min-h-screen flex-1 rounded-xl bg-muted/50 md:min-h-min" />
                 </div>
             </SidebarInset>

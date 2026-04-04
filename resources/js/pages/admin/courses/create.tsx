@@ -28,14 +28,16 @@ export default function Page() {
         mentor_id: string;
         thumbnail: File | null;
         description: string;
-        is_active: 'active' | 'not_active';
+        is_active: number;
+        is_highlight: number;
         category_ids: number[];
     }>({
         title: '',
         mentor_id: '',
         thumbnail: null as File | null,
         description: '',
-        is_active: 'active',
+        is_active: 0,
+        is_highlight: 0,
         category_ids: [] as number[],
     });
 
@@ -175,21 +177,41 @@ export default function Page() {
                         </Field>
 
                         <Field className="grid gap-2">
+                            <FieldLabel>Highlight</FieldLabel>
+                            <select
+                                value={data.is_highlight}
+                                onChange={(e) =>
+                                    setData(
+                                        'is_highlight',
+                                        parseInt(e.target.value),
+                                    )
+                                }
+                                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                            >
+                                <option value={1}>Ya (Highlight)</option>
+                                <option value={0}>Tidak</option>
+                            </select>
+                            {errors.is_highlight && (
+                                <p className="text-sm font-medium text-red-500">
+                                    {errors.is_highlight}
+                                </p>
+                            )}
+                        </Field>
+
+                        <Field className="grid gap-2">
                             <FieldLabel>Status</FieldLabel>
                             <select
                                 value={data.is_active}
                                 onChange={(e) =>
                                     setData(
                                         'is_active',
-                                        e.target.value as
-                                            | 'active'
-                                            | 'not_active',
+                                        parseInt(e.target.value),
                                     )
                                 }
                                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                             >
-                                <option value="active">Active</option>
-                                <option value="not_active">Not Active</option>
+                                <option value={1}>Aktif</option>
+                                <option value={0}>Tidak Aktif</option>
                             </select>
                             {errors.is_active && (
                                 <p className="text-sm font-medium text-red-500">

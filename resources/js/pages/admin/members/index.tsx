@@ -27,11 +27,11 @@ import {
     edit,
     destroy as destroyRoute,
 } from '@/routes/admin/members';
-import { LaravelPagination, Member } from '@/types';
-import { PaginationComponent } from '@/components/admin/pagination-component';
+import { CursorPagination, Member } from '@/types';
+import { PaginationComponent } from '@/components/admin';
 
 export default function Page() {
-    const { members } = usePage<{ members: LaravelPagination<Member> }>().props;
+    const { members } = usePage<{ members: CursorPagination<Member> }>().props;
 
     const { delete: destroy, processing } = useForm();
 
@@ -121,7 +121,7 @@ export default function Page() {
                             ))}
                         </TableBody>
                     </Table>
-                    <PaginationComponent links={members.links} />
+                    <PaginationComponent pagination={members} />
                     <div className="min-h-screen flex-1 rounded-xl bg-muted/50 md:min-h-min" />
                 </div>
             </SidebarInset>

@@ -1,7 +1,7 @@
 import { Form, Head } from '@inertiajs/react';
 import { useState } from 'react';
-import InputError from '@/components/user/input-error';
-import TextLink from '@/components/user/text-link';
+import InputError from '@/components/member/input-error';
+import TextLink from '@/components/member/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

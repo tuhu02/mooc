@@ -11,9 +11,8 @@ class WelcomeController extends Controller
     public function __invoke()
     {
         $courses = Course::with('categories')
-            ->where('is_active', 'active')
-            ->latest()
-            ->take(3)
+            ->where('is_active', 1)
+            ->where('is_highlight', 1)
             ->get()
             ->map(fn($course) => [
                 'id'        => $course->id,

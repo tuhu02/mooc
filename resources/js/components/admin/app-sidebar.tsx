@@ -29,12 +29,11 @@ import {
     SidebarRail,
 } from '@/components/ui/sidebar';
 import { usePage } from '@inertiajs/react';
-import AppLogoIcon from '../user/app-logo-icon';
-import { title } from 'process';
+import AppLogoIcon from '../member/app-logo-icon';
 import { Nav } from './nav';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-    const { url,props: pageProps } = usePage();
+    const { url, props: pageProps } = usePage();
     const user = pageProps.auth?.user;
 
     const data = {
@@ -50,7 +49,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 url: '/admin/dashboard',
                 icon: PieChart,
                 isActive: url.startsWith('/admin/dashboard'),
-            }
+            },
         ],
 
         navMain: [
@@ -168,12 +167,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
-                <div className='flex items-center gap-2 py-2 pl-2'>
-                    <AppLogoIcon className='h-5 w-5' />
-                    <span className='font-semibold'>MOOC</span>
+                <div className="flex items-center gap-2 py-2 pl-2">
+                    <AppLogoIcon className="h-5 w-5" />
+                    <span className="font-semibold">MOOC</span>
                 </div>
             </SidebarHeader>
-    
+
             <SidebarContent>
                 <Nav items={data.nav}></Nav>
                 <NavMain items={data.navMain} />

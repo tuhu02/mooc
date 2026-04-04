@@ -47,7 +47,8 @@ class CourseController extends Controller
             'mentor_id' => 'required|exists:mentors,id',
             'thumbnail' => 'required|image|mimes:jpg,jpeg,png,webp|max:4096',
             'description' => 'required|string',
-            'is_active' => 'required|in:active,not_active',
+            'is_active' => 'required|boolean',
+            'is_highlight' => 'required|boolean',
             'category_ids' => 'required|array|min:1',
             'category_ids.*' => 'exists:categories,id',
         ]);
@@ -63,6 +64,7 @@ class CourseController extends Controller
             'thumbnail' => $thumbnailPath,
             'description' => $validated['description'],
             'is_active' => $validated['is_active'],
+            'is_highlight' => $validated['is_highlight'],
         ]);
 
         $course->categories()->sync($validated['category_ids']);
@@ -71,9 +73,6 @@ class CourseController extends Controller
             ->with('success', 'Course Successfully Created!');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Course $course)
     {
         $course->load(['mentor.user', 'categories']);
@@ -85,9 +84,6 @@ class CourseController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Course $course)
     {
         $validated = $request->validate([
@@ -95,7 +91,8 @@ class CourseController extends Controller
             'mentor_id' => 'required|exists:mentors,id',
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
             'description' => 'required|string',
-            'is_active' => 'required|in:active,not_active',
+            'is_active' => 'required|boolean',
+            'is_highlight' => 'required|boolean',
             'category_ids' => 'required|array|min:1',
             'category_ids.*' => 'exists:categories,id',
         ]);
@@ -119,6 +116,7 @@ class CourseController extends Controller
         $course->mentor_id = $validated['mentor_id'];
         $course->description = $validated['description'];
         $course->is_active = $validated['is_active'];
+        $course->is_highlight = $validated['is_highlight'];
         $course->save();
 
         $course->categories()->sync($validated['category_ids']);
@@ -127,9 +125,6 @@ class CourseController extends Controller
             ->with('success', 'Course Successfully updated!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Course $course)
     {
         if ($course->thumbnail) {

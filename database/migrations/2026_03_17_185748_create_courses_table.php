@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('mentor_id')->constrained()->cascadeOnDelete();
             $table->string('thumbnail');
             $table->text('description');
-            $table->enum('is_active', ['active', 'not_active'])->default('active');
+            $table->boolean('is_active')->default(0);
             $table->timestamps();
         });
     }

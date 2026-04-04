@@ -89,6 +89,26 @@ export default function Page() {
                                 </p>
                             )}
                         </Field>
+                        <Field className="grid gap-2">
+                            <FieldLabel htmlFor="bio">Bio</FieldLabel>
+                            <textarea
+                                id="bio"
+                                value={data.bio}
+                                onChange={(e) => setData('bio', e.target.value)}
+                                placeholder="Enter bio"
+                                rows={4}
+                                className={`flex w-full rounded-md border px-3 py-2 text-sm ${
+                                    errors.bio
+                                        ? 'border-red-500 focus-visible:ring-red-500'
+                                        : ''
+                                }`}
+                            />
+                            {errors.bio && (
+                                <p className="text-sm font-medium text-red-500">
+                                    {errors.bio}
+                                </p>
+                            )}
+                        </Field>
 
                         <Field className="grid gap-2">
                             <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -148,18 +168,18 @@ export default function Page() {
 
                         <Field className="grid gap-2">
                             <FieldLabel htmlFor="address">Address</FieldLabel>
-                            <Input
+                            <textarea
                                 id="address"
                                 value={data.address}
                                 onChange={(e) =>
                                     setData('address', e.target.value)
                                 }
                                 placeholder="Enter Address"
-                                className={
-                                    errors.address
+                                className={`flex w-full rounded-md border px-3 py-2 text-sm ${
+                                    errors.bio
                                         ? 'border-red-500 focus-visible:ring-red-500'
                                         : ''
-                                }
+                                }`}
                             />
 
                             {errors.address && (

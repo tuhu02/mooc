@@ -47,6 +47,7 @@ export type Mentor = {
     institution: string,
     gender: string,
     date_of_birth: string,
+    bio: string,
     user_id: number,
     user: {
         id: number;
@@ -73,7 +74,8 @@ export type Course = {
     title: string;
     thumbnail: string;
     description: string;
-    is_active: 'active' | 'not_active';
+    is_active: boolean;
+    is_highlight: boolean;
     mentor_id: number;
     mentor?: Mentor;
     categories?: Category[];
@@ -92,6 +94,14 @@ export type LaravelPagination<T> = {
     last_page: number;
     per_page: number;
     total: number;
+};
+
+export type CursorPagination<T> = {
+    data: T[];
+    path: string;
+    per_page: number;
+    next_page_url: string | null;
+    prev_page_url: string | null;
 };
 
 

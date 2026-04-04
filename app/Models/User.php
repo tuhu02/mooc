@@ -28,6 +28,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $fillable = [
         'name',
         'email',
+        'pending_email',
         'password',
         'address',
         'type'
@@ -99,5 +100,4 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Admin::class);
     }
-
 }

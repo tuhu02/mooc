@@ -1,6 +1,6 @@
-import { AppContent } from '@/components/user/app-content';
-import { AppHeader } from '@/components/user/app-header';
-import { AppShell } from '@/components/user/app-shell';
+import { AppContent } from '@/components/member/app-content';
+import { AppHeader } from '@/components/member/app-header';
+import { AppShell } from '@/components/member/app-shell';
 import type { AppLayoutProps } from '@/types';
 
 export default function AppHeaderLayout({

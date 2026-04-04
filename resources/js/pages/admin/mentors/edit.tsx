@@ -29,6 +29,7 @@ export default function EditMentorPage() {
         _method: string;
         name: string;
         email: string;
+        bio: string;
         avatar: File | null;
         address: string;
         password: string;
@@ -37,6 +38,7 @@ export default function EditMentorPage() {
         _method: 'PUT',
         name: mentor.user.name,
         email: mentor.user.email,
+        bio: mentor.bio,
         avatar: null,
         address: mentor.user.address ?? '',
         password: '',
@@ -110,6 +112,27 @@ export default function EditMentorPage() {
                             )}
                         </Field>
 
+                        <Field className="grid gap-2">
+                            <FieldLabel htmlFor="bio">Bio</FieldLabel>
+                            <textarea
+                                id="bio"
+                                value={data.bio}
+                                onChange={(e) => setData('bio', e.target.value)}
+                                placeholder="Enter bio"
+                                rows={4}
+                                className={`flex w-full rounded-md border px-3 py-2 text-sm ${
+                                    errors.bio
+                                        ? 'border-red-500 focus-visible:ring-red-500'
+                                        : ''
+                                }`}
+                            />
+                            {errors.bio && (
+                                <p className="text-sm font-medium text-red-500">
+                                    {errors.bio}
+                                </p>
+                            )}
+                        </Field>
+
                         <Field className="grid items-center gap-2">
                             <FieldLabel htmlFor="avatar">Avatar</FieldLabel>
                             <div className="flex items-center gap-4">
@@ -165,29 +188,6 @@ export default function EditMentorPage() {
                             {errors.email && (
                                 <p className="text-sm font-medium text-red-500">
                                     {errors.email}
-                                </p>
-                            )}
-                        </Field>
-
-                        <Field className="grid gap-2">
-                            <FieldLabel htmlFor="address">Address</FieldLabel>
-                            <Input
-                                id="address"
-                                value={data.address}
-                                onChange={(e) =>
-                                    setData('address', e.target.value)
-                                }
-                                placeholder="Enter Address"
-                                className={
-                                    errors.address
-                                        ? 'border-red-500 focus-visible:ring-red-500'
-                                        : ''
-                                }
-                            />
-
-                            {errors.address && (
-                                <p className="text-sm font-medium text-red-500">
-                                    {errors.address}
                                 </p>
                             )}
                         </Field>

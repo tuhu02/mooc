@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Web\Admin;
 
+use App\Events\EmailChanged;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Mentor;
+use App\Notifications\PendingEmailChangeVerificationNotification;
 use Inertia\Inertia;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 
@@ -15,7 +18,7 @@ class MentorController extends Controller
 {
     public function index()
     {
-        $mentors = Mentor::with('user')->paginate(10);
+        $mentors = Mentor::with('user')->cursorPaginate(10);
 
         return Inertia::render('admin/mentors/index', [
             'mentors' =>  $mentors
@@ -33,7 +36,6 @@ class MentorController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
             'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'address' => 'nullable|string|max:1000',
             'bio' => 'nullable|string|max:1000',
             'password' => 'required|string|min:8|confirmed',
         ]);
@@ -53,7 +55,6 @@ class MentorController extends Controller
             Mentor::create([
                 'user_id' => $user->id,
                 'avatar' => $avatarPath,
-                'address' => $validated['address'] ?? null,
                 'bio' => $validated['bio'] ?? null,
             ]);
         });
@@ -75,27 +76,36 @@ class MentorController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $mentor->user_id,
+            'email' => 'required|string|email|max:255|unique:users,email,' . $mentor->user_id . '|unique:users,pending_email,' . $mentor->user_id,
+            'bio' => 'nullable|string|max:1000',
             'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'address' => 'nullable|string|max:1000',
             'password' => 'nullable|string|min:8|confirmed',
         ]);
 
         DB::transaction(function () use ($validated, $request, $mentor) {
             $user = $mentor->user;
 
+            $newEmail = $validated['email'];
+            $emailChanged = $newEmail !== $user->email;
+
             $user->name = $validated['name'];
-            $user->email = $validated['email'];
 
             if (!empty($validated['password'])) {
                 $user->password = $validated['password'];
             }
 
-            if ($user->isDirty('email')) {
-                $user->email_verified_at = null;
+            if ($emailChanged) {
+                $user->pending_email = $newEmail;
             }
 
             $user->save();
+
+            if ($emailChanged) {
+                Notification::route('mail', $newEmail)
+                    ->notify(new PendingEmailChangeVerificationNotification($user));
+
+                event(new EmailChanged($user->id, $newEmail, $user->type));
+            }
 
             if ($request->hasFile('avatar')) {
                 if ($mentor->avatar) {
@@ -105,8 +115,6 @@ class MentorController extends Controller
                 $avatarPath = $request->file('avatar')->store('avatars', 'public');
                 $mentor->avatar = $avatarPath;
             }
-
-            $mentor->address = $validated['address'] ?? $mentor->address;
 
             $mentor->save();
         });

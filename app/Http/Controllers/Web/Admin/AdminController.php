@@ -12,28 +12,19 @@ use Inertia\Inertia;
 
 class AdminController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $admins = Admin::with('user')->paginate(10);
+        $admins = Admin::with('user')->cursorPaginate(10);
         return Inertia::render('admin/admins/index', [
             'admins' =>  $admins
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return Inertia::render('admin/admins/create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -58,9 +49,6 @@ class AdminController extends Controller
         return Redirect::route('admin.admins.index')->with('success', 'Admin Successfully Created!');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Admin $admin)
     {
         $admin->load('user');
@@ -70,9 +58,6 @@ class AdminController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Admin $admin)
     {
         $validated = $request->validate([
@@ -90,10 +75,6 @@ class AdminController extends Controller
                 $user->password = $validated['password'];
             }
 
-            if ($user->isDirty('email')) {
-                $user->email_verified_at = null;
-            }
-
             $user->save();
         });
 
@@ -101,9 +82,6 @@ class AdminController extends Controller
             ->with('success', 'Admin Successfully Updated!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Admin $admin)
     {
         DB::transaction(function () use ($admin) {

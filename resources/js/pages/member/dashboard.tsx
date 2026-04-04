@@ -1,5 +1,5 @@
 import { Head } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
+import AppLayout from '@/layouts/MemberLayout';
 import type { BreadcrumbItem } from '@/types';
 import { dashboard } from '@/routes';
 import {

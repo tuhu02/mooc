@@ -27,11 +27,11 @@ import {
     edit,
     destroy as destroyRoute,
 } from '@/routes/admin/mentors';
-import { LaravelPagination, Mentor } from '@/types';
-import { PaginationComponent } from '@/components/admin/pagination-component';
+import { CursorPagination, Mentor } from '@/types';
+import { PaginationComponent } from '@/components/admin';
 
 export default function Page() {
-    const { mentors } = usePage<{ mentors: LaravelPagination<Mentor> }>().props;
+    const { mentors } = usePage<{ mentors: CursorPagination<Mentor> }>().props;
 
     const { delete: destroy, processing } = useForm();
 
@@ -121,7 +121,7 @@ export default function Page() {
                             ))}
                         </TableBody>
                     </Table>
-                    <PaginationComponent links={mentors.links} />
+                    <PaginationComponent pagination={mentors} />
                     <div className="min-h-screen flex-1 rounded-xl bg-muted/50 md:min-h-min" />
                 </div>
             </SidebarInset>

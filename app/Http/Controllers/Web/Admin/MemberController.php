@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Web\Admin;
 
+use App\Events\EmailChanged;
 use App\Http\Controllers\Controller;
 use App\Models\Member;
 use App\Models\User;
+use App\Notifications\PendingEmailChangeVerificationNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Redirect;
 
 
@@ -15,7 +18,7 @@ class MemberController extends Controller
 {
     public function index()
     {
-        $members = Member::with('user')->paginate(10);
+        $members = Member::with('user')->orderBy('id')->cursorPaginate(10);
 
         return Inertia::render('admin/members/index', [
             'members' =>  $members
@@ -56,7 +59,6 @@ class MemberController extends Controller
             ]);
         });
 
-
         return Redirect::route('admin.members.index')->with('success', 'Member Successfully Created!');;
     }
 
@@ -73,7 +75,7 @@ class MemberController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $member->user->id,
+            'email' => 'required|string|email|max:255|unique:users,email,' . $member->user->id . '|unique:users,pending_email,' . $member->user->id,
             'institution' => 'required|string|max:50',
             'gender' => 'nullable|string|max:50',
             'date_of_birth' => 'nullable|date|before_or_equal:today',
@@ -84,20 +86,29 @@ class MemberController extends Controller
         DB::transaction(function () use ($validated, $member) {
             $user = $member->user;
 
+            $newEmail = $validated['email'];
+            $emailChanged = $newEmail !== $user->email;
+
             $user->fill([
                 'name' => $validated['name'],
-                'email' => $validated['email'],
             ]);
 
             if (!empty($validated['password'])) {
                 $user['password'] = $validated['password'];
             }
 
-            if ($member->user->isDirty('email')) {
-                $member->user->email_verified_at = null;
+            if ($emailChanged) {
+                $user->pending_email = $newEmail;
             }
 
             $user->save();
+
+            if ($emailChanged) {
+                Notification::route('mail', $newEmail)
+                    ->notify(new PendingEmailChangeVerificationNotification($user));
+
+                event(new EmailChanged($user->id, $newEmail, $user->type));
+            }
 
             $member->update([
                 'institution' => $validated['institution'],
@@ -106,6 +117,7 @@ class MemberController extends Controller
                 'address' => $validated['address'],
             ]);
         });
+
 
         return Redirect::route('admin.members.index')->with('success', 'Member Successfully Updated!');;
     }

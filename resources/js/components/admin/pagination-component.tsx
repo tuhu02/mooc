@@ -5,19 +5,18 @@ import {
     PaginationLink,
 } from '@/components/ui/pagination';
 import { Link } from '@inertiajs/react';
+import { CursorPagination } from '@/types';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { LaravelPaginationLink } from '@/types';
 
 export function PaginationComponent({
-    links,
+    pagination,
 }: {
-    links: LaravelPaginationLink[];
+    pagination: Pick<
+        CursorPagination<unknown>,
+        'next_page_url' | 'prev_page_url'
+    >;
 }) {
-    const previousLink = links[0];
-    const nextLink = links[links.length - 1];
-    const pageLinks = links.slice(1, -1);
-
     return (
         <Pagination>
             <PaginationContent>
@@ -26,16 +25,16 @@ export function PaginationComponent({
                         asChild
                         size="default"
                         aria-label="Go to previous page"
-                        aria-disabled={!previousLink?.url}
-                        tabIndex={previousLink?.url ? undefined : -1}
+                        aria-disabled={!pagination.prev_page_url}
+                        tabIndex={pagination.prev_page_url ? undefined : -1}
                         className={cn(
                             'gap-1 px-2.5 sm:pl-2.5',
-                            !previousLink?.url &&
+                            !pagination.prev_page_url &&
                                 'pointer-events-none opacity-50',
                         )}
                     >
-                        {previousLink?.url ? (
-                            <Link href={previousLink.url}>
+                        {pagination.prev_page_url ? (
+                            <Link href={pagination.prev_page_url}>
                                 <ChevronLeftIcon />
                                 <span className="hidden sm:block">
                                     Previous
@@ -51,48 +50,22 @@ export function PaginationComponent({
                         )}
                     </PaginationLink>
                 </PaginationItem>
-                {pageLinks.map((link, i) => (
-                    <PaginationItem key={i}>
-                        <PaginationLink
-                            asChild
-                            isActive={link.active}
-                            aria-disabled={!link.url}
-                            tabIndex={link.url ? undefined : -1}
-                            className={cn(
-                                !link.url && 'pointer-events-none opacity-50',
-                            )}
-                        >
-                            {link.url ? (
-                                <Link
-                                    href={link.url}
-                                    dangerouslySetInnerHTML={{
-                                        __html: link.label,
-                                    }}
-                                />
-                            ) : (
-                                <span
-                                    dangerouslySetInnerHTML={{
-                                        __html: link.label,
-                                    }}
-                                />
-                            )}
-                        </PaginationLink>
-                    </PaginationItem>
-                ))}
+
                 <PaginationItem>
                     <PaginationLink
                         asChild
                         size="default"
                         aria-label="Go to next page"
-                        aria-disabled={!nextLink?.url}
-                        tabIndex={nextLink?.url ? undefined : -1}
+                        aria-disabled={!pagination.next_page_url}
+                        tabIndex={pagination.next_page_url ? undefined : -1}
                         className={cn(
                             'gap-1 px-2.5 sm:pr-2.5',
-                            !nextLink?.url && 'pointer-events-none opacity-50',
+                            !pagination.next_page_url &&
+                                'pointer-events-none opacity-50',
                         )}
                     >
-                        {nextLink?.url ? (
-                            <Link href={nextLink.url}>
+                        {pagination.next_page_url ? (
+                            <Link href={pagination.next_page_url}>
                                 <span className="hidden sm:block">Next</span>
                                 <ChevronRightIcon />
                             </Link>

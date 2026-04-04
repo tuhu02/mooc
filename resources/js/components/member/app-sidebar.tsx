@@ -1,8 +1,15 @@
 import { Link } from '@inertiajs/react';
-import { Trophy, BookOpen, Award, FileText, Folder, LayoutGrid } from 'lucide-react';
-import { NavFooter } from '@/components/user/nav-footer';
-import { NavMain } from '@/components/user/nav-main';
-import { NavUser } from '@/components/user/nav-user';
+import {
+    Trophy,
+    BookOpen,
+    Award,
+    FileText,
+    Folder,
+    LayoutGrid,
+} from 'lucide-react';
+import { NavFooter } from '@/components/member/nav-footer';
+import { NavMain } from '@/components/member/nav-main';
+import { NavUser } from '@/components/member/nav-user';
 import {
     Sidebar,
     SidebarContent,
@@ -40,8 +47,8 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Achievement',
         href: '/achievement',
-        icon: Trophy
-    }
+        icon: Trophy,
+    },
 ];
 
 const footerNavItems: NavItem[] = [

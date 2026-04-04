@@ -2,7 +2,7 @@ import { Form } from '@inertiajs/react';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
 import { Check, Copy, ScanLine } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import InputError from '@/components/user/input-error';
+import InputError from '@/components/member/input-error';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,

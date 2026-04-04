@@ -101,11 +101,8 @@ export default function FeaturedCourses({ courses }: Props) {
                                 <h3 className="mb-4 text-xl leading-snug font-bold text-slate-900 dark:text-white">
                                     {course.title}
                                 </h3>
-                                <p>
-                                    {course.description.length > 35
-                                        ? course.description.slice(0, 35) +
-                                        '...'
-                                        : course.description}
+                                <p className="line-clamp-2">
+                                    {course.description}
                                 </p>
 
                                 <Button
