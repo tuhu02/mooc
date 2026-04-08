@@ -1,6 +1,8 @@
 import { Link } from '@inertiajs/react';
-import { dashboard, login, register } from '@/routes';
+import { login, register } from '@/routes';
+import member from '@/routes/member';
 import admin from '@/routes/admin';
+import mentor from '@/routes/mentor';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 
@@ -10,8 +12,18 @@ type Props = {
 };
 
 export default function WelcomeNav({ auth, canRegister = true }: Props) {
-    const dashboardHref =
-        auth.user?.type === 'admin' ? admin.dashboard().url : dashboard().url;
+    const getDashboardHref = () => {
+        if (!auth.user) return null;
+
+        if (auth.user.type === 'admin') {
+            return admin.dashboard().url;
+        } else if (auth.user.type === 'mentor') {
+            return mentor.dashboard().url;
+        }
+        return member.dashboard().url;
+    };
+
+    const dashboardHref = getDashboardHref();
 
     return (
         <motion.nav
@@ -37,7 +49,7 @@ export default function WelcomeNav({ auth, canRegister = true }: Props) {
 
                 <div className="flex items-center gap-4">
                     {auth.user ? (
-                        <Link href={dashboardHref}>
+                        <Link href={dashboardHref || '/'}>
                             <Button className="rounded-full bg-black px-6 text-white hover:bg-slate-800 dark:bg-white dark:text-black dark:hover:bg-slate-200">
                                 Dashboard
                             </Button>
@@ -48,12 +60,12 @@ export default function WelcomeNav({ auth, canRegister = true }: Props) {
                                 href={login().url}
                                 className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                             >
-                                Sign in
+                                Login
                             </Link>
                             {canRegister && (
                                 <Link href={register().url}>
-                                    <Button className="rounded-full bg-slate-900 px-6 text-white transition-all hover:scale-105 hover:bg-black active:scale-95 dark:bg-white dark:text-black dark:hover:bg-slate-200">
-                                        Join for Free
+                                    <Button className="rounded-full bg-black px-6 text-white hover:bg-slate-800 dark:bg-white dark:text-black dark:hover:bg-slate-200">
+                                        Register
                                     </Button>
                                 </Link>
                             )}

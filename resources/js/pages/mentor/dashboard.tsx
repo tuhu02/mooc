@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
-import MentorLayout from '@/layouts/MentorLayout';
+import MentorLayout from '@/layouts/mentor-layout';
 
 export default function Page() {
     return (

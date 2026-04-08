@@ -1,4 +1,4 @@
-import AdminLayout from '@/layouts/AdminLayout';
+import AdminLayout from '@/layouts/admin-layout';
 import React from 'react';
 import {
     Breadcrumb,
@@ -44,8 +44,8 @@ export default function EditCoursePage() {
         mentor_id: String(course.mentor_id),
         thumbnail: null as File | null,
         description: course.description,
-        is_active: course.is_active? 1 : 0,
-        is_highlight: course.is_highlight? 1 : 0,
+        is_active: course.is_active ? 1 : 0,
+        is_highlight: course.is_highlight ? 1 : 0,
         category_ids: course.categories?.map((category) => category.id) ?? [],
     });
 
@@ -202,7 +202,7 @@ export default function EditCoursePage() {
                                 onChange={(e) =>
                                     setData(
                                         'is_highlight',
-                                        parseInt(e.target.value)
+                                        parseInt(e.target.value),
                                     )
                                 }
                                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"

@@ -85,27 +85,18 @@ class MentorController extends Controller
         DB::transaction(function () use ($validated, $request, $mentor) {
             $user = $mentor->user;
 
-            $newEmail = $validated['email'];
-            $emailChanged = $newEmail !== $user->email;
-
             $user->name = $validated['name'];
 
             if (!empty($validated['password'])) {
                 $user->password = $validated['password'];
             }
 
-            if ($emailChanged) {
-                $user->pending_email = $newEmail;
+            if ($user->isDirty('email')) {
+                $user->verified_at = null;
             }
 
             $user->save();
 
-            if ($emailChanged) {
-                Notification::route('mail', $newEmail)
-                    ->notify(new PendingEmailChangeVerificationNotification($user));
-
-                event(new EmailChanged($user->id, $newEmail, $user->type));
-            }
 
             if ($request->hasFile('avatar')) {
                 if ($mentor->avatar) {

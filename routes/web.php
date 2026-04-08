@@ -10,30 +10,27 @@ use App\Http\Controllers\Web\EmailChangeVerificationController;
 use App\Http\Controllers\Web\WelcomeController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\MentorMiddleware;
+use App\Http\Middleware\MemberMiddleware;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', WelcomeController::class)->name('welcome');
 
-Route::get('/email/change/verify/{user}/{hash}', EmailChangeVerificationController::class)
-    ->middleware('signed')
-    ->name('email.change.verify');
-
-// Member Route
-Route::middleware(['auth', 'verified'])->group(function () {
+// Route Member
+Route::middleware(['auth', MemberMiddleware::class])->prefix('member')->name('member.')->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('member/dashboard');
     })->name('dashboard');
 });
 
-// Mentor Route
+// Route Mentor
 Route::middleware(['auth', MentorMiddleware::class])->prefix('mentor')->name('mentor.')->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('mentor/dashboard');
     })->name('dashboard');
 });
 
-// Admin Route
+// Route Admin
 Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->name('admin.')->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('admin/dashboard');

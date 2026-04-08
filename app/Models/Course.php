@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 class Course extends Model
 {
+    use Searchable;
+
     protected $fillable = [
         'title',
         'thumbnail',
@@ -45,5 +48,20 @@ class Course extends Model
         }
 
         return $slug;
+    }
+
+
+    public function toSearchableArray(): array
+    {
+        $courseData = [
+            'id' => (int) $this->id,
+            'title' => $this->title,
+            'description' => $this->description,
+            'slug' => $this->slug,
+        ];
+
+        $courseData['mentor_name'] = $this->mentor ? $this->mentor->name : null;
+
+        return $courseData;
     }
 }

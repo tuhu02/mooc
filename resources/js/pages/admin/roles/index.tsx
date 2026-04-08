@@ -1,4 +1,4 @@
-import AdminLayout from '@/layouts/AdminLayout';
+import AdminLayout from '@/layouts/admin-layout';
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -28,7 +28,6 @@ import {
     destroy as destroyRoute,
 } from '@/routes/admin/roles';
 import { Role } from '@/types';
-
 
 export default function Page() {
     const { roles } = usePage<{ roles: Role[] }>().props;

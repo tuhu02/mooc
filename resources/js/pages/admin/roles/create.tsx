@@ -1,4 +1,4 @@
-import AdminLayout from '@/layouts/AdminLayout';
+import AdminLayout from '@/layouts/admin-layout';
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -15,7 +15,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useForm } from '@inertiajs/react';
 import { index } from '@/routes/admin/roles';
-
 
 export default function Page() {
     const { data, setData, post, processing, errors } = useForm({
@@ -61,7 +60,6 @@ export default function Page() {
                         <h1 className="text-center text-2xl font-semibold">
                             Add Role
                         </h1>
-
 
                         <Field className="grid gap-2">
                             <FieldLabel htmlFor="name">Name</FieldLabel>

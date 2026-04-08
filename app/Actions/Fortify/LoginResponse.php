@@ -19,6 +19,6 @@ class LoginResponse implements LoginResponseContract
             return redirect()->route('mentor.dashboard');
         }
 
-        return redirect()->route('dashboard');
+        return redirect()->route('member.dashboard');
     }
 }

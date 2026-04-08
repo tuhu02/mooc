@@ -19,6 +19,6 @@ class MentorMiddleware
         if (Auth::check() && Auth::user()->type === 'mentor') {
             return $next($request);
         }
-        abort(403, 'Unauthorized Access');
+        abort(404, 'Not Found');
     }
 }

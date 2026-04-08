@@ -1,5 +1,4 @@
 import { AppSidebar } from '@/components/mentor/app-sidebar';
-import RealtimeEmailChangedListener from '@/components/ui/realtime-email-changed-listener';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { type PropsWithChildren, useEffect } from 'react';
 import { usePage } from '@inertiajs/react';
@@ -16,7 +15,6 @@ export default function MentorLayout({ children }: PropsWithChildren) {
 
     return (
         <SidebarProvider>
-            <RealtimeEmailChangedListener />
             <AppSidebar />
             {children}
         </SidebarProvider>

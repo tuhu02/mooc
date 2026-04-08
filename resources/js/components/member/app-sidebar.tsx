@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/sidebar';
 import type { NavItem } from '@/types';
 import AppLogo from './app-logo';
-import { dashboard } from '@/routes';
+import { dashboard } from '@/routes/member';
 
 const mainNavItems: NavItem[] = [
     {

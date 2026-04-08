@@ -1,7 +1,7 @@
 import { Head } from '@inertiajs/react';
-import AppLayout from '@/layouts/MemberLayout';
+import AppLayout from '@/layouts/member-layout';
 import type { BreadcrumbItem } from '@/types';
-import { dashboard } from '@/routes';
+import { dashboard } from '@/routes/member';
 import {
     BookOpen,
     TimerIcon,

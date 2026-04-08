@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\PasswordResetController;
 use App\Http\Controllers\Api\Auth\EmailVerificationController;
+use App\Http\Controllers\Api\SearchController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -25,3 +26,6 @@ Route::post('/email/resend-otp', [EmailVerificationController::class, 'resendOtp
 Route::post('/reset-password', [PasswordResetController::class, 'sendOtp']);
 Route::post('/otp-check', [PasswordResetController::class, 'checkOtp'])->middleware('throttle:6,1');
 Route::post('/new-password', [PasswordResetController::class, 'resetPassword']);    
+
+// Search
+Route::get('/search', [SearchController::class,'index']);

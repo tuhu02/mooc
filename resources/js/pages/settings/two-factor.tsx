@@ -7,7 +7,7 @@ import TwoFactorSetupModal from '@/components/member/two-factor-setup-modal';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useTwoFactorAuth } from '@/hooks/use-two-factor-auth';
-import AppLayout from '@/layouts/MemberLayout';
+import AppLayout from '@/layouts/member-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import type { BreadcrumbItem } from '@/types';
 import { disable, enable, show } from '@/routes/two-factor';

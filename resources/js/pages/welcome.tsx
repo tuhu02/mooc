@@ -1,6 +1,4 @@
-import { Head, Link, usePage } from '@inertiajs/react';
-import { GraduationCap, Lightbulb, Users } from 'lucide-react';
-import { motion, type Variants } from 'framer-motion';
+import { Head, usePage } from '@inertiajs/react';
 import WelcomeNav from '@/components/welcome/welcome-nav';
 import HeroSection from '@/components/welcome/hero-section';
 import FeaturesSection from '@/components/welcome/feature-section';

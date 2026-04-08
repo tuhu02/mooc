@@ -1,5 +1,8 @@
 import { Link } from '@inertiajs/react';
-import { dashboard, login, register } from '@/routes';
+import { login, register } from '@/routes';
+import member from '@/routes/member';
+import admin from '@/routes/admin';
+import mentor from '@/routes/mentor';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
@@ -10,6 +13,20 @@ type Props = {
 };
 
 export default function CTASection({ auth, canRegister = true }: Props) {
+    const getDashboardHref = () => {
+        if (!auth.user) return '/';
+
+        if (auth.user.type === 'admin') {
+            return admin.dashboard().url;
+        }
+
+        if (auth.user.type === 'mentor') {
+            return mentor.dashboard().url;
+        }
+
+        return member.dashboard().url;
+    };
+
     return (
         <section className="bg-black py-24 text-white dark:bg-white dark:text-black">
             <div className="mx-auto max-w-5xl px-4 text-center md:px-8">
@@ -36,7 +53,7 @@ export default function CTASection({ auth, canRegister = true }: Props) {
 
                     <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
                         {auth.user ? (
-                            <Link href={dashboard().url}>
+                            <Link href={getDashboardHref()}>
                                 <Button
                                     size="lg"
                                     className="h-12 rounded-full bg-white px-8 text-base font-semibold text-black transition-transform hover:scale-105 hover:bg-slate-200 active:scale-95 dark:bg-black dark:text-white dark:hover:bg-slate-800"

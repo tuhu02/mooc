@@ -1,7 +1,7 @@
 import { Head } from '@inertiajs/react';
 import AppearanceTabs from '@/components/member/appearance-tabs';
 import Heading from '@/components/member/heading';
-import AppLayout from '@/layouts/MemberLayout';
+import AppLayout from '@/layouts/member-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import type { BreadcrumbItem } from '@/types';
 import { edit as editAppearance } from '@/routes/appearance';
