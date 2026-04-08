@@ -10,14 +10,27 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
+            'Pemrograman Dasar',
             'Web Development',
             'Mobile Development',
+            'Basis Data',
             'UI/UX Design',
             'Data Science',
             'DevOps',
             'Cyber Security',
-            'Digital Marketing',
-            'Business',
+            'Software Engineering',
+            'Artificial Intelligence',
+            'Bahasa Inggris Akademik',
+            'Public Speaking',
+            'Academic Writing',
+            'Communication Skills',
+            'Leadership',
+            'Research Methodology',
+            'Pengembangan Diri',
+            'Kewirausahaan',
+            'Manajemen Bisnis',
+            'Statistika',
+            'Psikologi',
         ];
 
         foreach ($categories as $name) {

@@ -60,7 +60,7 @@ class Course extends Model
             'slug' => $this->slug,
         ];
 
-        $courseData['mentor_name'] = $this->mentor ? $this->mentor->name : null;
+        $courseData['mentor_name'] = $this->mentor?->user?->name;
 
         return $courseData;
     }

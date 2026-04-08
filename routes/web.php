@@ -2,11 +2,13 @@
 
 use App\Http\Controllers\Web\Admin\AdminController;
 use App\Http\Controllers\Web\Admin\CategoryController;
-use App\Http\Controllers\Web\Admin\CourseController;
+use App\Http\Controllers\Web\Admin\CourseController as AdminCourseController;
 use App\Http\Controllers\Web\Admin\MemberController;
 use App\Http\Controllers\Web\Admin\MentorController;
 use App\Http\Controllers\Web\Admin\RoleController;
+use App\Http\Controllers\Web\CourseController;
 use App\Http\Controllers\Web\EmailChangeVerificationController;
+use App\Http\Controllers\Web\SearchController;
 use App\Http\Controllers\Web\WelcomeController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\MentorMiddleware;
@@ -15,7 +17,8 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', WelcomeController::class)->name('welcome');
-
+Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
+Route::get('/search', [SearchController::class, 'index'])->name('search.index');
 // Route Member
 Route::middleware(['auth', MemberMiddleware::class])->prefix('member')->name('member.')->group(function () {
     Route::get('dashboard', function () {
@@ -41,7 +44,7 @@ Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->name('admi
     Route::resource('/mentors', MentorController::class)->except(['show']);
     Route::resource('/admins', AdminController::class)->except(['show']);
     Route::resource('/categories', CategoryController::class)->except(['show']);
-    Route::resource('/courses', CourseController::class)->except(['show']);
+    Route::resource('/courses', AdminCourseController::class)->except(['show']);
 });
 
 require __DIR__ . '/settings.php';
