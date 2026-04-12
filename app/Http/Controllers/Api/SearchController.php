@@ -27,7 +27,7 @@ class SearchController extends Controller
                 });
             })
             ->with(['mentor.user:id,name'])
-            ->cursorPaginate(5);
+            ->cursorPaginate(9);
 
         $courseData = collect($courses->items())->map(function ($course) {
             return [
