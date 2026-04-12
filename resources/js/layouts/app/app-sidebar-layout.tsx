@@ -1,4 +1,5 @@
 import { AppContent } from '@/components/member/app-content';
+import { AppHeader } from '@/components/member/app-header';
 import { AppShell } from '@/components/member/app-shell';
 import { AppSidebar } from '@/components/member/app-sidebar';
 import { AppSidebarHeader } from '@/components/member/app-sidebar-header';

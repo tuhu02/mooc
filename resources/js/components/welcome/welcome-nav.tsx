@@ -10,7 +10,7 @@ import { Search } from 'lucide-react';
 import { FormEvent, useState } from 'react';
 
 type Props = {
-    auth: { user: any };
+    auth: { user: any };  
     canRegister?: boolean;
 };
 

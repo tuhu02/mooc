@@ -1,4 +1,4 @@
-import { Link, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-react';
 import { Breadcrumbs } from '@/components/member/breadcrumbs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -32,9 +32,10 @@ import { useCurrentUrl } from '@/hooks/use-current-url';
 import { useInitials } from '@/hooks/use-initials';
 import { cn, toUrl } from '@/lib/utils';
 import type { BreadcrumbItem, NavItem } from '@/types';
-import AppLogo from '../app-logo';
-import AppLogoIcon from '../app-logo-icon';
-import { dashboard } from '@/routes';
+import AppLogo from '@/components/member/app-logo';
+import AppLogoIcon from '@/components/member/app-logo-icon';
+import { dashboard } from '@/routes/member';
+import { FormEvent, useState } from 'react';
 
 type Props = {
     breadcrumbs?: BreadcrumbItem[];
@@ -44,7 +45,10 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: dashboard(),
-        icon: LayoutGrid,
+    },
+    {
+        title: 'Courses',
+        href: '/courses',
     },
 ];
 
@@ -69,6 +73,19 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
     const { auth } = page.props;
     const getInitials = useInitials();
     const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
+    const [keyword, setKeyword] = useState('');
+
+    const handleSearch = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        const search = keyword.trim();
+        const url = search
+            ? `/search?q=${encodeURIComponent(search)}`
+            : '/search';
+
+        router.visit(url);
+    };
+
     return (
         <>
             <div className="border-b border-sidebar-border/80">
@@ -80,7 +97,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="mr-2 h-[34px] w-[34px]"
+                                    className="mr-2 h-8.5 w-8.5"
                                 >
                                     <Menu className="h-5 w-5" />
                                 </Button>
@@ -178,13 +195,21 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
 
                     <div className="ml-auto flex items-center space-x-2">
                         <div className="relative flex items-center space-x-1">
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="group h-9 w-9 cursor-pointer"
+                            <form
+                                onSubmit={handleSearch}
+                                className="relative w-56 transition-all duration-300 ease-out focus-within:w-80"
                             >
-                                <Search className="!size-5 opacity-80 group-hover:opacity-100" />
-                            </Button>
+                                <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                                <input
+                                    type="text"
+                                    value={keyword}
+                                    onChange={(event) =>
+                                        setKeyword(event.target.value)
+                                    }
+                                    placeholder="Cari course, mentor, kategori..."
+                                    className="h-10 w-full rounded-full border border-slate-300 bg-white py-2 pr-4 pl-9 text-sm text-slate-800 transition-all duration-300 ease-out placeholder:text-slate-400 focus:border-slate-400 focus:ring-2 focus:ring-slate-200 focus:outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-slate-500 dark:focus:ring-slate-700"
+                                />
+                            </form>
                             <div className="ml-1 hidden gap-1 lg:flex">
                                 {rightNavItems.map((item) => (
                                     <TooltipProvider
@@ -223,7 +248,11 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                 >
                                     <Avatar className="size-8 overflow-hidden rounded-full">
                                         <AvatarImage
-                                            src={auth.user.avatar}
+                                            src={
+                                                auth.user.member?.avatar
+                                                    ? `/storage/${auth.user.member.avatar}`
+                                                    : ''
+                                            }
                                             alt={auth.user.name}
                                         />
                                         <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">

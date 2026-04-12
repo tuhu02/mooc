@@ -16,36 +16,28 @@ class SearchController extends Controller
 
         $query = trim((string) $request->input('q', ''));
 
-        if (!$query) {
-            return response()->json([
-                'message' => 'Silakan masukkan kata kunci.',
-                'data' => [
-                    'query' => $query,
-                    'sections' => [
-                        'courses' => [],
-                    ],
-                ],
-                'meta' => [
-                    'courses_total' => 0,
-                ],
-            ]);
-        }
+        $courses = Course::query()
+            ->when($query !== '', function ($builder) use ($query) {
+                $builder->where(function ($q) use ($query) {
+                    $q->where('title', 'like', "%{$query}%")
+                        ->orWhere('description', 'like', "%{$query}%")
+                        ->orWhereHas('mentor.user', function ($q2) use ($query) {
+                            $q2->where('name', 'like', "%{$query}%");
+                        });
+                });
+            })
+            ->with(['mentor.user:id,name'])
+            ->cursorPaginate(5);
 
-        $courses = Course::search($query)
-            ->query(fn($builder) => $builder->with(['mentor.user:id,name']))
-            ->take(6)
-            ->get();
-
-        $courseData = $courses->map(function (Course $course) {
+        $courseData = collect($courses->items())->map(function ($course) {
             return [
-                'id' => $course->id,
                 'title' => $course->title,
                 'slug' => $course->slug,
                 'description' => $course->description,
                 'thumbnail' => $course->thumbnail,
                 'mentor_name' => $course->mentor?->user?->name,
             ];
-        })->values();
+        });
 
         return response()->json([
             'message' => 'Hasil pencarian berhasil diambil.',
@@ -54,7 +46,9 @@ class SearchController extends Controller
                 'courses' => $courseData,
             ],
             'meta' => [
-                'courses_total' => $courseData->count(),
+                'next_cursor' => $courses->nextCursor()?->encode(),
+                'previous_cursor' => $courses->previousCursor()?->encode(),
+                'has_more' => $courses->hasMorePages(),
             ],
         ]);
     }

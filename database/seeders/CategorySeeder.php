@@ -10,33 +10,17 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            'Pemrograman Dasar',
             'Web Development',
+            'Backend Development',
             'Mobile Development',
-            'Basis Data',
             'UI/UX Design',
-            'Data Science',
-            'DevOps',
-            'Cyber Security',
-            'Software Engineering',
-            'Artificial Intelligence',
-            'Bahasa Inggris Akademik',
-            'Public Speaking',
-            'Academic Writing',
-            'Communication Skills',
-            'Leadership',
-            'Research Methodology',
-            'Pengembangan Diri',
-            'Kewirausahaan',
-            'Manajemen Bisnis',
-            'Statistika',
-            'Psikologi',
+            'Machine Learning',
+            'Database',
+            'Version Control',
         ];
 
         foreach ($categories as $name) {
-            Category::firstOrCreate([
-                'name' => $name,
-            ]);
+            Category::firstOrCreate(['name' => $name]);
         }
     }
 }
