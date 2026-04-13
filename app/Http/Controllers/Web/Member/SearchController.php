@@ -24,7 +24,7 @@ class SearchController extends Controller
             ->with(['mentor', 'categories'])
             ->cursorPaginate(9);
 
-        return Inertia::render('member/search', [
+        return Inertia::render('member/course', [
             'query' => $query,
             'courses' => $courses,
         ]);

@@ -34,7 +34,7 @@ import { cn, toUrl } from '@/lib/utils';
 import type { BreadcrumbItem, NavItem } from '@/types';
 import AppLogo from '@/components/member/app-logo';
 import AppLogoIcon from '@/components/member/app-logo-icon';
-import { dashboard } from '@/routes/member';
+import member, { dashboard } from '@/routes/member';
 import { FormEvent, useState } from 'react';
 
 type Props = {
@@ -48,7 +48,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Courses',
-        href: '/courses',
+        href: member.courses.index(),
     },
 ];
 

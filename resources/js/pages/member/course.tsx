@@ -24,6 +24,11 @@ export default function search() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Course" />
             <div className="flex flex-1 flex-col gap-6 p-4 md:p-8">
+
+                <section>
+                    
+                </section>
+
                 <div className="flex">
                     <Card className="relative mx-auto w-full max-w-sm pt-0">
                         <div className="absolute inset-0 z-30 aspect-video bg-black/35" />
