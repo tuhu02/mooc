@@ -8,7 +8,6 @@ use App\Http\Controllers\Web\Admin\MentorController;
 use App\Http\Controllers\Web\Admin\RoleController;
 use App\Http\Controllers\Web\Member\CourseController;
 use App\Http\Controllers\Web\EmailChangeVerificationController;
-use App\Http\Controllers\Web\Member\SearchController;
 use App\Http\Controllers\Web\WelcomeController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\MentorMiddleware;
@@ -17,9 +16,6 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', WelcomeController::class)->name('welcome');
-
-
-Route::get('/search', [SearchController::class, 'index'])->name('search.index');
 
 // Route Member
 Route::middleware(['auth', MemberMiddleware::class])->prefix('member')->name('member.')->group(function () {

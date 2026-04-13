@@ -10,7 +10,7 @@ import { Search } from 'lucide-react';
 import { FormEvent, useState } from 'react';
 
 type Props = {
-    auth: { user: any };  
+    auth: { user: any };
     canRegister?: boolean;
 };
 
@@ -34,9 +34,9 @@ export default function WelcomeNav({ auth, canRegister = true }: Props) {
         event.preventDefault();
 
         const search = keyword.trim();
-        const url = search
-            ? `/search?q=${encodeURIComponent(search)}`
-            : '/search';
+        const url = member.courses.index.url({
+            query: search ? { q: search } : {},
+        });
 
         router.visit(url);
     };

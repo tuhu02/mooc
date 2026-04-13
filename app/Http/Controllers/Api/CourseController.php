@@ -14,9 +14,9 @@ class CourseController extends Controller
 
         return response()->json([
             'message' => 'Data Course Berhasil Diambil',
-            'data' => [
-                'courses' => $courses,
-            ],
+
+            'courses' => $courses,
+
             'meta' => [
                 'next_cursor' => $courses->nextCursor()?->encode(),
                 'previous_cursor' => $courses->previousCursor()?->encode(),

@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\PasswordResetController;
 use App\Http\Controllers\Api\Auth\EmailVerificationController;
+use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\SearchController;
 
 Route::get('/user', function (Request $request) {
@@ -27,4 +28,4 @@ Route::post('/new-password', [PasswordResetController::class, 'resetPassword']);
 
 Route::get('/search', [SearchController::class,'index']);
 
-// Route::get('/courses', [Cou])
+Route::get('/courses', [CourseController::class, 'index']);

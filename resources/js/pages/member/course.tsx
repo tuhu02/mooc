@@ -1,9 +1,11 @@
-import { BreadcrumbItem, CursorPagination } from '@/types';
+import { BreadcrumbItem, Category, Course, CursorPagination } from '@/types';
 import AppLayout from '@/layouts/member-layout';
 import { Head } from '@inertiajs/react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { PaginationComponent } from '@/components/member/pagination-component';
+import member from '@/routes/member';
+
 import {
     Card,
     CardAction,
@@ -13,19 +15,12 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { useEffect, useRef } from 'react';
-
-type Course = {
-    id: number;
-    title: string;
-    thumbnail: string;
-    description: string;
-    slug: string;
-    is_active: boolean;
-    mentor_id: number;
-};
+import { useState } from 'react';
+import { router } from '@inertiajs/react';
 
 type Props = {
     courses: CursorPagination<Course>;
+    categories: Category[];
 };
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -35,8 +30,16 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function search({ courses }: Props) {
+export default function search({ courses, categories }: Props) {
     const courseSectionRef = useRef<HTMLDivElement>(null);
+    const [level, setLevel] = useState(() => {
+        return new URLSearchParams(window.location.search).get('level') ?? '';
+    });
+    const [topic, setTopic] = useState(() => {
+        return (
+            new URLSearchParams(window.location.search).get('category_id') ?? ''
+        );
+    });
 
     useEffect(() => {
         requestAnimationFrame(() => {
@@ -46,6 +49,44 @@ export default function search({ courses }: Props) {
             });
         });
     }, [courses.data]);
+
+    const handleLevelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value;
+        setLevel(value);
+
+        router.get(
+            member.courses.index.url({
+                query: {
+                    ...(value ? { level: value } : {}),
+                    ...(topic ? { category_id: topic } : {}),
+                },
+            }),
+            {},
+            {
+                preserveState: true,
+                replace: true,
+            },
+        );
+    };
+
+    const handleTopicChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value;
+        setTopic(value);
+
+        router.get(
+            member.courses.index.url({
+                query: {
+                    ...(level ? { level } : {}),
+                    ...(value ? { category_id: value } : {}),
+                },
+            }),
+            {},
+            {
+                preserveState: true,
+                replace: true,
+            },
+        );
+    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -75,11 +116,15 @@ export default function search({ courses }: Props) {
                         <label className="mb-2 block text-sm font-medium text-gray-700">
                             Tingkat
                         </label>
-                        <select className="w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-blue-500 focus:ring-blue-500">
-                            <option>Semua Tingkat</option>
-                            <option>Pemula</option>
-                            <option>Menengah</option>
-                            <option>Mahir</option>
+                        <select
+                            value={level}
+                            onChange={handleLevelChange}
+                            className="w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-blue-500 focus:ring-blue-500"
+                        >
+                            <option value="">Semua Tingkat</option>
+                            <option value="Beginner">Pemula</option>
+                            <option value="Intermediate">Menengah</option>
+                            <option value="Advanced">Mahir</option>
                         </select>
                     </div>
 
@@ -87,11 +132,20 @@ export default function search({ courses }: Props) {
                         <label className="mb-2 block text-sm font-medium text-gray-700">
                             Topik
                         </label>
-                        <select className="w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-blue-500 focus:ring-blue-500">
-                            <option>Semua Topik</option>
-                            <option>Web Development</option>
-                            <option>Machine Learning</option>
-                            <option>Data Science</option>
+                        <select
+                            value={topic}
+                            onChange={handleTopicChange}
+                            className="w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-blue-500 focus:ring-blue-500"
+                        >
+                            <option value="">Semua Topik</option>
+                            {categories.map((category) => (
+                                <option
+                                    key={category.id}
+                                    value={String(category.id)}
+                                >
+                                    {category.name}
+                                </option>
+                            ))}
                         </select>
                     </div>
 

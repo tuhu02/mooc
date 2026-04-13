@@ -79,9 +79,9 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
         event.preventDefault();
 
         const search = keyword.trim();
-        const url = search
-            ? `/search?q=${encodeURIComponent(search)}`
-            : '/search';
+        const url = member.courses.index.url({
+            query: search ? { q: search } : {},
+        });
 
         router.visit(url);
     };

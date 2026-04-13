@@ -103,7 +103,7 @@ export default function Page() {
                                         {course.mentor?.user?.name ?? '-'}
                                     </TableCell>
                                     <TableCell>
-                                        {course.is_active === 'active'
+                                        {course.is_active
                                             ? 'Active'
                                             : 'Not Active'}
                                     </TableCell>

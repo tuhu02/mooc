@@ -82,6 +82,7 @@ export type Course = {
     categories?: Category[];
 };
 
+
 export type LaravelPaginationLink = {
     url: string | null;
     label: string;
