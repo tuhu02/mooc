@@ -76,7 +76,7 @@ export default function Dashboard() {
             <div className="flex flex-1 flex-col gap-6 p-4 md:p-8">
                 <div>
                     <h1 className="text-2xl font-semibold">Welcome back! 👋</h1>
-                    <p className="text-sm text-muted-foreground text-slate-500">
+                    <p className="text-sm text-muted-foreground">
                         Continue your learning journey
                     </p>
                 </div>

@@ -10,7 +10,12 @@ use Inertia\Inertia;
 
 class CourseController extends Controller
 {
-    public function index() {
-        return Inertia::render('member/course');
+    public function index()
+    {
+        $courses = Course::orderBy('id', 'desc')->cursorPaginate(6);
+        
+        return Inertia::render('member/course', [
+            'courses' => $courses,
+        ]);
     }
 }

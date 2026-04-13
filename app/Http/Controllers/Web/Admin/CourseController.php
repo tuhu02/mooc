@@ -45,6 +45,7 @@ class CourseController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'mentor_id' => 'required|exists:mentors,id',
+            'level' => 'required|in:Beginner,Intermediate,Advanced',
             'thumbnail' => 'required|image|mimes:jpg,jpeg,png,webp|max:4096',
             'description' => 'required|string',
             'is_active' => 'required|boolean',
@@ -61,6 +62,7 @@ class CourseController extends Controller
             'title' => $validated['title'],
             'slug' => $slug,
             'mentor_id' => $validated['mentor_id'],
+            'level' => $validated['level'],
             'thumbnail' => $thumbnailPath,
             'description' => $validated['description'],
             'is_active' => $validated['is_active'],
@@ -89,6 +91,7 @@ class CourseController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'mentor_id' => 'required|exists:mentors,id',
+            'level' => 'required|in:Beginner,Intermediate,Advanced',
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
             'description' => 'required|string',
             'is_active' => 'required|boolean',
@@ -114,6 +117,7 @@ class CourseController extends Controller
 
         $course->title = $validated['title'];
         $course->mentor_id = $validated['mentor_id'];
+        $course->level = $validated['level'];
         $course->description = $validated['description'];
         $course->is_active = $validated['is_active'];
         $course->is_highlight = $validated['is_highlight'];

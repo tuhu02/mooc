@@ -76,6 +76,7 @@ export type Course = {
     description: string;
     is_active: boolean;
     is_highlight: boolean;
+    level: 'Beginner' | 'Intermediate' | 'Advanced' | null;
     mentor_id: number;
     mentor?: Mentor;
     categories?: Category[];

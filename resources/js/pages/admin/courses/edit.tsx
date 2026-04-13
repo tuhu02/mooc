@@ -33,6 +33,7 @@ export default function EditCoursePage() {
         _method: 'PUT';
         title: string;
         mentor_id: string;
+        level: string;
         thumbnail: File | null;
         description: string;
         is_active: number;
@@ -42,6 +43,7 @@ export default function EditCoursePage() {
         _method: 'PUT',
         title: course.title,
         mentor_id: String(course.mentor_id),
+        level: course.level ?? '',
         thumbnail: null as File | null,
         description: course.description,
         is_active: course.is_active ? 1 : 0,
@@ -79,12 +81,12 @@ export default function EditCoursePage() {
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
                                     <BreadcrumbLink href={index.url()}>
-                                        Courses
+                                        Kursus
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator className="hidden md:block" />
                                 <BreadcrumbItem>
-                                    <BreadcrumbPage>Edit Course</BreadcrumbPage>
+                                    <BreadcrumbPage>Ubah Kursus</BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
                         </Breadcrumb>
@@ -97,18 +99,18 @@ export default function EditCoursePage() {
                         className="w-full max-w-xl space-y-6"
                     >
                         <h1 className="text-center text-2xl font-semibold">
-                            Edit Course
+                            Ubah Kursus
                         </h1>
 
                         <Field className="grid gap-2">
-                            <FieldLabel htmlFor="title">Title</FieldLabel>
+                            <FieldLabel htmlFor="title">Judul</FieldLabel>
                             <Input
                                 id="title"
                                 value={data.title}
                                 onChange={(e) =>
                                     setData('title', e.target.value)
                                 }
-                                placeholder="Enter course title"
+                                placeholder="Masukkan judul kursus"
                             />
                             {errors.title && (
                                 <p className="text-sm font-medium text-red-500">
@@ -118,7 +120,9 @@ export default function EditCoursePage() {
                         </Field>
 
                         <Field className="grid gap-2">
-                            <FieldLabel htmlFor="mentor_id">Mentor</FieldLabel>
+                            <FieldLabel htmlFor="mentor_id">
+                                Pengajar
+                            </FieldLabel>
                             <select
                                 id="mentor_id"
                                 value={data.mentor_id}
@@ -127,7 +131,7 @@ export default function EditCoursePage() {
                                 }
                                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                             >
-                                <option value="">Select mentor</option>
+                                <option value="">Pilih pengajar</option>
                                 {mentors.map((mentor) => (
                                     <option key={mentor.id} value={mentor.id}>
                                         {mentor.user.name}
@@ -142,8 +146,30 @@ export default function EditCoursePage() {
                         </Field>
 
                         <Field className="grid gap-2">
+                            <FieldLabel htmlFor="level">Tingkat</FieldLabel>
+                            <select
+                                id="level"
+                                value={data.level}
+                                onChange={(e) =>
+                                    setData('level', e.target.value)
+                                }
+                                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                            >
+                                <option value="">Pilih tingkat</option>
+                                <option value="Beginner">Pemula</option>
+                                <option value="Intermediate">Menengah</option>
+                                <option value="Advanced">Lanjutan</option>
+                            </select>
+                            {errors.level && (
+                                <p className="text-sm font-medium text-red-500">
+                                    {errors.level}
+                                </p>
+                            )}
+                        </Field>
+
+                        <Field className="grid gap-2">
                             <FieldLabel htmlFor="thumbnail">
-                                Thumbnail
+                                Gambar Sampul
                             </FieldLabel>
                             <img
                                 src={previewThumbnail}
@@ -170,14 +196,14 @@ export default function EditCoursePage() {
                                 </p>
                             )}
                             <FieldDescription>
-                                Leave it empty if you don't want to change the
-                                thumbnail.
+                                Biarkan kosong jika tidak ingin mengubah gambar
+                                sampul.
                             </FieldDescription>
                         </Field>
 
                         <Field className="grid gap-2">
                             <FieldLabel htmlFor="description">
-                                Description
+                                Deskripsi
                             </FieldLabel>
                             <textarea
                                 id="description"
@@ -186,7 +212,7 @@ export default function EditCoursePage() {
                                     setData('description', e.target.value)
                                 }
                                 className="min-h-28 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-                                placeholder="Enter course description"
+                                placeholder="Masukkan deskripsi kursus"
                             />
                             {errors.description && (
                                 <p className="text-sm font-medium text-red-500">
@@ -196,7 +222,7 @@ export default function EditCoursePage() {
                         </Field>
 
                         <Field className="grid gap-2">
-                            <FieldLabel>Highlight</FieldLabel>
+                            <FieldLabel>Sorotan</FieldLabel>
                             <select
                                 value={data.is_highlight}
                                 onChange={(e) =>
@@ -207,7 +233,7 @@ export default function EditCoursePage() {
                                 }
                                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                             >
-                                <option value={1}>Ya (Highlight)</option>
+                                <option value={1}>Ya (Sorotan)</option>
                                 <option value={0}>Tidak</option>
                             </select>
                             {errors.is_highlight && (
@@ -230,7 +256,7 @@ export default function EditCoursePage() {
                                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                             >
                                 <option value={1}>Aktif</option>
-                                <option value={0}>Tidak Aktif</option>
+                                <option value={0}>Tidak aktif</option>
                             </select>
                             {errors.is_active && (
                                 <p className="text-sm font-medium text-red-500">
@@ -240,7 +266,7 @@ export default function EditCoursePage() {
                         </Field>
 
                         <Field className="grid gap-2">
-                            <FieldLabel>Categories</FieldLabel>
+                            <FieldLabel>Kategori</FieldLabel>
                             <div className="grid gap-2 rounded-md border p-3">
                                 {categories.map((category) => {
                                     const checked = data.category_ids.includes(
@@ -279,7 +305,7 @@ export default function EditCoursePage() {
                                 className="flex-1"
                                 disabled={processing}
                             >
-                                {processing ? 'Saving...' : 'Update Course'}
+                                {processing ? 'Menyimpan...' : 'Simpan Kursus'}
                             </Button>
                             <Button
                                 type="button"
@@ -287,7 +313,7 @@ export default function EditCoursePage() {
                                 className="flex-1"
                                 onClick={() => window.history.back()}
                             >
-                                Cancel
+                                Batal
                             </Button>
                         </div>
                     </form>

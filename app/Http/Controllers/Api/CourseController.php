@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Course;
+use Illuminate\Http\Request;
+
+class CourseController extends Controller
+{
+    public function index()
+    {
+        $courses = Course::orderBy('id', 'desc')->cursorPaginate(6);
+
+        return response()->json([
+            'message' => 'Data Course Berhasil Diambil',
+            'data' => [
+                'courses' => $courses,
+            ],
+            'meta' => [
+                'next_cursor' => $courses->nextCursor()?->encode(),
+                'previous_cursor' => $courses->previousCursor()?->encode(),
+                'has_more' => $courses->hasMorePages(),
+            ],
+        ]);
+    }
+}

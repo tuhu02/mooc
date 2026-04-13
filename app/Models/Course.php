@@ -14,6 +14,7 @@ class Course extends Model
         'slug',
         'is_active',
         'mentor_id',
+        'level',
     ];
 
     public function mentor()
@@ -47,5 +48,4 @@ class Course extends Model
 
         return $slug;
     }
-
 }
