@@ -20,11 +20,19 @@ class CourseResource extends JsonResource
             'slug' => $this->slug,
             'thumbnail' => $this->thumbnail,
             'description' => $this->description,
-            'mentor' => [
-                'id' => $this->mentor?->id,
-                'name' => $this->mentor?->user?->name,
-                'bio' => $this->mentor?->bio,
-            ],
+            'level' => $this->level,
+            'is_active' => $this->is_active,
+            'is_highlight' => $this->is_highlight,
+            'categories' => $this->whenLoaded('categories', function () {
+                return $this->categories->map(function ($category) {
+                    return [
+                        'id' => $category->id,
+                        'name' => $category->name,
+                    ];
+                });
+            }, []),
+            'modules_count' => $this->whenCounted('modules'),
+            'members_count' => $this->whenCounted('members'),
         ];
     }
 }

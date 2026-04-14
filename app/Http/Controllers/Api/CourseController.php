@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CourseResource;
 use App\Models\Course;
-use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
@@ -19,7 +19,7 @@ class CourseController extends Controller
         return response()->json([
             'message' => 'Data Course Berhasil Diambil',
 
-            'courses' => $courses,
+            'courses' => CourseResource::collection($courses->items()),
 
             'meta' => [
                 'next_cursor' => $courses->nextCursor()?->encode(),
