@@ -19,7 +19,7 @@ class CourseEnrollmentSeeder extends Seeder
         Member::query()->get()->each(function (Member $member) use ($courseIds): void {
             $joinedCourseIds = $courseIds
                 ->shuffle()
-                ->take(min(3, $courseIds->count()))
+                ->take(min(5, $courseIds->count()))
                 ->all();
 
             $syncPayload = [];
