@@ -31,6 +31,7 @@ class SearchController extends Controller
 
         $courseData = collect($courses->items())->map(function ($course) {
             return [
+                'id' => $course->id,
                 'title' => $course->title,
                 'slug' => $course->slug,
                 'description' => $course->description,
