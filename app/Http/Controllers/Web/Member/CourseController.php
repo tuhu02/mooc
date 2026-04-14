@@ -17,6 +17,8 @@ class CourseController extends Controller
         $search = trim((string) $request->input('q', ''));
 
         $courses = Course::query()
+            ->with('categories')
+            ->withCount(['modules', 'members'])
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('title', 'like', "%{$search}%")

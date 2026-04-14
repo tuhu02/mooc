@@ -27,6 +27,18 @@ class Course extends Model
         return $this->belongsToMany(Category::class, 'category_course');
     }
 
+    public function modules()
+    {
+        return $this->hasMany(Module::class);
+    }
+
+    public function members()
+    {
+        return $this->belongsToMany(Member::class, 'member_course')
+            ->withPivot('enrolled_at')
+            ->withTimestamps();
+    }
+
 
     public static function generateUniqueSlug(string $slug, ?int $excludeId = null): string
     {

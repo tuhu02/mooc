@@ -78,6 +78,8 @@ export type Course = {
     is_highlight: boolean;
     level: 'Beginner' | 'Intermediate' | 'Advanced' | null;
     mentor_id: number;
+    modules_count?: number;
+    members_count?: number;
     mentor?: Mentor;
     categories?: Category[];
 };

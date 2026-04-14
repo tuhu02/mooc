@@ -10,7 +10,11 @@ class CourseController extends Controller
 {
     public function index()
     {
-        $courses = Course::orderBy('id', 'desc')->cursorPaginate(6);
+        $courses = Course::query()
+            ->with('categories')
+            ->withCount(['modules', 'members'])
+            ->orderBy('id', 'desc')
+            ->cursorPaginate(6);
 
         return response()->json([
             'message' => 'Data Course Berhasil Diambil',

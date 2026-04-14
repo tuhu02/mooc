@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { PaginationComponent } from '@/components/member/pagination-component';
 import member from '@/routes/member';
+import { BookOpen, Users } from 'lucide-react';
 
 import {
     Card,
@@ -32,6 +33,14 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function search({ courses, categories }: Props) {
     const courseSectionRef = useRef<HTMLDivElement>(null);
+
+    const levelLabel: Record<'Beginner' | 'Intermediate' | 'Advanced', string> =
+        {
+            Beginner: 'Pemula',
+            Intermediate: 'Menengah',
+            Advanced: 'Mahir',
+        };
+
     const [level, setLevel] = useState(() => {
         return new URLSearchParams(window.location.search).get('level') ?? '';
     });
@@ -178,17 +187,56 @@ export default function search({ courses, categories }: Props) {
                                 className="relative z-20 aspect-video w-full object-cover"
                             />
                             <CardHeader>
-                                <CardAction>
-                                    <Badge variant="secondary">Featured</Badge>
+                                <CardAction className="flex items-center gap-2">
+                                    {item.level && (
+                                        <Badge variant="outline">
+                                            {levelLabel[item.level]}
+                                        </Badge>
+                                    )}
                                 </CardAction>
+                                <div className="flex flex-wrap gap-1.5">
+                                    {item.categories &&
+                                    item.categories.length > 0 ? (
+                                        <>
+                                            {item.categories
+                                                .slice(0, 2)
+                                                .map((category) => (
+                                                    <Badge
+                                                        key={category.id}
+                                                        variant="secondary"
+                                                        className="text-[10px]"
+                                                    >
+                                                        {category.name}
+                                                    </Badge>
+                                                ))}
+                                            {item.categories.length > 2 && (
+                                                <Badge
+                                                    variant="secondary"
+                                                    className="text-[10px]"
+                                                >
+                                                    +
+                                                    {item.categories.length - 2}
+                                                </Badge>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <span className="text-xs font-medium tracking-wide text-slate-500 uppercase">
+                                            Tanpa Topik
+                                        </span>
+                                    )}
+                                </div>
                                 <CardTitle>{item.title}</CardTitle>
                                 <CardDescription>
                                     {item.description}
                                 </CardDescription>
                             </CardHeader>
-                            <CardFooter>
-                                <Button className="w-full">View Course</Button>
-                            </CardFooter>
+                            <div className="flex items-center gap-2 px-6 pb-4 text-sm text-slate-600">
+                                <BookOpen className="h-4 w-4" />
+                                <span>{item.modules_count ?? 0} Modul</span>
+                                <span className="text-slate-300">|</span>
+                                <Users className="h-4 w-4" />
+                                <span>{item.members_count ?? 0} Join</span>
+                            </div>
                         </Card>
                     ))}
                 </div>

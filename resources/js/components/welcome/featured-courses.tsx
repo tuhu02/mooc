@@ -84,14 +84,9 @@ export default function FeaturedCourses({ courses }: Props) {
                                 <div className="mb-4 flex flex-wrap gap-2">
                                     {course.categories &&
                                     course.categories.length > 0 ? (
-                                        course.categories.map((category) => (
-                                            <span
-                                                key={category.id}
-                                                className="rounded-full bg-slate-200 px-3 py-1 text-xs font-semibold tracking-wide text-slate-700 uppercase dark:bg-slate-800 dark:text-slate-300"
-                                            >
-                                                {category.name}
-                                            </span>
-                                        ))
+                                        <span className="rounded-full bg-slate-200 px-3 py-1 text-xs font-semibold tracking-wide text-slate-700 uppercase dark:bg-slate-800 dark:text-slate-300">
+                                            {course.categories[0].name}
+                                        </span>
                                     ) : (
                                         <span className="rounded-full bg-slate-200 px-3 py-1 text-xs font-semibold text-slate-700">
                                             Uncategorized
