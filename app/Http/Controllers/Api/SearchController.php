@@ -26,7 +26,14 @@ class SearchController extends Controller
                         });
                 });
             })
-            ->with(['mentor.user:id,name'])
+            ->when($request->filled('level'), function ($query) use ($request) {
+                $query->where('level', $request->level);
+            })
+            ->when($request->filled('category_id'), function ($query) use ($request) {
+                $query->whereHas('categories', function ($categoryQuery) use ($request) {
+                    $categoryQuery->where('categories.id', $request->category_id);
+                });
+            })
             ->cursorPaginate(9);
 
         $courseData = collect($courses->items())->map(function ($course) {
@@ -36,16 +43,14 @@ class SearchController extends Controller
                 'slug' => $course->slug,
                 'description' => $course->description,
                 'thumbnail' => $course->thumbnail,
-                'mentor_name' => $course->mentor?->user?->name,
             ];
         });
 
         return response()->json([
             'message' => 'Hasil pencarian berhasil diambil.',
-            'data' => [
-                'query' => $query,
-                'courses' => $courseData,
-            ],
+
+            'courses' => $courseData,
+
             'meta' => [
                 'next_cursor' => $courses->nextCursor()?->encode(),
                 'previous_cursor' => $courses->previousCursor()?->encode(),

@@ -53,7 +53,7 @@ export default function search({ courses, categories }: Props) {
     useEffect(() => {
         requestAnimationFrame(() => {
             courseSectionRef.current?.scrollIntoView({
-                behavior: 'instant',
+                behavior: 'smooth',
                 block: 'start',
             });
         });
@@ -226,7 +226,7 @@ export default function search({ courses, categories }: Props) {
                                     )}
                                 </div>
                                 <CardTitle>{item.title}</CardTitle>
-                                <CardDescription>
+                                <CardDescription className='line-clamp-2'>
                                     {item.description}
                                 </CardDescription>
                             </CardHeader>

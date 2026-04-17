@@ -34,7 +34,10 @@ export function PaginationComponent({
                         )}
                     >
                         {pagination.prev_page_url ? (
-                            <Link href={pagination.prev_page_url}>
+                            <Link
+                                preserveScroll
+                                href={pagination.prev_page_url}
+                            >
                                 <ChevronLeftIcon />
                                 <span className="hidden sm:block">
                                     Previous
@@ -65,7 +68,10 @@ export function PaginationComponent({
                         )}
                     >
                         {pagination.next_page_url ? (
-                            <Link href={pagination.next_page_url}>
+                            <Link
+                                preserveScroll
+                                href={pagination.next_page_url}
+                            >
                                 <span className="hidden sm:block">Next</span>
                                 <ChevronRightIcon />
                             </Link>

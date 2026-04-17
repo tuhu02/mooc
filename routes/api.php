@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\Auth\PasswordResetController;
 use App\Http\Controllers\Api\Auth\EmailVerificationController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\SearchController;
+use App\Http\Controllers\Api\CategoryController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -29,3 +30,5 @@ Route::post('/new-password', [PasswordResetController::class, 'resetPassword']);
 Route::get('/search', [SearchController::class,'index']);
 
 Route::get('/courses', [CourseController::class, 'index']);
+
+Route::get('/categories', [CategoryController::class, 'index']);

@@ -22,7 +22,10 @@ class CourseController extends Controller
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('title', 'like', "%{$search}%")
-                        ->orWhere('description', 'like', "%{$search}%");
+                        ->orWhere('description', 'like', "%{$search}%")
+                        ->orWhereHas('mentor.user', function ($q2) use ($search) {
+                            $q2->where('name', 'like', "%{$search}%");
+                        });
                 });
             })
             ->when($request->filled('level'), function ($query) use ($request) {
