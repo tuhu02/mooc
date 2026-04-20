@@ -21,7 +21,7 @@ class MemberController extends Controller
         $members = Member::with('user')->orderBy('id')->cursorPaginate(10);
 
         return Inertia::render('admin/members/index', [
-            'members' =>  $members
+            'members' => fn() => $members
         ]);
     }
 

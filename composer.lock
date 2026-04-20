@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "27d0a8b9c6b8834f12fd7023d7a4d92f",
+    "content-hash": "e6bd151d9075c0e10f89d2be4a01ca0b",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -6772,6 +6772,60 @@
                 "source": "https://github.com/tijsverkoyen/CssToInlineStyles/tree/v2.4.0"
             },
             "time": "2025-12-02T11:56:42+00:00"
+        },
+        {
+            "name": "vimeo/vimeo-api",
+            "version": "4.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vimeo/vimeo.php.git",
+                "reference": "363c3a0d432890deea69cc5ce1933b1943732184"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vimeo/vimeo.php/zipball/363c3a0d432890deea69cc5ce1933b1943732184",
+                "reference": "363c3a0d432890deea69cc5ce1933b1943732184",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "guzzlehttp/guzzle": "^7.2",
+                "php": ">=7.1.0",
+                "psr/http-message": "^1.1 || ^2.0"
+            },
+            "require-dev": {
+                "php-coveralls/php-coveralls": "^1.0",
+                "phpunit/phpunit": "^7.4",
+                "vimeo/psalm": "^2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Vimeo\\": "src/Vimeo"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Vimeo",
+                    "homepage": "http://vimeo.com"
+                }
+            ],
+            "description": "Official PHP library for the Vimeo API.",
+            "homepage": "https://github.com/vimeo/vimeo.php",
+            "keywords": [
+                "video",
+                "vimeo"
+            ],
+            "support": {
+                "issues": "https://github.com/vimeo/vimeo.php/issues",
+                "source": "https://github.com/vimeo/vimeo.php/tree/4.0.1"
+            },
+            "time": "2025-10-23T15:07:27+00:00"
         },
         {
             "name": "vlucas/phpdotenv",

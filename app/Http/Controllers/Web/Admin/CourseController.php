@@ -22,7 +22,7 @@ class CourseController extends Controller
         $courses = Course::with(['mentor.user', 'categories'])->latest()->get();
 
         return Inertia::render('admin/courses/index', [
-            'courses' => $courses,
+            'courses' => fn() => $courses,
         ]);
     }
 

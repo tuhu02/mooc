@@ -26,16 +26,16 @@ const itemVariants: Variants = {
 
 const roadmaps = [
     {
-        title: 'Foundations First',
-        desc: 'Master core concepts, modern tools, and professional workflows systematically.',
+        title: 'Mulai dari Fondasi',
+        desc: 'Kuasai konsep inti, alat modern, dan alur kerja profesional secara sistematis.',
     },
     {
-        title: 'Hands-on Projects',
-        desc: 'Build real-world projects and case studies that simulate industry demands.',
+        title: 'Proyek Praktik Langsung',
+        desc: 'Bangun proyek nyata dan studi kasus yang mencerminkan kebutuhan industri.',
     },
     {
-        title: 'Career Portfolio',
-        desc: 'Craft your best work and receive expert feedback to launch your professional career.',
+        title: 'Portofolio Karier',
+        desc: 'Susun karya terbaik Anda dan dapatkan umpan balik ahli untuk memulai karier profesional.',
     },
 ];
 
@@ -52,10 +52,10 @@ export default function RoadmapSection() {
                     >
                         <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold tracking-wide text-slate-700 uppercase dark:bg-slate-800 dark:text-slate-300">
                             <BookOpen className="h-4 w-4" />
-                            Learning Journey
+                            Perjalanan Belajar
                         </p>
                         <h2 className="text-3xl font-bold text-black md:text-4xl dark:text-white">
-                            Guided & Structured Roadmaps
+                            Roadmap Terarah & Terstruktur
                         </h2>
                     </motion.div>
 
@@ -66,9 +66,8 @@ export default function RoadmapSection() {
                         transition={{ duration: 0.5, delay: 0.1 }}
                         className="max-w-md text-sm leading-relaxed text-slate-600 md:text-base dark:text-slate-400"
                     >
-                        Every student follows a step-by-step path, ensuring
-                        measurable progress from fundamentals to job-ready
-                        skills.
+                        Setiap peserta mengikuti jalur langkah demi langkah,
+                        memastikan progres terukur dari dasar hingga siap kerja.
                     </motion.p>
                 </div>
 

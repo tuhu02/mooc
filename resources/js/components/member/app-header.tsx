@@ -52,19 +52,6 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
-const rightNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
-    },
-];
-
 const activeItemStyles =
     'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100';
 
@@ -126,23 +113,6 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                                     )}
                                                     <span>{item.title}</span>
                                                 </Link>
-                                            ))}
-                                        </div>
-
-                                        <div className="flex flex-col space-y-4">
-                                            {rightNavItems.map((item) => (
-                                                <a
-                                                    key={item.title}
-                                                    href={toUrl(item.href)}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="flex items-center space-x-2 font-medium"
-                                                >
-                                                    {item.icon && (
-                                                        <item.icon className="h-5 w-5" />
-                                                    )}
-                                                    <span>{item.title}</span>
-                                                </a>
                                             ))}
                                         </div>
                                     </div>
@@ -210,35 +180,6 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                     className="h-10 w-full rounded-full border border-slate-300 bg-white py-2 pr-4 pl-9 text-sm text-slate-800 transition-all duration-300 ease-out placeholder:text-slate-400 focus:border-slate-400 focus:ring-2 focus:ring-slate-200 focus:outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-slate-500 dark:focus:ring-slate-700"
                                 />
                             </form>
-                            <div className="ml-1 hidden gap-1 lg:flex">
-                                {rightNavItems.map((item) => (
-                                    <TooltipProvider
-                                        key={item.title}
-                                        delayDuration={0}
-                                    >
-                                        <Tooltip>
-                                            <TooltipTrigger>
-                                                <a
-                                                    href={toUrl(item.href)}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="group inline-flex h-9 w-9 items-center justify-center rounded-md bg-transparent p-0 text-sm font-medium text-accent-foreground ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
-                                                >
-                                                    <span className="sr-only">
-                                                        {item.title}
-                                                    </span>
-                                                    {item.icon && (
-                                                        <item.icon className="size-5 opacity-80 group-hover:opacity-100" />
-                                                    )}
-                                                </a>
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p>{item.title}</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                ))}
-                            </div>
                         </div>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>

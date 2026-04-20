@@ -68,28 +68,28 @@ export default function WelcomeNav({ auth, canRegister = true }: Props) {
                         href="/"
                         className="text-sm font-semibold text-slate-700 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
                     >
-                        Home
+                        Beranda
                     </Link>
 
                     <Link
                         href="/courses"
                         className="text-sm font-semibold text-slate-700 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
                     >
-                        About
+                        Tentang
                     </Link>
 
                     <Link
                         href="/courses"
                         className="text-sm font-semibold text-slate-700 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
                     >
-                        Courses
+                        Kursus
                     </Link>
 
                     <Link
                         href="/courses"
                         className="text-sm font-semibold text-slate-700 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
                     >
-                        Faq
+                        FAQ
                     </Link>
 
                     <form
@@ -111,7 +111,7 @@ export default function WelcomeNav({ auth, canRegister = true }: Props) {
                     {auth.user ? (
                         <Link href={dashboardHref || '/'}>
                             <Button className="rounded-full bg-black px-6 text-white hover:bg-slate-800 dark:bg-white dark:text-black dark:hover:bg-slate-200">
-                                Dashboard
+                                Dasbor
                             </Button>
                         </Link>
                     ) : (
@@ -120,12 +120,12 @@ export default function WelcomeNav({ auth, canRegister = true }: Props) {
                                 href={login().url}
                                 className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                             >
-                                Login
+                                Masuk
                             </Link>
                             {canRegister && (
                                 <Link href={register().url}>
                                     <Button className="rounded-full bg-black px-6 text-white hover:bg-slate-800 dark:bg-white dark:text-black dark:hover:bg-slate-200">
-                                        Register
+                                        Daftar
                                     </Button>
                                 </Link>
                             )}

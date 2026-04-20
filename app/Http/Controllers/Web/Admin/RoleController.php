@@ -17,7 +17,7 @@ class RoleController extends Controller
     {
         $roles = Role::select('id', 'name')->where('name', '!=', 'admin')->get();
         return Inertia::render('admin/roles/index', [
-            'roles' => $roles
+            'roles' => fn() => $roles
         ]);
     }
 

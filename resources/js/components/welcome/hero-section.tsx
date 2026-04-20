@@ -47,22 +47,22 @@ export default function HeroSection({ canRegister = true }: Props) {
                             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-slate-400 opacity-75 dark:bg-slate-500"></span>
                             <span className="relative inline-flex h-2 w-2 rounded-full bg-slate-600 dark:bg-slate-400"></span>
                         </span>
-                        New: Advanced Business & Digital Marketing courses are
-                        now live!
+                        Baru: Kelas Bisnis Lanjutan & Digital Marketing sudah
+                        tersedia!
                     </div>
 
                     <h1 className="mx-auto max-w-4xl text-5xl font-extrabold tracking-tight md:text-7xl dark:text-white">
-                        Elevate Your{' '}
+                        Tingkatkan{' '}
                         <span className="text-slate-700 dark:text-slate-400">
-                            Future Skills
+                            Skill Masa Depan
                         </span>{' '}
-                        With Us
+                        Bersama Kami
                     </h1>
 
                     <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-600 md:text-xl dark:text-slate-400">
-                        The ultimate interactive online learning platform. From
-                        Design & Marketing to Technology and Leadership, master
-                        the skills that matter today.
+                        Platform belajar online interaktif untuk pengembangan
+                        karier. Dari Desain & Marketing hingga Teknologi dan
+                        Kepemimpinan, kuasai keterampilan yang relevan saat ini.
                     </p>
 
                     <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -72,7 +72,7 @@ export default function HeroSection({ canRegister = true }: Props) {
                                     size="lg"
                                     className="h-12 rounded-full bg-black px-8 text-base font-semibold text-white shadow-lg shadow-slate-300 transition-transform hover:scale-105 hover:bg-slate-800 active:scale-95 dark:bg-white dark:text-black dark:shadow-none dark:hover:bg-slate-200"
                                 >
-                                    Start Learning Now
+                                    Mulai Belajar Sekarang
                                     <ArrowRight className="ml-2 h-5 w-5" />
                                 </Button>
                             </Link>
@@ -82,7 +82,7 @@ export default function HeroSection({ canRegister = true }: Props) {
                             size="lg"
                             className="h-12 rounded-full border-2 border-slate-900 px-8 text-base font-semibold text-slate-900 transition-all hover:scale-105 hover:bg-slate-100 active:scale-95 dark:border-white dark:text-white dark:hover:bg-slate-800"
                         >
-                            Browse Catalog
+                            Jelajahi Katalog
                         </Button>
                     </div>
                 </motion.div>
@@ -96,10 +96,10 @@ export default function HeroSection({ canRegister = true }: Props) {
                     className="mt-20 grid grid-cols-2 gap-8 border-t border-slate-200 pt-12 md:grid-cols-4 dark:border-slate-800"
                 >
                     {[
-                        { label: 'Active Learners', value: '10,000+' },
-                        { label: 'Online Courses', value: '150+' },
-                        { label: 'Expert Mentors', value: '45+' },
-                        { label: 'Satisfaction Rate', value: '4.9/5' },
+                        { label: 'Peserta Aktif', value: '10.000+' },
+                        { label: 'Kursus Online', value: '150+' },
+                        { label: 'Mentor Ahli', value: '45+' },
+                        { label: 'Tingkat Kepuasan', value: '4,9/5' },
                     ].map((stat, i) => (
                         <motion.div
                             key={i}

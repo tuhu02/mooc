@@ -41,14 +41,14 @@ export default function CTASection({ auth, canRegister = true }: Props) {
                     }}
                 >
                     <p className="mb-4 text-sm font-semibold tracking-[0.2em] text-slate-300 uppercase dark:text-slate-600">
-                        Get Started
+                        Mulai Sekarang
                     </p>
                     <h2 className="mx-auto max-w-3xl text-3xl leading-tight font-bold md:text-5xl">
-                        Build Your Digital Expertise Today
+                        Bangun Keahlian Digital Anda Hari Ini
                     </h2>
                     <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-slate-300 md:text-lg dark:text-slate-600">
-                        Join thousands of learners and start your learning
-                        journey in minutes.
+                        Bergabung dengan ribuan peserta dan mulai perjalanan
+                        belajar Anda dalam hitungan menit.
                     </p>
 
                     <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -58,7 +58,7 @@ export default function CTASection({ auth, canRegister = true }: Props) {
                                     size="lg"
                                     className="h-12 rounded-full bg-white px-8 text-base font-semibold text-black transition-transform hover:scale-105 hover:bg-slate-200 active:scale-95 dark:bg-black dark:text-white dark:hover:bg-slate-800"
                                 >
-                                    Open Dashboard
+                                    Buka Dasbor
                                     <ArrowRight className="ml-2 h-5 w-5" />
                                 </Button>
                             </Link>
@@ -70,7 +70,7 @@ export default function CTASection({ auth, canRegister = true }: Props) {
                                             size="lg"
                                             className="h-12 rounded-full bg-white px-8 text-base font-semibold text-black transition-transform hover:scale-105 hover:bg-slate-200 active:scale-95 dark:bg-black dark:text-white dark:hover:bg-slate-800"
                                         >
-                                            Sign Up for Free
+                                            Daftar Gratis
                                             <ArrowRight className="ml-2 h-5 w-5" />
                                         </Button>
                                     </Link>
@@ -81,7 +81,7 @@ export default function CTASection({ auth, canRegister = true }: Props) {
                                         size="lg"
                                         className="h-12 rounded-full border-white bg-transparent px-8 text-base font-semibold text-white transition-all hover:bg-white hover:text-black dark:border-black dark:text-black dark:hover:bg-black dark:hover:text-white"
                                     >
-                                        I Already Have an Account
+                                        Saya Sudah Punya Akun
                                     </Button>
                                 </Link>
                             </>

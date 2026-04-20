@@ -93,10 +93,10 @@ class CourseSeeder extends Seeder
             $course->categories()->sync($item['category_ids']);
 
             $course->modules()->createMany([
-                ['name' => 'Pengenalan'],
-                ['name' => 'Fundamental'],
-                ['name' => 'Praktik'],
-                ['name' => 'Studi Kasus'],
+                ['title' => 'Pengenalan', 'sort_order' => 1],
+                ['title' => 'Fundamental', 'sort_order' => 2],
+                ['title' => 'Praktik', 'sort_order' => 3],
+                ['title' => 'Studi Kasus', 'sort_order' => 4],
             ]);
         }
     }

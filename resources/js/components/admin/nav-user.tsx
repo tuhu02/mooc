@@ -1,5 +1,6 @@
 "use client"
 
+import { Link, router } from "@inertiajs/react"
 import {
   BadgeCheck,
   Bell,
@@ -29,6 +30,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { logout } from "@/routes"
 
 export function NavUser({
   user,
@@ -40,6 +42,10 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+
+  const handleLogout = () => {
+    router.flushAll()
+  }
 
   return (
     <SidebarMenu>
@@ -102,9 +108,16 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut />
-              Log out
+            <DropdownMenuItem asChild>
+              <Link
+                className="block w-full cursor-pointer"
+                href={logout()}
+                as="button"
+                onClick={handleLogout}
+              >
+                <LogOut />
+                Log out
+              </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

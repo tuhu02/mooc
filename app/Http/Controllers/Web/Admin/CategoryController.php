@@ -17,7 +17,7 @@ class CategoryController extends Controller
     {
         $categories = Category::all();
         return Inertia::render('admin/categories/index', [
-            'categories' =>  $categories
+            'categories' => fn() =>  $categories
         ]);
     }
 

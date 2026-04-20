@@ -27,20 +27,20 @@ const itemVariants: Variants = {
 const features = [
     {
         icon: <Lightbulb className="h-6 w-6 text-slate-900 dark:text-white" />,
-        title: 'Flexible Learning',
-        desc: 'Access high-quality materials anytime, anywhere, at your own pace.',
+        title: 'Belajar Fleksibel',
+        desc: 'Akses materi berkualitas kapan saja, di mana saja, sesuai ritme belajar Anda.',
     },
     {
         icon: <Users className="h-6 w-6 text-slate-900 dark:text-white" />,
-        title: 'Expert Mentors',
-        desc: 'Get guided directly by industry professionals and creative experts.',
+        title: 'Mentor Berpengalaman',
+        desc: 'Dibimbing langsung oleh praktisi industri dan para ahli kreatif.',
     },
     {
         icon: (
             <GraduationCap className="h-6 w-6 text-slate-900 dark:text-white" />
         ),
-        title: 'Professional Certification',
-        desc: 'Earn recognized certificates to boost your career and portfolio.',
+        title: 'Sertifikasi Profesional',
+        desc: 'Dapatkan sertifikat yang diakui untuk memperkuat karier dan portofolio Anda.',
     },
 ];
 
@@ -56,11 +56,11 @@ export default function FeaturesSection() {
                     className="mb-16 text-center"
                 >
                     <h2 className="text-3xl font-bold text-slate-900 md:text-4xl dark:text-white">
-                        Why Study at IGS MOOC?
+                        Kenapa Belajar di IGS MOOC?
                     </h2>
                     <p className="mt-4 text-slate-600 dark:text-slate-400">
-                        We provide a comprehensive learning ecosystem built for
-                        career growth and personal development.
+                        Kami menyediakan ekosistem belajar yang komprehensif
+                        untuk pertumbuhan karier dan pengembangan diri.
                     </p>
                 </motion.div>
 

@@ -1,8 +1,7 @@
 import { BreadcrumbItem, Category, Course, CursorPagination } from '@/types';
 import AppLayout from '@/layouts/member-layout';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { PaginationComponent } from '@/components/member/pagination-component';
 import member from '@/routes/member';
 import { BookOpen, Users } from 'lucide-react';
@@ -15,7 +14,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { useEffect, useRef } from 'react';
+
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
 
@@ -32,8 +31,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function search({ courses, categories }: Props) {
-    const courseSectionRef = useRef<HTMLDivElement>(null);
-
     const levelLabel: Record<'Beginner' | 'Intermediate' | 'Advanced', string> =
         {
             Beginner: 'Pemula',
@@ -50,58 +47,42 @@ export default function search({ courses, categories }: Props) {
         );
     });
 
-    useEffect(() => {
-        requestAnimationFrame(() => {
-            courseSectionRef.current?.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start',
-            });
-        });
-    }, [courses.data]);
-
-    const handleLevelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const value = e.target.value;
-        setLevel(value);
-
+    const applyFilter = (newLevel: string, newTopic: string) => {
         router.get(
             member.courses.index.url({
                 query: {
-                    ...(value ? { level: value } : {}),
-                    ...(topic ? { category_id: topic } : {}),
+                    ...(newLevel ? { level: newLevel } : {}),
+                    ...(newTopic ? { category_id: newTopic } : {}),
                 },
             }),
             {},
             {
                 preserveState: true,
                 replace: true,
+                only: ['courses'],
             },
         );
+    };
+
+    const handleLevelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value;
+        setLevel(value);
+
+        applyFilter(value, topic);
     };
 
     const handleTopicChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const value = e.target.value;
         setTopic(value);
 
-        router.get(
-            member.courses.index.url({
-                query: {
-                    ...(level ? { level } : {}),
-                    ...(value ? { category_id: value } : {}),
-                },
-            }),
-            {},
-            {
-                preserveState: true,
-                replace: true,
-            },
-        );
+        applyFilter(level, value);
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Course" />
 
-            <div className="flex flex-1 flex-col gap-6 p-4 md:p-8">
+            <div className="flex flex-1 flex-col gap-6 overflow-x-hidden p-4 md:p-8">
                 <section className="relative left-1/2 -mt-4 flex h-64 w-screen -translate-x-1/2 items-center justify-center overflow-hidden bg-white md:-mt-8">
                     <div
                         className="absolute inset-0 z-0 opacity-10"
@@ -170,74 +151,80 @@ export default function search({ courses, categories }: Props) {
                     </div>
                 </section>
 
-                <div className="grid grid-cols-3 gap-6" ref={courseSectionRef}>
+                <div className="grid grid-cols-3 gap-6">
                     {courses.data.map((item) => (
-                        <Card
+                        <Link
+                            href={`/member/courses/${item.slug}`}
                             key={item.id}
-                            className="relative mx-auto w-full max-w-sm pt-0"
                         >
-                            <div className="absolute inset-0 z-30 aspect-video bg-black/35" />
-                            <img
-                                src={
-                                    item.thumbnail
-                                        ? `/storage/${item.thumbnail}`
-                                        : 'https://avatar.vercel.sh/shadcn1'
-                                }
-                                alt={item.title}
-                                className="relative z-20 aspect-video w-full object-cover"
-                            />
-                            <CardHeader>
-                                <CardAction className="flex items-center gap-2">
-                                    {item.level && (
-                                        <Badge variant="outline">
-                                            {levelLabel[item.level]}
-                                        </Badge>
-                                    )}
-                                </CardAction>
-                                <div className="flex flex-wrap gap-1.5">
-                                    {item.categories &&
-                                    item.categories.length > 0 ? (
-                                        <>
-                                            {item.categories
-                                                .slice(0, 2)
-                                                .map((category) => (
+                            <Card className="relative mx-auto w-full max-w-sm pt-0 transition hover:-translate-y-1 hover:shadow-lg">
+                                <div className="absolute inset-0 z-30 aspect-video bg-black/35" />
+                                <img
+                                    src={
+                                        item.thumbnail
+                                            ? `/storage/${item.thumbnail}`
+                                            : 'https://avatar.vercel.sh/shadcn1'
+                                    }
+                                    alt={item.title}
+                                    className="relative z-20 aspect-video w-full object-cover"
+                                />
+                                <CardHeader>
+                                    <CardAction className="flex items-center gap-2">
+                                        {item.level && (
+                                            <Badge
+                                                variant="outline"
+                                                className="px-3 py-1 text-base"
+                                            >
+                                                {levelLabel[item.level]}
+                                            </Badge>
+                                        )}
+                                    </CardAction>
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {item.categories &&
+                                        item.categories.length > 0 ? (
+                                            <>
+                                                {item.categories
+                                                    .slice(0, 2)
+                                                    .map((category) => (
+                                                        <Badge
+                                                            key={category.id}
+                                                            variant="secondary"
+                                                            className="px-3 py-1 text-base"
+                                                        >
+                                                            {category.name}
+                                                        </Badge>
+                                                    ))}
+                                                {item.categories.length > 2 && (
                                                     <Badge
-                                                        key={category.id}
                                                         variant="secondary"
-                                                        className="text-[10px]"
+                                                        className="px-3 py-1 text-base"
                                                     >
-                                                        {category.name}
+                                                        +
+                                                        {item.categories
+                                                            .length - 2}
                                                     </Badge>
-                                                ))}
-                                            {item.categories.length > 2 && (
-                                                <Badge
-                                                    variant="secondary"
-                                                    className="text-[10px]"
-                                                >
-                                                    +
-                                                    {item.categories.length - 2}
-                                                </Badge>
-                                            )}
-                                        </>
-                                    ) : (
-                                        <span className="text-xs font-medium tracking-wide text-slate-500 uppercase">
-                                            Tanpa Topik
-                                        </span>
-                                    )}
+                                                )}
+                                            </>
+                                        ) : (
+                                            <span className="tracking-wide text-slate-500 uppercase">
+                                                Tanpa Topik
+                                            </span>
+                                        )}
+                                    </div>
+                                    <CardTitle>{item.title}</CardTitle>
+                                    <CardDescription className="line-clamp-2">
+                                        {item.description}
+                                    </CardDescription>
+                                </CardHeader>
+                                <div className="flex items-center gap-2 px-6 pb-4 text-sm text-slate-600">
+                                    <BookOpen className="h-4 w-4" />
+                                    <span>{item.modules_count ?? 0} Modul</span>
+                                    <span className="text-slate-300">|</span>
+                                    <Users className="h-4 w-4" />
+                                    <span>{item.members_count ?? 0} Join</span>
                                 </div>
-                                <CardTitle>{item.title}</CardTitle>
-                                <CardDescription className='line-clamp-2'>
-                                    {item.description}
-                                </CardDescription>
-                            </CardHeader>
-                            <div className="flex items-center gap-2 px-6 pb-4 text-sm text-slate-600">
-                                <BookOpen className="h-4 w-4" />
-                                <span>{item.modules_count ?? 0} Modul</span>
-                                <span className="text-slate-300">|</span>
-                                <Users className="h-4 w-4" />
-                                <span>{item.members_count ?? 0} Join</span>
-                            </div>
-                        </Card>
+                            </Card>
+                        </Link>
                     ))}
                 </div>
 

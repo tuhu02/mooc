@@ -21,7 +21,7 @@ class MentorController extends Controller
         $mentors = Mentor::with('user')->cursorPaginate(10);
 
         return Inertia::render('admin/mentors/index', [
-            'mentors' =>  $mentors
+            'mentors' =>  fn() => $mentors
         ]);
     }
 

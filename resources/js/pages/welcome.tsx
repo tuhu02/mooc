@@ -19,7 +19,7 @@ export default function Welcome({
 
     return (
         <div className="min-h-screen bg-white text-slate-900 selection:bg-slate-200 selection:text-slate-900 dark:bg-slate-950 dark:text-slate-100 dark:selection:bg-slate-800 dark:selection:text-slate-100">
-            <Head title="Welcome to IGS MOOC" />
+            <Head title="Selamat Datang di IGS MOOC" />
 
             <WelcomeNav auth={auth} canRegister={canRegister} />
 

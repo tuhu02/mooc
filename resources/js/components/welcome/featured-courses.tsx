@@ -43,14 +43,14 @@ export default function FeaturedCourses({ courses }: Props) {
                 >
                     <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-slate-300 bg-slate-100 px-3 py-1 text-xs font-semibold tracking-wide text-slate-700 uppercase dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-300">
                         <BookOpen className="h-4 w-4" />
-                        Featured Courses
+                        Kursus Unggulan
                     </p>
                     <h2 className="text-3xl font-bold text-slate-900 md:text-4xl dark:text-white">
-                        Explore Popular Learning Paths
+                        Jelajahi Jalur Belajar Populer
                     </h2>
                     <p className="mx-auto mt-4 max-w-2xl text-slate-600 dark:text-slate-400">
-                        Curated programs designed to build practical skills and
-                        portfolio-ready outcomes.
+                        Program terkurasi untuk membangun skill praktis dan
+                        hasil yang siap masuk portofolio.
                     </p>
                 </motion.div>
 
@@ -89,7 +89,7 @@ export default function FeaturedCourses({ courses }: Props) {
                                         </span>
                                     ) : (
                                         <span className="rounded-full bg-slate-200 px-3 py-1 text-xs font-semibold text-slate-700">
-                                            Uncategorized
+                                            Tanpa Kategori
                                         </span>
                                     )}
                                 </div>
@@ -104,7 +104,7 @@ export default function FeaturedCourses({ courses }: Props) {
                                     variant="outline"
                                     className="mt-6 w-full border-slate-300 bg-transparent text-slate-900 hover:bg-slate-100 dark:border-slate-700 dark:text-white dark:hover:bg-slate-800"
                                 >
-                                    View Course
+                                    Lihat Kursus
                                 </Button>
                             </motion.article>
                         );

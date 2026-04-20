@@ -72,6 +72,7 @@ export type Category = {
 export type Course = {
     id: number;
     title: string;
+    slug: string;
     thumbnail: string;
     description: string;
     is_active: boolean;
@@ -82,6 +83,21 @@ export type Course = {
     members_count?: number;
     mentor?: Mentor;
     categories?: Category[];
+};
+
+export type Module = {
+    id: number;
+    course_id: number;
+    sort_order?: number | null;
+    title: string;
+    thumbnail?: string | null;
+    video?: string | null;
+    description?: string | null;
+    duration?: number | null;
+    attachment?: string | null;
+    created_at?: string;
+    updated_at?: string;
+    course?: Course;
 };
 
 
@@ -108,4 +124,12 @@ export type CursorPagination<T> = {
     prev_page_url: string | null;
 };
 
-
+export type TableData = {
+    id: number;
+    header: string;
+    type: string;
+    status: string;
+    target: string;
+    limit: string;
+    reviewer: string;
+};

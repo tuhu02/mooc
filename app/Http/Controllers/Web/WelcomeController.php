@@ -28,7 +28,7 @@ class WelcomeController extends Controller
 
         return Inertia::render('welcome', [
             'canRegister' => app('router')->has('register'),
-            'courses'     => $courses,
+            'courses'     => fn() => $courses,
         ]);
     }
 }

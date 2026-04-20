@@ -12,20 +12,20 @@ export default function FooterSection() {
                         </span>
                     </div>
                     <p className="text-sm text-slate-600 dark:text-slate-400">
-                        © 2026 IGS MOOC. All rights reserved.
+                        © 2026 IGS MOOC. Seluruh hak cipta dilindungi.
                     </p>
                     <div className="flex gap-6 text-sm font-medium text-slate-500 dark:text-slate-400">
                         <a
                             href="#"
                             className="transition hover:text-slate-900 dark:hover:text-white"
                         >
-                            Privacy Policy
+                            Kebijakan Privasi
                         </a>
                         <a
                             href="#"
                             className="transition hover:text-slate-900 dark:hover:text-white"
                         >
-                            Terms of Service
+                            Syarat Layanan
                         </a>
                     </div>
                 </div>

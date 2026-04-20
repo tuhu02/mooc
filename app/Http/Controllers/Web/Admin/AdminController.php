@@ -16,7 +16,7 @@ class AdminController extends Controller
     {
         $admins = Admin::with('user')->cursorPaginate(10);
         return Inertia::render('admin/admins/index', [
-            'admins' =>  $admins
+            'admins' => fn() => $admins
         ]);
     }
 
@@ -54,7 +54,7 @@ class AdminController extends Controller
         $admin->load('user');
 
         return Inertia::render('admin/admins/edit', [
-            'admin' => $admin,
+            'admin' => fn() => $admin,
         ]);
     }
 
