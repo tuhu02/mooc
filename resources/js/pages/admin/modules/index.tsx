@@ -160,12 +160,7 @@ export default function Page() {
 
     const isFiltered = !!filters.course_id;
 
-    const sensors = useSensors(
-        useSensor(PointerSensor),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates,
-        }),
-    );
+    const sensors = useSensors(useSensor(PointerSensor));
 
     const handleDragEnd = (event: DragEndEvent) => {
         if (!isFiltered) return;

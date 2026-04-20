@@ -48,7 +48,7 @@ export default function CourseLearningPage({ course }: Props) {
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Course', href: '/member/courses' },
-        { title: course.title, href: `/member/courses/${course.id}` },
+        { title: course.title, href: `/member/courses/${course.slug}` },
         { title: 'Belajar', href: '' },
     ];
 
