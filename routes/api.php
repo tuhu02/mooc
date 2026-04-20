@@ -30,5 +30,11 @@ Route::post('/new-password', [PasswordResetController::class, 'resetPassword']);
 Route::get('/search', [SearchController::class,'index']);
 
 Route::get('/courses', [CourseController::class, 'index']);
+Route::get('/courses/{course:slug}', [CourseController::class, 'show']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/courses/{course:slug}/enroll', [CourseController::class, 'enroll']);
+    Route::get('/courses/{course:slug}/learning', [CourseController::class, 'learning']);
+});
 
 Route::get('/categories', [CategoryController::class, 'index']);
