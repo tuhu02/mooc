@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\Auth\EmailVerificationController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\LevelController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -21,13 +22,13 @@ Route::post('/login', LoginController::class);
 Route::post('/logout', LogoutController::class)->middleware('auth:sanctum');
 
 Route::post('/email/verify-otp', [EmailVerificationController::class, 'verifyEmail'])->name('api.verification.verify')->middleware('auth:sanctum');
-Route::post('/email/resend-otp', [EmailVerificationController::class, 'resendOtp'])->middleware('throttle:6,1','auth:sanctum')->name('api.verification.resend');
+Route::post('/email/resend-otp', [EmailVerificationController::class, 'resendOtp'])->middleware('throttle:6,1', 'auth:sanctum')->name('api.verification.resend');
 
 Route::post('/reset-password', [PasswordResetController::class, 'sendOtp']);
 Route::post('/otp-check', [PasswordResetController::class, 'checkOtp'])->middleware('throttle:6,1');
-Route::post('/new-password', [PasswordResetController::class, 'resetPassword']);    
+Route::post('/new-password', [PasswordResetController::class, 'resetPassword']);
 
-Route::get('/search', [SearchController::class,'index']);
+Route::get('/search', [SearchController::class, 'index']);
 
 Route::get('/courses', [CourseController::class, 'index']);
 Route::get('/courses/{course:slug}', [CourseController::class, 'show']);
@@ -38,3 +39,4 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::get('/categories', [CategoryController::class, 'index']);
+Route::get('/level', [LevelController::class, 'index']);
