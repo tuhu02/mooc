@@ -2,18 +2,11 @@
 
 import * as React from 'react';
 import {
-    AudioWaveform,
     BookOpen,
-    Bot,
-    Command,
-    Frame,
     GalleryVerticalEnd,
     Layers,
-    Map,
     PieChart,
-    Settings2,
     Shield,
-    SquareTerminal,
     Users,
     UserCheck,
     UserCog,
@@ -141,24 +134,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         title: 'Add Course',
                         url: '/admin/courses/create',
                         isActive: url === '/admin/courses/create',
-                    },
-                ],
-            },
-            {
-                title: 'Modules',
-                url: '/admin/modules',
-                icon: Layers,
-                isActive: url.startsWith('/admin/modules'),
-                items: [
-                    {
-                        title: 'All Modules',
-                        url: '/admin/modules',
-                        isActive: url === '/admin/modules',
-                    },
-                    {
-                        title: 'Add Module',
-                        url: '/admin/modules/create',
-                        isActive: url === '/admin/modules/create',
                     },
                 ],
             },

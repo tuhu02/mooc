@@ -9,6 +9,7 @@ class Module extends Model
     protected $fillable = [
         'course_id',
         'sort_order',
+        'is_preview',
         'title',
         'thumbnail',
         'video',
@@ -17,8 +18,17 @@ class Module extends Model
         'attachment',
     ];
 
+    protected $casts = [
+        'is_preview' => 'boolean',
+    ];
+
     public function course()
     {
         return $this->belongsTo(Course::class);
+    }
+
+    public function assignments()
+    {
+        return $this->hasMany(Assignment::class);
     }
 }

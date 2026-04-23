@@ -35,7 +35,7 @@ Route::get('/courses/{course:slug}', [CourseController::class, 'show']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/courses/{course:slug}/enroll', [CourseController::class, 'enroll']);
-    Route::get('/courses/{course:slug}/learning', [CourseController::class, 'learning']);
+    Route::get('/courses/{course:slug}/modules/{sort_order}', [CourseController::class, 'learning']);
 });
 
 Route::get('/categories', [CategoryController::class, 'index']);

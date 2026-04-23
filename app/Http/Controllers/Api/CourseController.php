@@ -57,13 +57,32 @@ class CourseController extends Controller
 
     public function show(Request $request, Course $course)
     {
+        $member = $request->user()?->member;
+
         $course->load([
             'categories',
             'mentor.user',
-            'modules' => fn($query) => $query->orderBy('sort_order')->orderBy('id'),
+            'modules' => fn($query) => $query
+                ->where('is_preview', true)
+                ->with([
+                    'assignments' => fn($assignmentQuery) => $assignmentQuery->with([
+                        'submissions' => fn($submissionQuery) => $submissionQuery
+                            ->when($member, fn($q) => $q->where('member_id', $member->id))
+                            ->latest()
+                            ->limit(1),
+                    ]),
+                ])
+                ->orderBy('sort_order')
+                ->orderBy('id'),
         ])->loadCount(['modules', 'members']);
 
-        $member = $request->user()?->member;
+        $course->modules->each(function ($module) {
+            $module->assignments->each(function ($assignment) {
+                $assignment->submission = $assignment->submissions->first();
+                $assignment->makeHidden('submissions');
+            });
+        });
+
         $isEnrolled = $member
             ? $member->courses()->where('course_id', $course->id)->exists()
             : false;
@@ -78,13 +97,6 @@ class CourseController extends Controller
     public function enroll(Request $request, Course $course)
     {
         $user = $request->user();
-
-        if (!$user) {
-            return response()->json([
-                'message' => 'Anda harus login terlebih dahulu.',
-            ], 401);
-        }
-
         $member = $user?->member;
 
         if (!$member) {
@@ -93,23 +105,38 @@ class CourseController extends Controller
             ], 404);
         }
 
-        $isEnrolled = $member->courses()->where('course_id', $course->id)->exists();
+        $isEnrolled = $member->courses()
+            ->where('course_id', $course->id)
+            ->exists();
+
+        $firstModuleSortOrder = $course->modules()
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->value('sort_order');
 
         if ($isEnrolled) {
             return response()->json([
-                'message' => 'Anda sudah terdaftar di kursus ini.',
+                'message' => $firstModuleSortOrder === null
+                    ? 'Anda sudah terdaftar, tetapi modul belum tersedia.'
+                    : 'Anda sudah terdaftar di kursus ini.',
                 'is_enrolled' => true,
+                'target_sort_order' => $firstModuleSortOrder,
             ]);
         }
 
-        $member->courses()->attach($course->id, ['enrolled_at' => now()]);
+        $member->courses()->attach($course->id, [
+            'enrolled_at' => now(),
+        ]);
 
         return response()->json([
-            'message' => 'Berhasil mendaftar ke kursus! Mulai belajar sekarang.',
+            'message' => $firstModuleSortOrder === null
+                ? 'Berhasil mendaftar. Modul akan segera tersedia.'
+                : 'Berhasil mendaftar ke kursus! Mulai belajar sekarang.',
             'is_enrolled' => true,
+            'target_sort_order' => $firstModuleSortOrder,
         ], 201);
     }
-
+    
     public function learning(Request $request, Course $course)
     {
         $user = $request->user();
@@ -130,8 +157,25 @@ class CourseController extends Controller
         $course->load([
             'categories',
             'mentor.user',
-            'modules' => fn($query) => $query->orderBy('sort_order')->orderBy('id'),
+            'modules' => fn($query) => $query
+                ->with([
+                    'assignments' => fn($q) => $q->with([
+                        'submissions' => fn($s) => $s
+                            ->where('member_id', $member->id)
+                            ->latest()
+                            ->limit(1),
+                    ]),
+                ])
+                ->orderBy('sort_order')
+                ->orderBy('id'),
         ])->loadCount(['modules', 'members']);
+
+        $course->modules->each(function ($module) {
+            $module->assignments->each(function ($assignment) {
+                $assignment->submission = $assignment->submissions->first();
+                $assignment->makeHidden('submissions');
+            });
+        });
 
         return response()->json([
             'message' => 'Data pembelajaran course berhasil diambil.',

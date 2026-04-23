@@ -47,7 +47,7 @@ const mainNavItems: NavItem[] = [
         href: dashboard(),
     },
     {
-        title: 'Courses',
+        title: 'Kursus',
         href: member.courses.index(),
     },
 ];

@@ -19,7 +19,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { usePage, useForm, Link } from '@inertiajs/react';
+import { usePage, useForm, Link, router } from '@inertiajs/react';
 import { Trash2, Pencil } from 'lucide-react';
 import {
     index,
@@ -27,6 +27,8 @@ import {
     edit,
     destroy as destroyRoute,
 } from '@/routes/admin/courses';
+
+
 import { Course } from '@/types';
 
 export default function Page() {
@@ -90,7 +92,15 @@ export default function Page() {
                         </TableHeader>
                         <TableBody>
                             {courses.map((course) => (
-                                <TableRow key={course.id}>
+                                <TableRow
+                                    key={course.id}
+                                    className="cursor-pointer hover:bg-muted/50"
+                                    onClick={() =>
+                                        router.visit(
+                                            `/admin/courses/${course.id}`,
+                                        )
+                                    }
+                                >
                                     <TableCell>
                                         <img
                                             src={`/storage/${course.thumbnail}`}
@@ -119,6 +129,9 @@ export default function Page() {
                                                 variant="outline"
                                                 size="sm"
                                                 disabled={processing}
+                                                onClick={(e) =>
+                                                    e.stopPropagation()
+                                                }
                                             >
                                                 <Link
                                                     href={edit.url(course.id)}
@@ -127,13 +140,15 @@ export default function Page() {
                                                     Edit
                                                 </Link>
                                             </Button>
+
                                             <Button
                                                 variant="destructive"
                                                 size="sm"
                                                 disabled={processing}
-                                                onClick={() =>
-                                                    handleDelete(course.id)
-                                                }
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleDelete(course.id);
+                                                }}
                                             >
                                                 <Trash2 className="mr-2 h-4 w-4" />
                                                 Delete

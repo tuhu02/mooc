@@ -168,12 +168,12 @@ export default function search({ courses, categories }: Props) {
                                     alt={item.title}
                                     className="relative z-20 aspect-video w-full object-cover"
                                 />
-                                <CardHeader>
+                                <CardHeader className="gap-2">
                                     <CardAction className="flex items-center gap-2">
                                         {item.level && (
                                             <Badge
                                                 variant="outline"
-                                                className="px-3 py-1 text-base"
+                                                className="px-3 py-1"
                                             >
                                                 {levelLabel[item.level]}
                                             </Badge>
@@ -189,7 +189,7 @@ export default function search({ courses, categories }: Props) {
                                                         <Badge
                                                             key={category.id}
                                                             variant="secondary"
-                                                            className="px-3 py-1 text-base"
+                                                            className="px-3 py-1"
                                                         >
                                                             {category.name}
                                                         </Badge>
@@ -197,7 +197,7 @@ export default function search({ courses, categories }: Props) {
                                                 {item.categories.length > 2 && (
                                                     <Badge
                                                         variant="secondary"
-                                                        className="px-3 py-1 text-base"
+                                                        className="px-3 py-1"
                                                     >
                                                         +
                                                         {item.categories
@@ -221,7 +221,9 @@ export default function search({ courses, categories }: Props) {
                                     <span>{item.modules_count ?? 0} Modul</span>
                                     <span className="text-slate-300">|</span>
                                     <Users className="h-4 w-4" />
-                                    <span>{item.members_count ?? 0} Join</span>
+                                    <span>
+                                        {item.members_count ?? 0} Bergabung
+                                    </span>
                                 </div>
                             </Card>
                         </Link>

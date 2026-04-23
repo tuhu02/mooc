@@ -10,32 +10,32 @@ import { SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-    Users,
-    BookOpen,
-    Layers,
-    Tag,
-    TrendingUp,
-    ArrowRight,
-} from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Users, BookOpen, Layers, Tag, ArrowRight } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 import type { Course, Module } from '@/types';
 
 type Props = {
-    stats: {
-        total_users: number;
-        total_members: number;
-        total_mentors: number;
-        total_courses: number;
-        total_modules: number;
-        total_categories: number;
-    };
-    recent_courses: (Course & {
-        modules_count: number;
-        members_count: number;
-    })[];
-    recent_modules: (Module & { course: Course })[];
-    enrolled_members: { course_title: string; member_count: number }[];
+    stats:
+        | {
+              total_users: number;
+              total_members: number;
+              total_mentors: number;
+              total_courses: number;
+              total_modules: number;
+              total_categories: number;
+          }
+        | undefined;
+    recent_courses:
+        | (Course & {
+              modules_count: number;
+              members_count: number;
+          })[]
+        | undefined;
+    recent_modules: (Module & { course: Course })[] | undefined;
+    enrolled_members:
+        | { course_title: string; member_count: number }[]
+        | undefined;
 };
 
 export default function DashboardPage({
@@ -47,37 +47,37 @@ export default function DashboardPage({
     const statCards = [
         {
             title: 'Total Pengguna',
-            value: stats.total_users,
+            value: stats?.total_users,
             icon: Users,
             href: '#',
         },
         {
             title: 'Total Member',
-            value: stats.total_members,
+            value: stats?.total_members,
             icon: Users,
             href: '/admin/members',
         },
         {
             title: 'Total Mentor',
-            value: stats.total_mentors,
+            value: stats?.total_mentors,
             icon: Users,
             href: '/admin/mentors',
         },
         {
             title: 'Total Kursus',
-            value: stats.total_courses,
+            value: stats?.total_courses,
             icon: BookOpen,
             href: '/admin/courses',
         },
         {
             title: 'Total Modul',
-            value: stats.total_modules,
+            value: stats?.total_modules,
             icon: Layers,
             href: '/admin/modules',
         },
         {
             title: 'Total Kategori',
-            value: stats.total_categories,
+            value: stats?.total_categories,
             icon: Tag,
             href: '/admin/categories',
         },
@@ -115,6 +115,7 @@ export default function DashboardPage({
                             informasi penting sistem Anda di sini.
                         </p>
                     </div>
+
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                         {statCards.map((stat) => {
                             const Icon = stat.icon;
@@ -130,19 +131,19 @@ export default function DashboardPage({
                                                 <CardTitle className="text-sm font-medium text-muted-foreground">
                                                     {stat.title}
                                                 </CardTitle>
-                                                <div
-                                                    className={
-                                                        'rounded-lg bg-slate-900 p-2 text-white'
-                                                    }
-                                                >
+                                                <div className="rounded-lg bg-slate-900 p-2 text-white">
                                                     <Icon className="h-4 w-4" />
                                                 </div>
                                             </div>
                                         </CardHeader>
                                         <CardContent>
-                                            <div className="text-2xl font-bold">
-                                                {stat.value}
-                                            </div>
+                                            {stat.value !== undefined ? (
+                                                <div className="text-2xl font-bold">
+                                                    {stat.value}
+                                                </div>
+                                            ) : (
+                                                <Skeleton className="h-8 w-16" />
+                                            )}
                                             <p className="mt-2 text-xs text-muted-foreground">
                                                 Lihat detail →
                                             </p>
@@ -172,7 +173,19 @@ export default function DashboardPage({
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-4">
-                                    {recent_courses.length > 0 ? (
+                                    {recent_courses === undefined ? (
+                                        Array.from({ length: 3 }).map(
+                                            (_, i) => (
+                                                <div
+                                                    key={i}
+                                                    className="space-y-2 border-b pb-3 last:border-b-0 last:pb-0"
+                                                >
+                                                    <Skeleton className="h-4 w-3/4" />
+                                                    <Skeleton className="h-3 w-1/3" />
+                                                </div>
+                                            ),
+                                        )
+                                    ) : recent_courses.length > 0 ? (
                                         recent_courses.map((course) => (
                                             <div
                                                 key={course.id}
@@ -210,13 +223,26 @@ export default function DashboardPage({
                                 </div>
                             </CardContent>
                         </Card>
+
                         <Card>
                             <CardHeader>
                                 <CardTitle>Kursus Paling Populer</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-4">
-                                    {enrolled_members.length > 0 ? (
+                                    {enrolled_members === undefined ? (
+                                        Array.from({ length: 3 }).map(
+                                            (_, i) => (
+                                                <div
+                                                    key={i}
+                                                    className="flex items-center justify-between gap-4 border-b pb-3 last:border-b-0 last:pb-0"
+                                                >
+                                                    <Skeleton className="h-4 w-2/3" />
+                                                    <Skeleton className="h-6 w-16 rounded-full" />
+                                                </div>
+                                            ),
+                                        )
+                                    ) : enrolled_members.length > 0 ? (
                                         enrolled_members.map((item, index) => (
                                             <div
                                                 key={index}
@@ -263,7 +289,17 @@ export default function DashboardPage({
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-3">
-                                {recent_modules.length > 0 ? (
+                                {recent_modules === undefined ? (
+                                    Array.from({ length: 3 }).map((_, i) => (
+                                        <div
+                                            key={i}
+                                            className="space-y-1 border-b pb-3 last:border-b-0 last:pb-0"
+                                        >
+                                            <Skeleton className="h-4 w-3/4" />
+                                            <Skeleton className="h-3 w-1/2" />
+                                        </div>
+                                    ))
+                                ) : recent_modules.length > 0 ? (
                                     recent_modules.map((module) => (
                                         <div
                                             key={module.id}
@@ -275,7 +311,7 @@ export default function DashboardPage({
                                                 </p>
                                                 <p className="mt-1 text-xs text-muted-foreground">
                                                     Kursus:{' '}
-                                                    {module.course?.title ||
+                                                    {module.course?.title ??
                                                         'Unknown'}
                                                 </p>
                                             </div>

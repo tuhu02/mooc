@@ -98,6 +98,32 @@ export type Module = {
     created_at?: string;
     updated_at?: string;
     course?: Course;
+    assignments?: Assignment[];
+};
+
+export type Assignment = {
+    id: number;
+    module_id: number;
+    title: string;
+    description?: string | null;
+    due_date?: string | null;
+    created_at?: string;
+    updated_at?: string;
+    module?: Module;
+};
+
+export type AssignmentSubmission = {
+    id: number;
+    assignment_id: number;
+    member_id: number;
+    submission_name?: string | null;
+    description?: string | null;
+    file?: string | null;
+    file_type?: string | null;
+    submitted_at?: string | null;
+    created_at?: string;
+    updated_at?: string;
+    assignment?: Assignment;
 };
 
 

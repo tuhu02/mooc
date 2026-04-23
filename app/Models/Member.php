@@ -24,4 +24,9 @@ class Member extends Model
             ->withPivot('enrolled_at')
             ->withTimestamps();
     }
+
+    public function assignmentSubmissions()
+    {
+        return $this->hasMany(AssignmentSubmission::class);
+    }
 }

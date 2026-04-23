@@ -10,7 +10,7 @@ class WelcomeController extends Controller
 {
     public function __invoke()
     {
-        $courses = Course::with('categories')
+        $courses = fn() => Course::with('categories')
             ->where('is_active', 1)
             ->where('is_highlight', 1)
             ->get()
@@ -28,7 +28,7 @@ class WelcomeController extends Controller
 
         return Inertia::render('welcome', [
             'canRegister' => app('router')->has('register'),
-            'courses'     => fn() => $courses,
+            'courses'     => $courses,
         ]);
     }
 }

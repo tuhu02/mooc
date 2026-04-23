@@ -16,50 +16,40 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $totalUsers = User::count();
-        $totalMembers = Member::count();
-        $totalMentors = Mentor::count();
-        $totalCourses = Course::count();
-        $totalModules = Module::count();
-        $totalCategories = Category::count();
-
-        $recentCourses = Course::with('mentor.user', 'categories')
-            ->withCount(['modules', 'members'])
-            ->latest()
-            ->limit(5)
-            ->get();
-
-        $recentModules = Module::with('course')
-            ->latest()
-            ->limit(5)
-            ->get();
-
-        $enrolledMembers = DB::table('member_course')
-            ->selectRaw('course_id, COUNT(DISTINCT member_id) as member_count')
-            ->groupBy('course_id')
-            ->orderByDesc('member_count')
-            ->limit(5)
-            ->get()
-            ->map(function ($item) {
-                $course = Course::find($item->course_id);
-                return [
-                    'course_title' => $course?->title ?? 'Unknown',
-                    'member_count' => $item->member_count,
-                ];
-            });
-
         return Inertia::render('admin/dashboard', [
-            'stats' => fn() => [
-                'total_users' => $totalUsers,
-                'total_members' => $totalMembers,
-                'total_mentors' => $totalMentors,
-                'total_courses' => $totalCourses,
-                'total_modules' => $totalModules,
-                'total_categories' => $totalCategories,
-            ],
-            'recent_courses' => fn() => $recentCourses,
-            'recent_modules' => fn() => $recentModules,
-            'enrolled_members' => fn() => $enrolledMembers,
+            'stats' => [
+                'total_users'      => User::count(),
+                'total_members'    => Member::count(),
+                'total_mentors'    => Mentor::count(),
+                'total_courses'    => Course::count(),
+                'total_modules'    => Module::count(),
+                'total_categories' => Category::count(),
+            ],  
+
+            'recent_courses' => Inertia::defer(
+                fn() => Course::with('mentor.user', 'categories')
+                    ->withCount(['modules', 'members'])
+                    ->latest()
+                    ->limit(5)
+                    ->get()
+            ),
+
+            'recent_modules' => Inertia::defer(
+                fn() => Module::with('course')
+                    ->latest()
+                    ->limit(5)
+                    ->get()
+            ),
+
+            'enrolled_members' => Inertia::defer(
+                fn() => DB::table('member_course')
+                    ->join('courses', 'courses.id', '=', 'member_course.course_id')
+                    ->selectRaw('courses.title as course_title, COUNT(DISTINCT member_id) as member_count')
+                    ->groupBy('member_course.course_id', 'courses.title')
+                    ->orderByDesc('member_count')
+                    ->limit(5)
+                    ->get()
+            ),
         ]);
     }
 }

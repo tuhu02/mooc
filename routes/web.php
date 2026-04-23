@@ -8,6 +8,7 @@ use App\Http\Controllers\Web\Admin\MemberController;
 use App\Http\Controllers\Web\Admin\MentorController;
 use App\Http\Controllers\Web\Admin\ModuleController;
 use App\Http\Controllers\Web\Admin\RoleController;
+use App\Http\Controllers\Web\Member\AssignmentSubmissionController;
 use App\Http\Controllers\Web\Member\CourseController;
 use App\Http\Controllers\Web\WelcomeController;
 use App\Http\Middleware\AdminMiddleware;
@@ -19,7 +20,7 @@ use Inertia\Inertia;
 Route::get('/', WelcomeController::class)->name('welcome');
 
 // Route Member
-Route::middleware(['auth', MemberMiddleware::class])->prefix('member')->name('member.')->group(function () {
+Route::middleware(['auth'])->prefix('member')->name('member.')->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('member/dashboard');
     })->name('dashboard');
@@ -27,7 +28,9 @@ Route::middleware(['auth', MemberMiddleware::class])->prefix('member')->name('me
     Route::get('courses', [CourseController::class, 'index'])->name('courses.index');
     Route::get('courses/{course:slug}', [CourseController::class, 'show'])->name('courses.show');
     Route::post('courses/{course:slug}/enroll', [CourseController::class, 'enroll'])->name('courses.enroll');
-    Route::get('learning/{course:slug}', [CourseController::class, 'learning'])->name('courses.learning');
+    Route::get('courses/{course:slug}/modules/{sort_order?}', [CourseController::class, 'learning'])->name('courses.learning');
+    Route::post('assignments/{assignment}/submissions', [AssignmentSubmissionController::class, 'store'])->name('assignments.submissions.store');
+    Route::delete('assignments/{assignment}/submissions/{submission}', [AssignmentSubmissionController::class, 'destroy'])->name('assignments.submissions.destroy');
 });
 
 // Route Mentor
@@ -46,10 +49,8 @@ Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->name('admi
     Route::resource('/mentors', MentorController::class)->except(['show']);
     Route::resource('/admins', AdminController::class)->except(['show']);
     Route::resource('/categories', CategoryController::class)->except(['show']);
-    Route::resource('/courses', AdminCourseController::class)->except(['show']);
-
-    Route::patch('/modules/reorder', [ModuleController::class, 'reorder'])->name('modules.reorder');
-
+    Route::resource('/courses', AdminCourseController::class);
+    Route::post('/modules/reorder', [ModuleController::class, 'reorder'])->name('modules.reorder');
     Route::resource('/modules', ModuleController::class)->except(['show']);
 });
 

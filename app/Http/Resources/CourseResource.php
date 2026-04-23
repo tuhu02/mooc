@@ -38,18 +38,25 @@ class CourseResource extends JsonResource
                     ];
                 });
             }, []),
+
             'modules' => $this->whenLoaded('modules', function () {
                 return $this->modules->map(function ($module) {
-                    return [
+                    $data = [
                         'id' => $module->id,
                         'sort_order' => $module->sort_order,
                         'title' => $module->title,
-                        'thumbnail' => $module->thumbnail,
-                        'video' => $module->video,
-                        'description' => $module->description,
-                        'duration' => $module->duration,
-                        'attachment' => $module->attachment,
+                        'is_preview' => $module->is_preview,
                     ];
+
+                    if ($module->relationLoaded('assignments') || isset($module->video)) {
+                        $data['thumbnail'] = $module->thumbnail;
+                        $data['video'] = $module->video;
+                        $data['description'] = $module->description;
+                        $data['duration'] = $module->duration;
+                        $data['attachment'] = $module->attachment;
+                    }
+
+                    return $data;
                 });
             }, []),
             'modules_count' => $this->whenCounted('modules'),

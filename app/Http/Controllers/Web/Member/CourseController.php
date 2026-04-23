@@ -16,7 +16,7 @@ class CourseController extends Controller
     {
         $search = trim((string) $request->input('q', ''));
 
-        $courses = Course::query()
+        $courses = fn() => Course::query()
             ->with('categories')
             ->withCount(['modules', 'members'])
             ->when($search !== '', function ($query) use ($search) {
@@ -41,9 +41,9 @@ class CourseController extends Controller
             ->withQueryString();
 
         return Inertia::render('member/course', [
-            'categories' => Category::all(),
+            'categories' => fn() => Category::all(),
             'query' => fn() => $search,
-            'courses' => fn() => $courses,
+            'courses' => $courses,
         ]);
     }
 
@@ -56,36 +56,62 @@ class CourseController extends Controller
         $course->load([
             'categories',
             'mentor.user',
-            'modules' => fn($query) => $query->orderBy('sort_order')->orderBy('id'),
+            'modules' => fn($query) => $query
+                ->where('is_preview', true)
+                ->with([
+                    'assignments' => fn($assignmentQuery) => $assignmentQuery->with([
+                        'submissions' => fn($submissionQuery) => $submissionQuery
+                            ->where('member_id', $member->id)
+                            ->latest()
+                            ->limit(1),
+                    ]),
+                ])
+                ->orderBy('sort_order')
+                ->orderBy('id'),
         ])->loadCount(['modules', 'members']);
 
+        $course->modules->each(function ($module) {
+            $module->assignments->each(function ($assignment) {
+                $assignment->submission = $assignment->submissions->first();
+                unset($assignment->submissions);
+            });
+        });
+
         return Inertia::render('member/course-detail', [
-            'course' => fn() => $course,
+            'course' => $course,
             'isEnrolled' => $isEnrolled,
         ]);
     }
+
 
     public function enroll(Course $course)
     {
         $user = Auth::user();
         $member = $user->member;
 
-        if (!$member) {
-            return back()->with('error', 'Member profile not found.');
-        }
+        $firstModuleSortOrder = $course->modules()
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->value('sort_order');
+
+        $targetSortOrder = $firstPreviewSortOrder ?? $firstModuleSortOrder;
 
         if ($member->courses()->where('course_id', $course->id)->exists()) {
-            return redirect()->route('member.courses.learning', $course->slug)
-                ->with('info', 'Anda sudah terdaftar di kursus ini.');
+            return redirect()->route('member.courses.learning', [
+                'course' => $course->slug,
+                'sort_order' => $targetSortOrder,
+            ])->with('info', 'Anda sudah terdaftar di kursus ini.');
         }
 
         $member->courses()->attach($course->id, ['enrolled_at' => now()]);
 
-        return redirect()->route('member.courses.learning', $course->slug)
-            ->with('success', 'Berhasil mendaftar ke kursus! Mulai belajar sekarang.');
+        return redirect()->route('member.courses.learning', [
+            'course' => $course->slug,
+            'sort_order' => $targetSortOrder,
+        ])->with('success', 'Berhasil mendaftar ke kursus! Mulai belajar sekarang.');
     }
 
-    public function learning(Course $course)
+    public function learning(Course $course, ?int $sort_order = null)
     {
         $user = Auth::user();
         $member = $user->member;
@@ -98,11 +124,29 @@ class CourseController extends Controller
         $course->load([
             'categories',
             'mentor.user',
-            'modules' => fn($query) => $query->orderBy('sort_order')->orderBy('id'),
+            'modules' => fn($query) => $query
+                ->with([
+                    'assignments' => fn($q) => $q->with([
+                        'submissions' => fn($s) => $s
+                            ->where('member_id', $member->id)
+                            ->latest()
+                            ->limit(1),
+                    ]),
+                ])
+                ->orderBy('sort_order')
+                ->orderBy('id'),
         ])->loadCount(['modules', 'members']);
+
+        $course->modules->each(function ($module) {
+            $module->assignments->each(function ($assignment) {
+                $assignment->submission = $assignment->submissions->first();
+                unset($assignment->submissions);
+            });
+        });
 
         return Inertia::render('member/course-learning', [
             'course' => fn() => $course,
+            'initialModuleSortOrder' => $sort_order,
         ]);
     }
 }

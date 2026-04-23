@@ -129,6 +129,19 @@ class CourseController extends Controller
             ->with('success', 'Course Successfully updated!');
     }
 
+    public function show(Course $course)
+    {
+        $course->load([
+            'mentor.user',
+            'categories',
+            'modules' => fn($query) => $query->with('assignments')->orderBy('sort_order')->orderBy('id'),
+        ]);
+
+        return Inertia::render('admin/courses/show', [
+            'course' => $course,
+        ]);
+    }
+
     public function destroy(Course $course)
     {
         if ($course->thumbnail) {
