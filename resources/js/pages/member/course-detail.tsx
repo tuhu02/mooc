@@ -225,10 +225,6 @@ export default function CourseDetailPage({
                                                         {module.title}
                                                     </span>
                                                 </div>
-
-                                                <Badge className="shrink-0 bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
-                                                    Preview Gratis
-                                                </Badge>
                                             </div>
                                         </AccordionTrigger>
 
