@@ -32,9 +32,11 @@ import { useCurrentUrl } from '@/hooks/use-current-url';
 import { useInitials } from '@/hooks/use-initials';
 import { cn, toUrl } from '@/lib/utils';
 import type { BreadcrumbItem, NavItem } from '@/types';
+import type { User } from '@/types/auth';
 import AppLogo from '@/components/member/app-logo';
 import AppLogoIcon from '@/components/member/app-logo-icon';
 import member, { dashboard } from '@/routes/member';
+import { login, register } from '@/routes';
 import { FormEvent, useState } from 'react';
 
 type Props = {
@@ -56,11 +58,15 @@ const activeItemStyles =
     'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100';
 
 export function AppHeader({ breadcrumbs = [] }: Props) {
-    const page = usePage();
+    const page = usePage<{ auth: { user: User | null } }>();
     const { auth } = page.props;
+    const user = auth?.user ?? null;
     const getInitials = useInitials();
     const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
     const [keyword, setKeyword] = useState('');
+    const navItems = user
+        ? mainNavItems
+        : mainNavItems.filter((item) => item.title !== 'Dashboard');
 
     const handleSearch = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -122,7 +128,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                     </div>
 
                     <Link
-                        href={dashboard()}
+                        href={user ? dashboard() : member.courses.index()}
                         prefetch
                         className="flex items-center space-x-2"
                     >
@@ -133,7 +139,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                     <div className="ml-6 hidden h-full items-center space-x-6 lg:flex">
                         <NavigationMenu className="flex h-full items-stretch">
                             <NavigationMenuList className="flex h-full items-stretch space-x-2">
-                                {mainNavItems.map((item, index) => (
+                                {navItems.map((item, index) => (
                                     <NavigationMenuItem
                                         key={index}
                                         className="relative flex h-full items-center"
@@ -181,31 +187,54 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                 />
                             </form>
                         </div>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant="ghost"
-                                    className="size-10 rounded-full p-1"
+                        {user ? (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="ghost"
+                                        className="size-10 rounded-full p-1"
+                                    >
+                                        <Avatar className="size-8 overflow-hidden rounded-full">
+                                            <AvatarImage
+                                                src={
+                                                    user.member?.avatar
+                                                        ? `/storage/${user.member.avatar}`
+                                                        : ''
+                                                }
+                                                alt={user.name ?? 'User'}
+                                            />
+                                            <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
+                                                {getInitials(
+                                                    user.name ?? 'User',
+                                                )}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent
+                                    className="w-56"
+                                    align="end"
                                 >
-                                    <Avatar className="size-8 overflow-hidden rounded-full">
-                                        <AvatarImage
-                                            src={
-                                                auth.user.member?.avatar
-                                                    ? `/storage/${auth.user.member.avatar}`
-                                                    : ''
-                                            }
-                                            alt={auth.user.name}
-                                        />
-                                        <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
-                                            {getInitials(auth.user.name)}
-                                        </AvatarFallback>
-                                    </Avatar>
+                                    <UserMenuContent user={user} />
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        ) : (
+                            <>
+                                <Link
+                                    href={login().url}
+                                    className="px-2 text-sm font-medium text-slate-700 hover:text-slate-900"
+                                >
+                                    Masuk
+                                </Link>
+                                <Button
+                                    asChild
+                                    size="sm"
+                                    className="rounded-full px-4"
+                                >
+                                    <Link href={register().url}>Daftar</Link>
                                 </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-56" align="end">
-                                <UserMenuContent user={auth.user} />
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

@@ -48,47 +48,10 @@ class ModuleController extends Controller
             }
         });
 
-        if ($request->input('from') === 'course-show') {
-            return Redirect::route('admin.courses.show', $validated['course_id'])
-                ->with('success', 'Urutan modul berhasil diperbarui!');
-        }
-
-        return Redirect::back()->with('success', 'Urutan modul berhasil diperbarui!');
+        return Redirect::route('admin.courses.show', $validated['course_id'])
+            ->with('success', 'Urutan modul berhasil diperbarui!');
     }
 
-    public function index(Request $request)
-    {
-        $courseId = $request->integer('course_id');
-
-        $modules = fn() => Module::with('course')
-            ->when($request->filled('course_id'), function ($query) use ($courseId) {
-                $query->where('course_id', $courseId);
-            })
-            ->orderBy('course_id')
-            ->orderBy('sort_order')
-            ->orderBy('id')
-            ->cursorPaginate(10)
-            ->withQueryString();
-
-        return Inertia::render('admin/modules/index', [
-            'modules' =>  $modules,
-            'courses' => fn() => Course::orderBy('title')->get(['id', 'title']),
-            'filters' => [
-                'course_id' => $request->input('course_id', ''),
-            ],
-        ]);
-    }
-
-    public function create(Request $request)
-    {
-        $courseId = $request->integer('course_id');
-
-        return Inertia::render('admin/modules/create', [
-            'courses' => Course::orderBy('title')->get(['id', 'title']),
-            'selectedCourseId' => $courseId ?: null,
-            'from' => $request->query('from'),
-        ]);
-    }
 
     public function store(Request $request)
     {
@@ -140,29 +103,10 @@ class ModuleController extends Controller
             ]);
         }
 
-        if ($request->input('from') === 'course-show') {
-            return Redirect::route('admin.courses.show', $module->course_id)
-                ->with('success', 'Module Successfully Created!');
-        }
-
-        return Redirect::route('admin.modules.index', [
-            'course_id' => $module->course_id,
-        ])->with('success', 'Module Successfully Created!');
+        return Redirect::route('admin.courses.show', $module->course_id)
+            ->with('success', 'Modul berhasil ditambahkan!');
     }
 
-    public function edit(Request $request, Module $module)
-    {
-        $module->load('course');
-
-        return Inertia::render('admin/modules/edit', [
-            'module' => $module,
-            'courses' => Course::orderBy('title')->get(['id', 'title']),
-            'filters' => [
-                'course_id' => $request->query('course_id', ''),
-            ],
-            'from' => $request->query('from'),
-        ]);
-    }
 
     public function update(Request $request, Module $module)
     {
@@ -174,7 +118,7 @@ class ModuleController extends Controller
             'description' => 'nullable|string',
             'duration' => 'nullable|integer|min:0',
             'attachment' => 'nullable|file|max:10240',
-            'is_preview' => 'boolean', 
+            'is_preview' => 'boolean',
             'assignment_title' => 'nullable|string|max:255',
             'assignment_instruction' => 'nullable|string',
             'assignment_type' => 'nullable|string|max:100',
@@ -232,19 +176,11 @@ class ModuleController extends Controller
             ]);
         }
 
-        if ($request->input('from') === 'course-show') {
-            return Redirect::route('admin.courses.show', $module->course_id)
-                ->with('success', 'Module Successfully Updated!');
-        }
-
-        $filterCourseId = $request->query('course_id', $module->course_id);
-
-        return Redirect::route('admin.modules.index', [
-            'course_id' => $filterCourseId !== null && $filterCourseId !== '' ? $filterCourseId : null,
-        ])->with('success', 'Module Successfully Updated!');
+        return Redirect::route('admin.courses.show', $module->course_id)
+            ->with('success', 'Modul berhasil diperbarui!');
     }
 
-    public function destroy(Request $request, Module $module)
+    public function destroy(Module $module)
     {
         $courseId = $module->course_id;
 
@@ -258,11 +194,7 @@ class ModuleController extends Controller
 
         $module->delete();
 
-        if ($request->input('from') === 'course-show') {
-            return Redirect::route('admin.courses.show', $courseId)
-                ->with('success', 'Module Successfully Deleted!');
-        }
-
-        return redirect()->back()->with('success', 'Module Successfully Deleted!');
+        return Redirect::route('admin.courses.show', $courseId)
+            ->with('success', 'Modul berhasil dihapus!');
     }
 }

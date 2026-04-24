@@ -1,6 +1,12 @@
 import AdminLayout from '@/layouts/admin-layout';
 import { useEffect, useState } from 'react';
 import { useForm, usePage, router } from '@inertiajs/react';
+import type {
+    CourseModule,
+    CourseShowPageProps,
+    CreateCourseModuleForm,
+    EditCourseModuleForm,
+} from '@/types/course-modules';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,14 +18,6 @@ import {
     CardDescription,
 } from '@/components/ui/card';
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
-import {
     Dialog,
     DialogContent,
     DialogDescription,
@@ -27,92 +25,21 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import MDEditor from '@uiw/react-md-editor';
-import { Pencil, Plus, Trash2, BookOpen, GripVertical } from 'lucide-react';
-import {
-    DndContext,
-    PointerSensor,
-    closestCenter,
-    useSensor,
-    useSensors,
-    type DragEndEvent,
-} from '@dnd-kit/core';
-import {
-    SortableContext,
-    useSortable,
-    verticalListSortingStrategy,
-    arrayMove,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { destroy, store, update } from '@/routes/admin/modules';
-
-type Module = {
-    id: number;
-    title: string;
-    description?: string | null;
-    video?: string | null;
-    duration?: number | null;
-    thumbnail?: string | null;
-    attachment?: string | null;
-    is_preview: boolean;
-    sort_order: number;
-    assignments?: {
-        id: number;
-        title: string;
-        description?: string | null;
-        type?: string | null;
-    }[];
-};
-
-type Course = {
-    id: number;
-    title: string;
-    description?: string;
-    modules: Module[];
-};
-
-type CreateModuleForm = {
-    course_id: number;
-    title: string;
-    description: string;
-    video: string;
-    is_preview: boolean;
-    duration: string;
-    thumbnail: File | null;
-    attachment: File | null;
-    assignment_title: string;
-    assignment_instruction: string;
-    assignment_type: string;
-    from: 'course-show';
-};
-
-type EditModuleForm = {
-    _method: 'PUT';
-    course_id: number;
-    title: string;
-    description: string;
-    video: string;
-    duration: string;
-    thumbnail: File | null;
-    attachment: File | null;
-    is_preview: boolean;
-    assignment_title: string;
-    assignment_instruction: string;
-    assignment_type: string;
-    from: 'course-show';
-};
+import { Plus, BookOpen } from 'lucide-react';
+import { type DragEndEvent } from '@dnd-kit/core';
+import { arrayMove } from '@dnd-kit/sortable';
+import { destroy } from '@/routes/admin/modules';
+import { CourseModulesTable } from '@/components/admin/course-modules-table';
 
 export default function Show() {
-    const { course } = usePage<{ course: Course }>().props;
-    const [modules, setModules] = useState<Module[]>(course.modules ?? []);
+    const { course } = usePage<CourseShowPageProps>().props;
+    const [modules, setModules] = useState<CourseModule[]>(
+        course.modules ?? [],
+    );
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [isEditOpen, setIsEditOpen] = useState(false);
-    const [selectedModule, setSelectedModule] = useState<Module | null>(null);
-    const sensors = useSensors(
-        useSensor(PointerSensor, {
-            activationConstraint: {
-                distance: 6,
-            },
-        }),
+    const [selectedModule, setSelectedModule] = useState<CourseModule | null>(
+        null,
     );
 
     useEffect(() => {
@@ -127,7 +54,7 @@ export default function Show() {
         errors: createErrors,
         reset: resetCreate,
         clearErrors: clearCreateErrors,
-    } = useForm<CreateModuleForm>({
+    } = useForm<CreateCourseModuleForm>({
         course_id: course.id,
         title: '',
         description: '',
@@ -150,7 +77,7 @@ export default function Show() {
         errors: editErrors,
         reset: resetEdit,
         clearErrors: clearEditErrors,
-    } = useForm<EditModuleForm>({
+    } = useForm<EditCourseModuleForm>({
         _method: 'PUT',
         course_id: course.id,
         title: '',
@@ -174,7 +101,7 @@ export default function Show() {
         setCreateData('from', 'course-show');
     };
 
-    const openEditModal = (module: Module) => {
+    const openEditModal = (module: CourseModule) => {
         const assignment = module.assignments?.[0];
 
         setSelectedModule(module);
@@ -259,7 +186,7 @@ export default function Show() {
             return;
         }
 
-        const previousModules = modules;    
+        const previousModules = modules;
         const reorderedModules = arrayMove(modules, oldIndex, newIndex).map(
             (module, index) => ({
                 ...module,
@@ -321,49 +248,12 @@ export default function Show() {
 
                     <CardContent>
                         {modules?.length > 0 ? (
-                            <div className="overflow-hidden rounded-xl border">
-                                <DndContext
-                                    sensors={sensors}
-                                    collisionDetection={closestCenter}
-                                    onDragEnd={handleDragEnd}
-                                >
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                                <TableHead className="w-20">
-                                                    Urutan
-                                                </TableHead>
-                                                <TableHead>
-                                                    Judul Modul
-                                                </TableHead>
-                                                <TableHead className="w-45 text-right">
-                                                    Aksi
-                                                </TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-
-                                        <TableBody>
-                                            <SortableContext
-                                                items={modules.map(
-                                                    (module) => module.id,
-                                                )}
-                                                strategy={
-                                                    verticalListSortingStrategy
-                                                }
-                                            >
-                                                {modules.map((module) => (
-                                                    <SortableModuleRow
-                                                        key={module.id}
-                                                        module={module}
-                                                        onEdit={openEditModal}
-                                                        onDelete={handleDelete}
-                                                    />
-                                                ))}
-                                            </SortableContext>
-                                        </TableBody>
-                                    </Table>
-                                </DndContext>
-                            </div>
+                            <CourseModulesTable
+                                modules={modules}
+                                onEdit={openEditModal}
+                                onDelete={handleDelete}
+                                onDragEnd={handleDragEnd}
+                            />
                         ) : (
                             <div className="rounded-xl border border-dashed p-10 text-center">
                                 <p className="text-sm text-slate-500">
@@ -381,7 +271,7 @@ export default function Show() {
                     </CardContent>
                 </Card>
 
-                {/* Modal Create */}
+                {/* modal create */}
                 <Dialog
                     open={isCreateOpen}
                     onOpenChange={(open) => {
@@ -616,7 +506,6 @@ export default function Show() {
                                 )}
                             </div>
 
-    
                             <div className="flex items-center gap-3">
                                 <input
                                     id="create-is-preview"
@@ -652,7 +541,7 @@ export default function Show() {
                     </DialogContent>
                 </Dialog>
 
-                {/* Modal Edit */}
+                {/* modal edit */}
                 <Dialog
                     open={isEditOpen}
                     onOpenChange={(open) => {
@@ -913,85 +802,5 @@ export default function Show() {
                 </Dialog>
             </div>
         </AdminLayout>
-    );
-}
-
-type SortableModuleRowProps = {
-    module: Module;
-    onEdit: (module: Module) => void;
-    onDelete: (moduleId: number) => void;
-};
-
-function SortableModuleRow({
-    module,
-    onEdit,
-    onDelete,
-}: SortableModuleRowProps) {
-    const {
-        attributes,
-        listeners,
-        setNodeRef,
-        transform,
-        transition,
-        isDragging,
-    } = useSortable({ id: module.id });
-
-    const style = {
-        transform: CSS.Transform.toString(transform),
-        transition,
-    };
-
-    return (
-        <TableRow
-            ref={setNodeRef}
-            style={style}
-            className={isDragging ? 'bg-muted/40' : ''}
-        >
-            <TableCell className="font-medium">
-                <button
-                    type="button"
-                    className="inline-flex items-center gap-2 text-slate-700"
-                    {...attributes}
-                    {...listeners}
-                >
-                    <GripVertical className="h-4 w-4 text-slate-400" />
-                    {module.sort_order}
-                </button>
-            </TableCell>
-
-            {/* ✅ Tambah badge Preview */}
-            <TableCell>
-                <div className="flex items-center gap-2">
-                    {module.title}
-                    {module.is_preview && (
-                        <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
-                            Preview
-                        </span>
-                    )}
-                </div>
-            </TableCell>
-
-            <TableCell>
-                <div className="flex justify-end gap-2">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => onEdit(module)}
-                    >
-                        <Pencil className="mr-2 h-4 w-4" />
-                        Edit
-                    </Button>
-
-                    <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => onDelete(module.id)}
-                    >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Hapus
-                    </Button>
-                </div>
-            </TableCell>
-        </TableRow>
     );
 }

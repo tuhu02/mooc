@@ -50,7 +50,8 @@ class CourseController extends Controller
     public function show(Course $course)
     {
         $user = Auth::user();
-        $member = $user->member;
+        $member = $user?->member;
+        $memberId = $member?->id;
         $isEnrolled = $member ? $member->courses()->where('course_id', $course->id)->exists() : false;
 
         $course->load([
@@ -61,7 +62,11 @@ class CourseController extends Controller
                 ->with([
                     'assignments' => fn($assignmentQuery) => $assignmentQuery->with([
                         'submissions' => fn($submissionQuery) => $submissionQuery
-                            ->where('member_id', $member->id)
+                            ->when(
+                                $memberId,
+                                fn($q) => $q->where('member_id', $memberId),
+                                fn($q) => $q->whereRaw('1 = 0'),
+                            )
                             ->latest()
                             ->limit(1),
                     ]),
@@ -88,6 +93,12 @@ class CourseController extends Controller
     {
         $user = Auth::user();
         $member = $user->member;
+
+        $firstPreviewSortOrder = $course->modules()
+            ->where('is_preview', true)
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->value('sort_order');
 
         $firstModuleSortOrder = $course->modules()
             ->orderBy('sort_order')
@@ -123,7 +134,6 @@ class CourseController extends Controller
 
         $course->load([
             'categories',
-            'mentor.user',
             'modules' => fn($query) => $query
                 ->with([
                     'assignments' => fn($q) => $q->with([
@@ -137,16 +147,75 @@ class CourseController extends Controller
                 ->orderBy('id'),
         ])->loadCount(['modules', 'members']);
 
-        $course->modules->each(function ($module) {
-            $module->assignments->each(function ($assignment) {
+        foreach ($course->modules as $module) {
+            foreach ($module->assignments as $assignment) {
                 $assignment->submission = $assignment->submissions->first();
                 unset($assignment->submissions);
-            });
-        });
+            }
+        }
+
+        $firstModuleSortOrder = $course->modules->first()?->sort_order;
+        $targetSortOrder = $sort_order ?? $firstModuleSortOrder;
+
+        $currentModule = $targetSortOrder === null
+            ? null
+            : $course->modules->firstWhere('sort_order', $targetSortOrder);
+
+        if ($targetSortOrder !== null && !$currentModule) {
+            abort(404, 'Modul dengan urutan tersebut tidak ditemukan.');
+        }
+
+        $moduleIndex = $currentModule
+            ? $course->modules->search(fn($module) => $module->id === $currentModule->id)
+            : false;
+
+        $previousModule = $moduleIndex !== false && $moduleIndex > 0
+            ? $course->modules[$moduleIndex - 1]
+            : null;
+        $nextModule = $moduleIndex !== false && $moduleIndex < ($course->modules->count() - 1)
+            ? $course->modules[$moduleIndex + 1]
+            : null;
 
         return Inertia::render('member/course-learning', [
-            'course' => fn() => $course,
-            'initialModuleSortOrder' => $sort_order,
+            'course' => [
+                'id' => $course->id,
+                'title' => $course->title,
+                'slug' => $course->slug,
+                'thumbnail' => $course->thumbnail,
+                'description' => $course->description,
+                'level' => $course->level,
+                'is_active' => $course->is_active,
+                'is_highlight' => $course->is_highlight,
+                'categories' => $course->categories->map(fn($category) => [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                ]),
+                'modules_count' => $course->modules_count,
+                'members_count' => $course->members_count,
+            ],
+            'initialModuleSortOrder' => $currentModule?->sort_order,
+            'currentModule' => $currentModule ? [
+                'id' => $currentModule->id,
+                'sort_order' => $currentModule->sort_order,
+                'title' => $currentModule->title,
+                'thumbnail' => $currentModule->thumbnail,
+                'video' => $currentModule->video,
+                'description' => $currentModule->description,
+                'duration' => $currentModule->duration,
+                'attachment' => $currentModule->attachment,
+                'is_preview' => $currentModule->is_preview,
+                'assignments' => $currentModule->assignments,
+            ] : null,
+            'navigation' => [
+                'previous' => $previousModule ? [
+                    'sort_order' => $previousModule->sort_order,
+                    'title' => $previousModule->title,
+                ] : null,
+                'next' => $nextModule ? [
+                    'sort_order' => $nextModule->sort_order,
+                    'title' => $nextModule->title,
+                ] : null,
+            ],
         ]);
     }
 }

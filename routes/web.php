@@ -20,17 +20,20 @@ use Inertia\Inertia;
 Route::get('/', WelcomeController::class)->name('welcome');
 
 // Route Member
-Route::middleware(['auth'])->prefix('member')->name('member.')->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('member/dashboard');
-    })->name('dashboard');
-
+Route::prefix('member')->name('member.')->group(function () {
     Route::get('courses', [CourseController::class, 'index'])->name('courses.index');
     Route::get('courses/{course:slug}', [CourseController::class, 'show'])->name('courses.show');
-    Route::post('courses/{course:slug}/enroll', [CourseController::class, 'enroll'])->name('courses.enroll');
-    Route::get('courses/{course:slug}/modules/{sort_order?}', [CourseController::class, 'learning'])->name('courses.learning');
-    Route::post('assignments/{assignment}/submissions', [AssignmentSubmissionController::class, 'store'])->name('assignments.submissions.store');
-    Route::delete('assignments/{assignment}/submissions/{submission}', [AssignmentSubmissionController::class, 'destroy'])->name('assignments.submissions.destroy');
+
+    Route::middleware(['auth', MemberMiddleware::class])->group(function () {
+        Route::get('dashboard', function () {
+            return Inertia::render('member/dashboard');
+        })->name('dashboard');
+
+        Route::post('courses/{course:slug}/enroll', [CourseController::class, 'enroll'])->name('courses.enroll');
+        Route::get('courses/{course:slug}/modules/{sort_order?}', [CourseController::class, 'learning'])->name('courses.learning');
+        Route::post('assignments/{assignment}/submissions', [AssignmentSubmissionController::class, 'store'])->name('assignments.submissions.store');
+        Route::delete('assignments/{assignment}/submissions/{submission}', [AssignmentSubmissionController::class, 'destroy'])->name('assignments.submissions.destroy');
+    });
 });
 
 // Route Mentor

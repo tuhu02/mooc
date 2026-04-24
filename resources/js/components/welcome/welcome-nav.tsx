@@ -79,7 +79,7 @@ export default function WelcomeNav({ auth, canRegister = true }: Props) {
                     </Link>
 
                     <Link
-                        href="/courses"
+                        href={member.courses.index().url}
                         className="text-sm font-semibold text-slate-700 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
                     >
                         Kursus

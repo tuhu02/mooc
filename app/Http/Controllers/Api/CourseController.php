@@ -136,8 +136,8 @@ class CourseController extends Controller
             'target_sort_order' => $firstModuleSortOrder,
         ], 201);
     }
-    
-    public function learning(Request $request, Course $course)
+
+    public function learning(Request $request, Course $course, int $sort_order)
     {
         $user = $request->user();
         $member = $user?->member;
@@ -156,7 +156,6 @@ class CourseController extends Controller
 
         $course->load([
             'categories',
-            'mentor.user',
             'modules' => fn($query) => $query
                 ->with([
                     'assignments' => fn($q) => $q->with([
@@ -177,9 +176,65 @@ class CourseController extends Controller
             });
         });
 
+        $currentModule = $course->modules->firstWhere('sort_order', $sort_order);
+
+        if (!$currentModule) {
+            return response()->json([
+                'message' => 'Modul dengan urutan tersebut tidak ditemukan.',
+            ], 404);
+        }
+
+        $moduleIndex = $course->modules->search(
+            fn($module) => $module->sort_order === $sort_order
+        );
+
+        $previousModule = $moduleIndex !== false && $moduleIndex > 0
+            ? $course->modules[$moduleIndex - 1]
+            : null;
+        $nextModule = $moduleIndex !== false && $moduleIndex < ($course->modules->count() - 1)
+            ? $course->modules[$moduleIndex + 1]
+            : null;
+
         return response()->json([
             'message' => 'Data pembelajaran course berhasil diambil.',
-            'course' => new CourseResource($course),
+            'course' => [
+                'id' => $course->id,
+                'title' => $course->title,
+                'slug' => $course->slug,
+                'thumbnail' => $course->thumbnail,
+                'description' => $course->description,
+                'level' => $course->level,
+                'is_active' => $course->is_active,
+                'is_highlight' => $course->is_highlight,
+                'categories' => $course->categories->map(fn($category) => [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                ]),
+                'modules_count' => $course->modules_count,
+                'members_count' => $course->members_count,
+            ],
+            'current_module' => [
+                'id' => $currentModule->id,
+                'sort_order' => $currentModule->sort_order,
+                'title' => $currentModule->title,
+                'thumbnail' => $currentModule->thumbnail,
+                'video' => $currentModule->video,
+                'description' => $currentModule->description,
+                'duration' => $currentModule->duration,
+                'attachment' => $currentModule->attachment,
+                'is_preview' => $currentModule->is_preview,
+                'assignments' => $currentModule->assignments,
+            ],
+            'navigation' => [
+                'previous' => $previousModule ? [
+                    'sort_order' => $previousModule->sort_order,
+                    'title' => $previousModule->title,
+                ] : null,
+                'next' => $nextModule ? [
+                    'sort_order' => $nextModule->sort_order,
+                    'title' => $nextModule->title,
+                ] : null,
+            ],
         ]);
     }
 }

@@ -13,7 +13,6 @@ class AssignmentSubmissionController extends Controller
     public function store(Request $request, Assignment $assignment)
     {
         $member = $request->user()->member;
-        abort_unless($member, 403);
 
         $course = $assignment->module->course;
         $isEnrolled = $member->courses()->where('course_id', $course->id)->exists();

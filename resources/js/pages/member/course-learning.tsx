@@ -1,88 +1,26 @@
 import AppLayout from '@/layouts/member-layout';
-import type { BreadcrumbItem, Course, Module } from '@/types';
-import { Head, Link, router } from '@inertiajs/react';
-import {
-    ChevronRight,
-    ChevronLeft,
-    Download,
-    Eye,
-    FileText,
-    Paperclip,
-    UploadCloud,
-    X,
-} from 'lucide-react';
-import { useMemo, useState } from 'react';
+import type { BreadcrumbItem } from '@/types';
+import { Head, Link } from '@inertiajs/react';
+import { ChevronRight, ChevronLeft, Paperclip, X } from 'lucide-react';
+import { useState } from 'react';
 import MDEditor from '@uiw/react-md-editor';
 import VideoPlayer from '@/components/member/video-player';
 import AssignmentSubmissionForm from '@/components/member/assignment-submission-form';
-
-type ModuleGroup = {
-    id: number;
-    title: string;
-    modules: Module[];
-};
-
-type CourseWithModules = Course & {
-    module_groups?: ModuleGroup[];
-    modules?: Module[];
-};
-
-type Props = {
-    course: CourseWithModules;
-    initialModuleSortOrder?: number | null;
-};
-
-type CourseDetail = Course & {
-    modules?: (Module & {
-        is_preview: boolean;
-        video?: string | null;
-        thumbnail?: string | null;
-        description?: string | null;
-        attachment?: string | null;
-        assignments?: {
-            id: number;
-            title: string;
-            description?: string | null;
-            submission?: unknown;
-        }[];
-    })[];
-};
+import { Props } from '@/types/course-learning';
 
 export default function CourseLearningPage({
     course,
-    initialModuleSortOrder,
+    currentModule,
+    navigation,
 }: Props) {
-    const allModules = useMemo(() => {
-        if (course.module_groups?.length) {
-            return course.module_groups.flatMap((group) => group.modules);
-        }
-        return course.modules ?? [];
-    }, [course]);
-
-    const selectedModule = useMemo(() => {
-        if (!allModules.length) return null;
-        return (
-            allModules.find(
-                (module) =>
-                    module.sort_order ===
-                    (initialModuleSortOrder ?? allModules[0]?.sort_order),
-            ) ?? allModules[0]
-        );
-    }, [allModules, initialModuleSortOrder]);
+    const selectedModule = currentModule ?? null;
 
     const selectedAttachmentUrl = selectedModule?.attachment
         ? `/storage/${selectedModule.attachment}`
         : null;
 
-    const currentIndex = selectedModule
-        ? allModules.findIndex((module) => module.id === selectedModule.id)
-        : -1;
-
-    const prevModule = currentIndex > 0 ? allModules[currentIndex - 1] : null;
-    const nextModule =
-        currentIndex >= 0 && currentIndex < allModules.length - 1
-            ? allModules[currentIndex + 1]
-            : null;
+    const prevModule = navigation?.previous ?? null;
+    const nextModule = navigation?.next ?? null;
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Course', href: '/member/courses' },
@@ -100,21 +38,6 @@ export default function CourseLearningPage({
         } | null;
     } | null>(null);
 
-    const handleCancelSubmission = (
-        assignmentId: number,
-        submissionId: number,
-    ) => {
-        if (!confirm('Batalkan pengumpulan tugas ini?')) {
-            return;
-        }
-
-        router.delete(
-            `/member/assignments/${assignmentId}/submissions/${submissionId}`,
-            {
-                preserveScroll: true,
-            },
-        );
-    };
 
     return (
         <>
@@ -159,8 +82,7 @@ export default function CourseLearningPage({
                                         </div>
                                     ) : (
                                         <p className="text-slate-500">
-                                            Pilih modul pada daftar di samping
-                                            untuk membaca materi pembelajaran.
+                                            Materi modul belum tersedia.
                                         </p>
                                     )}
                                 </div>

@@ -85,8 +85,8 @@ export default function CourseDetailPage({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={course.title} />
 
-            <div className="flex flex-1 flex-col overflow-x-hidden bg-slate-50">
-                <section className="relative left-1/2 w-screen -translate-x-1/2 overflow-hidden bg-linear-to-b from-slate-100 to-white">
+            <div className="flex flex-1 flex-col overflow-x-hidden">
+                <section className="relative left-1/2 w-screen -translate-x-1/2 overflow-hidden">
                     <div
                         className="absolute inset-0 opacity-40"
                         style={{
@@ -96,7 +96,6 @@ export default function CourseDetailPage({
                     />
 
                     <div className="relative mx-auto grid max-w-6xl grid-cols-1 gap-8 px-4 py-10 md:px-6 lg:grid-cols-[1.7fr_1fr] lg:py-14">
-                        {/* Course Info Card */}
                         <div className="flex flex-col gap-5 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-[220px_1fr]">
                                 <img
@@ -152,7 +151,6 @@ export default function CourseDetailPage({
                             </div>
                         </div>
 
-                        {/* CTA Card */}
                         <aside className="h-fit rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
                             <h2 className="text-lg font-bold text-slate-900">
                                 {isEnrolled
@@ -196,7 +194,7 @@ export default function CourseDetailPage({
                 <section className="mx-auto w-full max-w-6xl px-4 py-10 md:px-6">
                     <div className="mb-4 flex items-center justify-between">
                         <h2 className="text-xl font-bold text-slate-900">
-                            Kurikulum Course
+                            Pratinjau Kursus
                         </h2>
                         <span className="text-sm text-slate-500">
                             {course.modules_count ?? modules.length} modul
@@ -362,7 +360,6 @@ export default function CourseDetailPage({
                             </div>
                         )}
 
-                        {/* Locked modules row */}
                         {lockedCount > 0 && (
                             <div
                                 className={`flex items-center justify-between border-t border-slate-100 bg-slate-50/70 px-5 py-4`}
@@ -375,21 +372,6 @@ export default function CourseDetailPage({
                                         + {lockedCount} modul lainnya
                                     </span>
                                 </div>
-                                {isEnrolled ? (
-                                    <button
-                                        onClick={handleStartLearning}
-                                        className="text-sm font-medium text-emerald-600 hover:underline"
-                                    >
-                                        Mulai Belajar →
-                                    </button>
-                                ) : (
-                                    <button
-                                        onClick={handleEnroll}
-                                        className="text-sm font-medium text-emerald-600 hover:underline"
-                                    >
-                                        Daftar untuk akses penuh →
-                                    </button>
-                                )}
                             </div>
                         )}
                     </div>
