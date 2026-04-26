@@ -19,6 +19,26 @@ export type Category = {
     name: string;
 }
 
+export type Submission = {
+    id: number;
+    assignment_id: number;
+    submission_name?: string | null;
+    file?: string | null;
+};
+
+export type Assignment = {
+    id: number;
+    module_id: number;
+    title: string;
+    description?: string | null;
+    due_date?: string | null;
+    created_at?: string;
+    updated_at?: string;
+    module?: Module;
+    submission?: Submission | null;
+};
+
+
 export type Course = {
     id: number;
     title: string;
@@ -50,17 +70,6 @@ export type Module = {
     updated_at?: string;
     course?: Course;
     assignments?: Assignment[];
-};
-
-export type Assignment = {
-    id: number;
-    module_id: number;
-    title: string;
-    description?: string | null;
-    due_date?: string | null;
-    created_at?: string;
-    updated_at?: string;
-    module?: Module;
 };
 
 

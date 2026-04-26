@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\LevelController;
+use App\Http\Controllers\Api\AssignmentSubmissionController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -36,6 +37,9 @@ Route::get('/courses/{course:slug}', [CourseController::class, 'show']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/courses/{course:slug}/enroll', [CourseController::class, 'enroll']);
     Route::get('/courses/{course:slug}/modules/{sort_order}', [CourseController::class, 'learning']);
+
+    Route::post('/assignments/{assignment}/submissions', [AssignmentSubmissionController::class, 'store']);
+    Route::delete('/assignments/{assignment}/submissions/{submission}', [AssignmentSubmissionController::class, 'destroy']);
 });
 
 Route::get('/categories', [CategoryController::class, 'index']);

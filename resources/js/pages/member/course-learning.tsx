@@ -6,13 +6,12 @@ import { useState } from 'react';
 import MDEditor from '@uiw/react-md-editor';
 import VideoPlayer from '@/components/member/video-player';
 import AssignmentSubmissionForm from '@/components/member/assignment-submission-form';
-import { Props } from '@/types/course-learning';
+import { Assignment, Props } from '@/types/course-learning';
 
 export default function CourseLearningPage({
     course,
     currentModule,
     navigation,
-    isEnrolled,
 }: Props) {
     const selectedModule = currentModule ?? null;
 
@@ -112,7 +111,7 @@ export default function CourseLearningPage({
                                                 Assignment
                                             </p>
                                             {selectedModule.assignments.map(
-                                                (assignment: any) => (
+                                                (assignment: Assignment) => (
                                                     <div
                                                         key={assignment.id}
                                                         onClick={() =>

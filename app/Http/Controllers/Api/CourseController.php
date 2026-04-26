@@ -148,7 +148,7 @@ class CourseController extends Controller
                 ->with([
                     'assignments' => fn($q) => $q->with([
                         'submissions' => fn($s) => $s
-                            ->where('member_id', $member->id)
+                            ->when($member, fn($q) => $q->where('member_id', $member->id))
                             ->latest()
                             ->limit(1),
                     ]),
@@ -157,15 +157,12 @@ class CourseController extends Controller
                 ->orderBy('id'),
         ])->loadCount(['modules', 'members']);
 
-        if ($member) {
-            $course->modules->each(function ($module) {
-                $module->assignments->each(function ($assignment) {
-                    $assignment->submission = $assignment->submissions->first();
-                    $assignment->makeHidden('submissions');
-                });
-            }); 
-        }
-
+        $course->modules->each(function ($module) {
+            $module->assignments->each(function ($assignment) {
+                $assignment->submission = $assignment->submissions->first();
+                $assignment->makeHidden('submissions');
+            });
+        });
 
         $currentModule = $course->modules->firstWhere('sort_order', $sort_order);
 
@@ -173,6 +170,16 @@ class CourseController extends Controller
             return response()->json([
                 'message' => 'Modul dengan urutan tersebut tidak ditemukan.',
             ], 404);
+        }
+
+        $isEnrolled = $member
+            ? $member->courses()->where('course_id', $course->id)->exists()
+            : false;
+
+        if (!$currentModule->is_preview && !$isEnrolled) {
+            return response()->json([
+                'message' => 'Modul ini terkunci. Silakan login dan daftar terlebih dahulu.',
+            ], 403);
         }
 
         $moduleIndex = $course->modules->search(
@@ -215,16 +222,20 @@ class CourseController extends Controller
                 'duration' => $currentModule->duration,
                 'attachment' => $currentModule->attachment,
                 'is_preview' => $currentModule->is_preview,
-                'assignments' => $currentModule->assignments,
+                'assignments' => $isEnrolled ? $currentModule->assignments : [],
             ],
             'navigation' => [
                 'previous' => $previousModule ? [
                     'sort_order' => $previousModule->sort_order,
                     'title' => $previousModule->title,
+                    'is_preview' => $previousModule->is_preview,
+                    'is_locked' => !$previousModule->is_preview && !$isEnrolled,
                 ] : null,
                 'next' => $nextModule ? [
                     'sort_order' => $nextModule->sort_order,
                     'title' => $nextModule->title,
+                    'is_preview' => $nextModule->is_preview,
+                    'is_locked' => !$nextModule->is_preview && !$isEnrolled,
                 ] : null,
             ],
         ]);

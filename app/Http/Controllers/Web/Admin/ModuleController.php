@@ -3,15 +3,12 @@
 namespace App\Http\Controllers\Web\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Assignment;
-use App\Models\Course;
 use App\Models\Module;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
-use Inertia\Inertia;
 
 class ModuleController extends Controller
 {
@@ -64,10 +61,14 @@ class ModuleController extends Controller
             'duration' => 'nullable|integer|min:0',
             'attachment' => 'nullable|file|max:10240',
             'is_preview' => 'boolean',
-            'assignment_title' => 'nullable|string|max:255',
-            'assignment_instruction' => 'nullable|string',
-            'assignment_type' => 'nullable|string|max:100',
+            'assignments' => 'nullable|array',
+            'assignments.*.title' => 'nullable|string|max:255',
+            'assignments.*.description' => 'nullable|string',
+            'assignments.*.type' => 'nullable|string|max:100',
         ]);
+
+        $assignments = $validated['assignments'] ?? [];
+        unset($validated['assignments']);
 
         if ($request->hasFile('thumbnail')) {
             $validated['thumbnail'] = $request->file('thumbnail')->store('modules', 'public');
@@ -80,26 +81,21 @@ class ModuleController extends Controller
         $maxSortOrder = Module::where('course_id', $validated['course_id'])->max('sort_order') ?? 0;
         $validated['sort_order'] = $maxSortOrder + 1;
 
-        $assignmentPayload = [
-            'title' => $validated['assignment_title'] ?? null,
-            'description' => $validated['assignment_instruction'] ?? null,
-            'type' => $validated['assignment_type'] ?? null,
-        ];
-
-        unset($validated['assignment_title'], $validated['assignment_instruction'], $validated['assignment_type']);
-
         $module = Module::create($validated);
 
-        if (
-            !blank($assignmentPayload['title'])
-            || !blank($assignmentPayload['description'])
-            || !blank($assignmentPayload['type'])
-        ) {
-            Assignment::create([
-                'module_id' => $module->id,
-                'title' => $assignmentPayload['title'] ?: 'Tugas Modul',
-                'description' => $assignmentPayload['description'],
-                'type' => $assignmentPayload['type'],
+        foreach ($assignments as $assignment) {
+            if (
+                blank($assignment['title'] ?? null)
+                && blank($assignment['description'] ?? null)
+                && blank($assignment['type'] ?? null)
+            ) {
+                continue;
+            }
+
+            $module->assignments()->create([
+                'title' => $assignment['title'] ?: 'Tugas Modul',
+                'description' => $assignment['description'] ?? null,
+                'type' => $assignment['type'] ?? null,
             ]);
         }
 
@@ -119,18 +115,14 @@ class ModuleController extends Controller
             'duration' => 'nullable|integer|min:0',
             'attachment' => 'nullable|file|max:10240',
             'is_preview' => 'boolean',
-            'assignment_title' => 'nullable|string|max:255',
-            'assignment_instruction' => 'nullable|string',
-            'assignment_type' => 'nullable|string|max:100',
+            'assignments' => 'nullable|array',
+            'assignments.*.title' => 'nullable|string|max:255',
+            'assignments.*.description' => 'nullable|string',
+            'assignments.*.type' => 'nullable|string|max:100',
         ]);
 
-        $assignmentPayload = [
-            'title' => $validated['assignment_title'] ?? null,
-            'description' => $validated['assignment_instruction'] ?? null,
-            'type' => $validated['assignment_type'] ?? null,
-        ];
-
-        unset($validated['assignment_title'], $validated['assignment_instruction'], $validated['assignment_type']);
+        $assignments = $validated['assignments'] ?? [];
+        unset($validated['assignments']);
 
         if ($request->hasFile('thumbnail')) {
             if ($module->thumbnail) {
@@ -152,27 +144,21 @@ class ModuleController extends Controller
 
         $module->update($validated);
 
-        $existingAssignment = $module->assignments()->orderBy('id')->first();
+        $module->assignments()->delete();
 
-        if (
-            blank($assignmentPayload['title'])
-            && blank($assignmentPayload['description'])
-            && blank($assignmentPayload['type'])
-        ) {
-            if ($existingAssignment) {
-                $existingAssignment->delete();
+        foreach ($assignments as $assignment) {
+            if (
+                blank($assignment['title'] ?? null)
+                && blank($assignment['description'] ?? null)
+                && blank($assignment['type'] ?? null)
+            ) {
+                continue;
             }
-        } elseif ($existingAssignment) {
-            $existingAssignment->update([
-                'title' => $assignmentPayload['title'] ?: $existingAssignment->title,
-                'description' => $assignmentPayload['description'],
-                'type' => $assignmentPayload['type'],
-            ]);
-        } else {
+
             $module->assignments()->create([
-                'title' => $assignmentPayload['title'] ?: 'Tugas Modul',
-                'description' => $assignmentPayload['description'],
-                'type' => $assignmentPayload['type'],
+                'title' => $assignment['title'] ?: 'Tugas Modul',
+                'description' => $assignment['description'] ?? null,
+                'type' => $assignment['type'] ?? null,
             ]);
         }
 
