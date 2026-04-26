@@ -100,12 +100,8 @@ class CourseController extends Controller
             ->orderBy('id')
             ->value('sort_order');
 
-        $firstModuleSortOrder = $course->modules()
-            ->orderBy('sort_order')
-            ->orderBy('id')
-            ->value('sort_order');
 
-        $targetSortOrder = $firstPreviewSortOrder ?? $firstModuleSortOrder;
+        $targetSortOrder = $firstPreviewSortOrder;
 
         if ($member->courses()->where('course_id', $course->id)->exists()) {
             return redirect()->route('member.courses.learning', [
@@ -125,32 +121,29 @@ class CourseController extends Controller
     public function learning(Course $course, ?int $sort_order = null)
     {
         $user = Auth::user();
-        $member = $user->member;
-
-        if (!$member->courses()->where('course_id', $course->id)->exists()) {
-            return redirect()->route('member.courses.show', $course->slug)
-                ->with('error', 'Anda belum terdaftar di kursus ini. Silakan daftar terlebih dahulu.');
-        }
+        $member = $user?->member;
 
         $course->load([
             'categories',
             'modules' => fn($query) => $query
                 ->with([
-                    'assignments' => fn($q) => $q->with([
+                    'assignments' => fn($q) => $q->when($member, fn($q) => $q->with([
                         'submissions' => fn($s) => $s
                             ->where('member_id', $member->id)
                             ->latest()
                             ->limit(1),
-                    ]),
+                    ]))
                 ])
                 ->orderBy('sort_order')
                 ->orderBy('id'),
         ])->loadCount(['modules', 'members']);
 
-        foreach ($course->modules as $module) {
-            foreach ($module->assignments as $assignment) {
-                $assignment->submission = $assignment->submissions->first();
-                unset($assignment->submissions);
+        if ($member) {
+            foreach ($course->modules as $module) {
+                foreach ($module->assignments as $assignment) {
+                    $assignment->submission = $assignment->submissions;
+                    unset($assignment->submissions);
+                }
             }
         }
 
@@ -161,8 +154,19 @@ class CourseController extends Controller
             ? null
             : $course->modules->firstWhere('sort_order', $targetSortOrder);
 
+
         if ($targetSortOrder !== null && !$currentModule) {
             abort(404, 'Modul dengan urutan tersebut tidak ditemukan.');
+        }
+
+
+        $isEnrolled = $member
+            ? $member->courses()->where('course_id', $course->id)->exists()
+            : false;
+
+        if ($currentModule && !$currentModule->is_preview && !$isEnrolled) {
+            return redirect()->route('member.courses.show', $course->slug)
+                ->with('error', 'Modul ini terkunci. Silakan login atau daftar kursus terlebih dahulu.');
         }
 
         $moduleIndex = $currentModule
@@ -177,6 +181,7 @@ class CourseController extends Controller
             : null;
 
         return Inertia::render('member/course-learning', [
+            'isEnrolled' => $isEnrolled,
             'course' => [
                 'id' => $course->id,
                 'title' => $course->title,
@@ -204,16 +209,19 @@ class CourseController extends Controller
                 'duration' => $currentModule->duration,
                 'attachment' => $currentModule->attachment,
                 'is_preview' => $currentModule->is_preview,
-                'assignments' => $currentModule->assignments,
+                'assignments' => $isEnrolled ? $currentModule->assignments : [],
             ] : null,
             'navigation' => [
                 'previous' => $previousModule ? [
                     'sort_order' => $previousModule->sort_order,
                     'title' => $previousModule->title,
+                    'is_preview' => $previousModule->is_preview,
+                    'is_locked' => !$previousModule->is_preview && !$isEnrolled,
                 ] : null,
                 'next' => $nextModule ? [
                     'sort_order' => $nextModule->sort_order,
                     'title' => $nextModule->title,
+                    'is_locked' => !$nextModule->is_preview && !$isEnrolled,
                 ] : null,
             ],
         ]);

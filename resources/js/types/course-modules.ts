@@ -1,3 +1,10 @@
+type AssignmentForm = {
+    id?: number;
+    title: string;
+    description: string;
+    type: string;
+};
+
 export type CourseModuleAssignment = {
     id: number;
     title: string;
@@ -34,9 +41,7 @@ export type CreateCourseModuleForm = {
     duration: string;
     thumbnail: File | null;
     attachment: File | null;
-    assignment_title: string;
-    assignment_instruction: string;
-    assignment_type: string;
+    assignments: AssignmentForm[];
     from: 'course-show';
 };
 
@@ -50,9 +55,7 @@ export type EditCourseModuleForm = {
     thumbnail: File | null;
     attachment: File | null;
     is_preview: boolean;
-    assignment_title: string;
-    assignment_instruction: string;
-    assignment_type: string;
+    assignments: AssignmentForm[];
     from: 'course-show';
 };
 

@@ -28,7 +28,6 @@ import {
     destroy as destroyRoute,
 } from '@/routes/admin/courses';
 
-
 import { Course } from '@/types';
 
 export default function Page() {
@@ -95,11 +94,6 @@ export default function Page() {
                                 <TableRow
                                     key={course.id}
                                     className="cursor-pointer hover:bg-muted/50"
-                                    onClick={() =>
-                                        router.visit(
-                                            `/admin/courses/${course.id}`,
-                                        )
-                                    }
                                 >
                                     <TableCell>
                                         <img
@@ -126,12 +120,21 @@ export default function Page() {
                                         <div className="flex gap-2">
                                             <Button
                                                 asChild
+                                                variant="secondary"
+                                                size="sm"
+                                            >
+                                                <Link
+                                                    href={`/admin/courses/${course.id}`}
+                                                >
+                                                    Modul
+                                                </Link>
+                                            </Button>
+
+                                            <Button
+                                                asChild
                                                 variant="outline"
                                                 size="sm"
                                                 disabled={processing}
-                                                onClick={(e) =>
-                                                    e.stopPropagation()
-                                                }
                                             >
                                                 <Link
                                                     href={edit.url(course.id)}
@@ -145,10 +148,9 @@ export default function Page() {
                                                 variant="destructive"
                                                 size="sm"
                                                 disabled={processing}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleDelete(course.id);
-                                                }}
+                                                onClick={() =>
+                                                    handleDelete(course.id)
+                                                }
                                             >
                                                 <Trash2 className="mr-2 h-4 w-4" />
                                                 Delete

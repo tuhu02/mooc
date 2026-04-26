@@ -202,178 +202,56 @@ export default function CourseDetailPage({
                         </span>
                     </div>
 
-                    <div className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
-                        {previewModules.length > 0 ? (
-                            <Accordion
-                                type="single"
-                                collapsible
-                                className="w-full"
-                            >
-                                {previewModules.map((module) => (
-                                    <AccordionItem
+                    <div className="divide-y divide-slate-100">
+                        {modules
+                            .sort(
+                                (a, b) =>
+                                    (a.sort_order ?? 0) - (b.sort_order ?? 0),
+                            )
+                            .map((module) => {
+                                const isLocked =
+                                    !isEnrolled && !module.is_preview;
+
+                                return (
+                                    <Link
                                         key={module.id}
-                                        value={`module-${module.id}`}
-                                        className="border-b border-slate-100 px-5"
+                                        href={
+                                            isLocked
+                                                ? '#'
+                                                : `/member/courses/${course.slug}/modules/${module.sort_order}`
+                                        }
+                                        onClick={(e) => {
+                                            if (isLocked) {
+                                                e.preventDefault();
+                                            }
+                                        }}
+                                        className={`flex items-center justify-between px-5 py-4 transition ${
+                                            isLocked
+                                                ? 'cursor-not-allowed bg-slate-50 text-slate-400'
+                                                : 'hover:bg-slate-50'
+                                        }`}
                                     >
-                                        <AccordionTrigger className="py-4 hover:no-underline">
-                                            <div className="flex w-full items-center justify-between pr-4">
-                                                <div className="flex items-center gap-3 text-left">
-                                                    <span className="text-sm font-medium text-slate-700">
-                                                        {module.sort_order}.{' '}
-                                                        {module.title}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </AccordionTrigger>
+                                        <div className="flex items-center gap-3">
+                                            {isLocked ? (
+                                                <Lock className="h-5 w-5 text-slate-400" />
+                                            ) : (
+                                                <PlayCircle className="h-5 w-5 text-sky-600" />
+                                            )}
 
-                                        <AccordionContent className="pb-5">
-                                            <div className="space-y-4 pl-0 md:pl-11">
-                                                {module.video ? (
-                                                    <div className="overflow-hidden rounded-xl border border-slate-200 bg-black shadow-sm">
-                                                        <VideoPlayer
-                                                            videoUrl={
-                                                                module.video
-                                                            }
-                                                            thumbnail={
-                                                                module.thumbnail
-                                                            }
-                                                            title={module.title}
-                                                        />
-                                                    </div>
-                                                ) : module.thumbnail ? (
-                                                    <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
-                                                        <img
-                                                            src={`/storage/${module.thumbnail}`}
-                                                            alt={module.title}
-                                                            className="h-auto max-h-90 w-full object-cover"
-                                                        />
-                                                    </div>
-                                                ) : null}
+                                            <span className="text-sm font-medium">
+                                                {module.sort_order}.{' '}
+                                                {module.title}
+                                            </span>
+                                        </div>
 
-                                                <div className="text-sm leading-7 text-slate-600 md:text-base">
-                                                    {module.description ? (
-                                                        <div data-color-mode="light">
-                                                            <MDEditor.Markdown
-                                                                source={
-                                                                    module.description
-                                                                }
-                                                                className="bg-transparent!"
-                                                            />
-                                                        </div>
-                                                    ) : (
-                                                        <p className="text-slate-500">
-                                                            Modul preview ini
-                                                            bisa diakses untuk
-                                                            melihat gambaran
-                                                            materi sebelum
-                                                            mendaftar penuh.
-                                                        </p>
-                                                    )}
-                                                </div>
-
-                                                {module.attachment && (
-                                                    <div className="rounded-lg border border-slate-200 bg-white p-4">
-                                                        <p className="mb-2 text-sm font-medium text-slate-700">
-                                                            Attachment Modul
-                                                        </p>
-                                                        <a
-                                                            href={`/storage/${module.attachment}`}
-                                                            target="_blank"
-                                                            rel="noreferrer"
-                                                            className="inline-flex items-center gap-2 text-sm font-medium text-sky-700 underline-offset-2 hover:underline"
-                                                        >
-                                                            <Paperclip className="h-4 w-4" />
-                                                            Buka attachment
-                                                        </a>
-                                                    </div>
-                                                )}
-
-                                                {module.assignments &&
-                                                    module.assignments.length >
-                                                        0 && (
-                                                        <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-4">
-                                                            <p className="text-base font-semibold text-slate-900">
-                                                                Assignment
-                                                            </p>
-
-                                                            {module.assignments.map(
-                                                                (
-                                                                    assignment: PreviewAssignment,
-                                                                ) => (
-                                                                    <div
-                                                                        key={
-                                                                            assignment.id
-                                                                        }
-                                                                        className="rounded-xl border border-slate-200 bg-slate-50/60 p-4"
-                                                                    >
-                                                                        <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                                                                            <div>
-                                                                                <h3 className="font-semibold text-slate-900">
-                                                                                    {
-                                                                                        assignment.title
-                                                                                    }
-                                                                                </h3>
-                                                                            </div>
-
-                                                                            <span
-                                                                                className={`inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-semibold ${
-                                                                                    assignment.submission
-                                                                                        ? 'bg-emerald-100 text-emerald-700'
-                                                                                        : 'bg-amber-100 text-amber-700'
-                                                                                }`}
-                                                                            >
-                                                                                {assignment.submission
-                                                                                    ? 'Turned in'
-                                                                                    : 'Belum dikumpulkan'}
-                                                                            </span>
-                                                                        </div>
-
-                                                                        {assignment.description && (
-                                                                            <div
-                                                                                className="mt-2 text-sm text-slate-600"
-                                                                                data-color-mode="light"
-                                                                            >
-                                                                                <MDEditor.Markdown
-                                                                                    source={
-                                                                                        assignment.description
-                                                                                    }
-                                                                                    className="bg-transparent!"
-                                                                                />
-                                                                            </div>
-                                                                        )}
-                                                                    </div>
-                                                                ),
-                                                            )}
-                                                        </div>
-                                                    )}
-                                            </div>
-                                        </AccordionContent>
-                                    </AccordionItem>
-                                ))}
-                            </Accordion>
-                        ) : (
-                            <div className="flex flex-col items-center gap-2 px-5 py-8 text-center">
-                                <BookOpen className="h-8 w-8 text-slate-300" />
-                                <p className="text-sm text-slate-500">
-                                    Belum ada modul preview tersedia.
-                                </p>
-                            </div>
-                        )}
-
-                        {lockedCount > 0 && (
-                            <div
-                                className={`flex items-center justify-between border-t border-slate-100 bg-slate-50/70 px-5 py-4`}
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100">
-                                        <Lock className="h-4 w-4 text-slate-400" />
-                                    </div>
-                                    <span className="text-sm text-slate-500">
-                                        + {lockedCount} modul lainnya
-                                    </span>
-                                </div>
-                            </div>
-                        )}
+                                        {isLocked && (
+                                            <Badge variant="secondary">
+                                                Terkunci
+                                            </Badge>
+                                        )}
+                                    </Link>
+                                );
+                            })}
                     </div>
                 </section>
             </div>

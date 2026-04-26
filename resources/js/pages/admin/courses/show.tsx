@@ -63,9 +63,16 @@ export default function Show() {
         is_preview: false,
         thumbnail: null,
         attachment: null,
-        assignment_title: '',
-        assignment_instruction: '',
-        assignment_type: '',
+
+        // DIUBAH: dari single assignment menjadi array
+        assignments: [
+            {
+                title: '',
+                description: '',
+                type: '',
+            },
+        ],
+
         from: 'course-show',
     });
 
@@ -87,9 +94,13 @@ export default function Show() {
         thumbnail: null,
         is_preview: false,
         attachment: null,
-        assignment_title: '',
-        assignment_instruction: '',
-        assignment_type: '',
+        assignments: [
+            {
+                title: '',
+                description: '',
+                type: '',
+            },
+        ],
         from: 'course-show',
     });
 
@@ -118,9 +129,21 @@ export default function Show() {
             thumbnail: null,
             is_preview: module.is_preview ?? false,
             attachment: null,
-            assignment_title: assignment?.title ?? '',
-            assignment_instruction: assignment?.description ?? '',
-            assignment_type: assignment?.type ?? '',
+            assignments:
+                module.assignments && module.assignments.length > 0
+                    ? module.assignments.map((assignment) => ({
+                          id: assignment.id,
+                          title: assignment.title ?? '',
+                          description: assignment.description ?? '',
+                          type: assignment.type ?? '',
+                      }))
+                    : [
+                          {
+                              title: '',
+                              description: '',
+                              type: '',
+                          },
+                      ],
             from: 'course-show',
         });
         clearEditErrors();
@@ -132,6 +155,60 @@ export default function Show() {
         setSelectedModule(null);
         resetEdit();
         clearEditErrors();
+    };
+
+    const addCreateAssignment = () => {
+        setCreateData('assignments', [
+            ...createData.assignments,
+            { title: '', description: '', type: '' },
+        ]);
+    };
+
+    const removeCreateAssignment = (index: number) => {
+        setCreateData(
+            'assignments',
+            createData.assignments.filter((_, i) => i !== index),
+        );
+    };
+
+    const updateCreateAssignment = (
+        index: number,
+        field: 'title' | 'description' | 'type',
+        value: string,
+    ) => {
+        setCreateData(
+            'assignments',
+            createData.assignments.map((assignment, i) =>
+                i === index ? { ...assignment, [field]: value } : assignment,
+            ),
+        );
+    };
+
+    const addEditAssignment = () => {
+        setEditData('assignments', [
+            ...editData.assignments,
+            { title: '', description: '', type: '' },
+        ]);
+    };
+
+    const removeEditAssignment = (index: number) => {
+        setEditData(
+            'assignments',
+            editData.assignments.filter((_, i) => i !== index),
+        );
+    };
+
+    const updateEditAssignment = (
+        index: number,
+        field: 'title' | 'description' | 'type',
+        value: string,
+    ) => {
+        setEditData(
+            'assignments',
+            editData.assignments.map((assignment, i) =>
+                i === index ? { ...assignment, [field]: value } : assignment,
+            ),
+        );
     };
 
     const submitCreate = (e: React.FormEvent) => {
@@ -379,86 +456,104 @@ export default function Show() {
                             </div>
 
                             <div className="rounded-lg border p-4">
-                                <p className="mb-3 text-sm font-semibold text-slate-700">
-                                    Tugas / Assignment
-                                </p>
+                                <div className="mb-3 flex items-center justify-between">
+                                    <p className="text-sm font-semibold text-slate-700">
+                                        Tugas
+                                    </p>
 
-                                <div className="grid gap-2">
-                                    <Label htmlFor="create-assignment-title">
-                                        Judul Tugas
-                                    </Label>
-                                    <Input
-                                        id="create-assignment-title"
-                                        value={createData.assignment_title}
-                                        onChange={(e) =>
-                                            setCreateData(
-                                                'assignment_title',
-                                                e.target.value,
-                                            )
-                                        }
-                                        placeholder="Contoh: Tugas 1"
-                                    />
-                                    {createErrors.assignment_title && (
-                                        <p className="text-sm font-medium text-red-500">
-                                            {createErrors.assignment_title}
-                                        </p>
-                                    )}
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={addCreateAssignment}
+                                    >
+                                        <Plus className="mr-2 h-4 w-4" />
+                                        Tambah Tugas
+                                    </Button>
                                 </div>
 
-                                <div
-                                    className="mt-3 grid gap-2"
-                                    data-color-mode="light"
-                                >
-                                    <Label htmlFor="create-assignment-instruction">
-                                        Petunjuk
-                                    </Label>
-                                    <MDEditor
-                                        value={
-                                            createData.assignment_instruction
-                                        }
-                                        onChange={(value) =>
-                                            setCreateData(
-                                                'assignment_instruction',
-                                                value ?? '',
-                                            )
-                                        }
-                                        preview="edit"
-                                        visibleDragbar={false}
-                                        textareaProps={{
-                                            id: 'create-assignment-instruction',
-                                            placeholder:
-                                                'Tulis petunjuk tugas dengan markdown...',
-                                        }}
-                                        height={220}
-                                    />
-                                    {createErrors.assignment_instruction && (
-                                        <p className="text-sm font-medium text-red-500">
-                                            {
-                                                createErrors.assignment_instruction
-                                            }
-                                        </p>
-                                    )}
-                                </div>
+                                <div className="space-y-4">
+                                    {createData.assignments.map(
+                                        (assignment, index) => (
+                                            <div
+                                                key={index}
+                                                className="rounded-lg border p-4"
+                                            >
+                                                <div className="mb-3 flex items-center justify-between">
+                                                    <p className="text-sm font-medium text-slate-700">
+                                                        Tugas {index + 1}
+                                                    </p>
 
-                                <div className="mt-3 grid gap-2">
-                                    <Label htmlFor="create-assignment-type">
-                                        Jenis
-                                    </Label>
-                                    <Input
-                                        id="create-assignment-type"
-                                        value={createData.assignment_type}
-                                        onChange={(e) =>
-                                            setCreateData(
-                                                'assignment_type',
-                                                e.target.value,
-                                            )
-                                        }
-                                        placeholder="Contoh: essay"
-                                    />
-                                    {createErrors.assignment_type && (
-                                        <p className="text-sm font-medium text-red-500">
-                                            {createErrors.assignment_type}
-                                        </p>
+                                                    {createData.assignments
+                                                        .length > 1 && (
+                                                        <Button
+                                                            type="button"
+                                                            variant="destructive"
+                                                            size="sm"
+                                                            onClick={() =>
+                                                                removeCreateAssignment(
+                                                                    index,
+                                                                )
+                                                            }
+                                                        >
+                                                            Hapus
+                                                        </Button>
+                                                    )}
+                                                </div>
+
+                                                <div className="grid gap-2">
+                                                    <Label>Judul Tugas</Label>
+                                                    <Input
+                                                        value={assignment.title}
+                                                        onChange={(e) =>
+                                                            updateCreateAssignment(
+                                                                index,
+                                                                'title',
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        placeholder="Contoh: Tugas 1"
+                                                    />
+                                                </div>
+
+                                                <div
+                                                    className="mt-3 grid gap-2"
+                                                    data-color-mode="light"
+                                                >
+                                                    <Label>Petunjuk</Label>
+                                                    <MDEditor
+                                                        value={
+                                                            assignment.description
+                                                        }
+                                                        onChange={(value) =>
+                                                            updateCreateAssignment(
+                                                                index,
+                                                                'description',
+                                                                value ?? '',
+                                                            )
+                                                        }
+                                                        preview="edit"
+                                                        visibleDragbar={false}
+                                                        height={220}
+                                                    />
+                                                </div>
+
+                                                <div className="mt-3 grid gap-2">
+                                                    <Label>Jenis</Label>
+                                                    <Input
+                                                        value={assignment.type}
+                                                        onChange={(e) =>
+                                                            updateCreateAssignment(
+                                                                index,
+                                                                'type',
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        placeholder="Contoh: essay"
+                                                    />
+                                                </div>
+                                            </div>
+                                        ),
                                     )}
                                 </div>
                             </div>
@@ -643,82 +738,137 @@ export default function Show() {
                             </div>
 
                             <div className="rounded-lg border p-4">
-                                <p className="mb-3 text-sm font-semibold text-slate-700">
-                                    Tugas / Assignment
-                                </p>
+                                <div className="mb-3 flex items-center justify-between">
+                                    <p className="text-sm font-semibold text-slate-700">
+                                        Tugas
+                                    </p>
 
-                                <div className="grid gap-2">
-                                    <Label htmlFor="edit-assignment-title">
-                                        Judul Tugas
-                                    </Label>
-                                    <Input
-                                        id="edit-assignment-title"
-                                        value={editData.assignment_title}
-                                        onChange={(e) =>
-                                            setEditData(
-                                                'assignment_title',
-                                                e.target.value,
-                                            )
-                                        }
-                                        placeholder="Contoh: Tugas 1"
-                                    />
-                                    {editErrors.assignment_title && (
-                                        <p className="text-sm font-medium text-red-500">
-                                            {editErrors.assignment_title}
-                                        </p>
-                                    )}
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={addEditAssignment}
+                                    >
+                                        <Plus className="mr-2 h-4 w-4" />
+                                        Tambah Tugas
+                                    </Button>
                                 </div>
 
-                                <div
-                                    className="mt-3 grid gap-2"
-                                    data-color-mode="light"
-                                >
-                                    <Label htmlFor="edit-assignment-instruction">
-                                        Petunjuk
-                                    </Label>
-                                    <MDEditor
-                                        value={editData.assignment_instruction}
-                                        onChange={(value) =>
-                                            setEditData(
-                                                'assignment_instruction',
-                                                value ?? '',
-                                            )
-                                        }
-                                        preview="edit"
-                                        visibleDragbar={false}
-                                        textareaProps={{
-                                            id: 'edit-assignment-instruction',
-                                            placeholder:
-                                                'Tulis petunjuk tugas dengan markdown...',
-                                        }}
-                                        height={220}
-                                    />
-                                    {editErrors.assignment_instruction && (
-                                        <p className="text-sm font-medium text-red-500">
-                                            {editErrors.assignment_instruction}
-                                        </p>
-                                    )}
-                                </div>
+                                <div className="space-y-4">
+                                    {editData.assignments.map(
+                                        (assignment, index) => (
+                                            <div
+                                                key={assignment.id ?? index}
+                                                className="rounded-lg border p-4"
+                                            >
+                                                <div className="mb-3 flex items-center justify-between">
+                                                    <p className="text-sm font-medium text-slate-700">
+                                                        Tugas {index + 1}
+                                                    </p>
 
-                                <div className="mt-3 grid gap-2">
-                                    <Label htmlFor="edit-assignment-type">
-                                        Jenis
-                                    </Label>
-                                    <Input
-                                        id="edit-assignment-type"
-                                        value={editData.assignment_type}
-                                        onChange={(e) =>
-                                            setEditData(
-                                                'assignment_type',
-                                                e.target.value,
-                                            )
-                                        }
-                                        placeholder="Contoh: essay"
-                                    />
-                                    {editErrors.assignment_type && (
-                                        <p className="text-sm font-medium text-red-500">
-                                            {editErrors.assignment_type}
-                                        </p>
+                                                    {editData.assignments
+                                                        .length > 1 && (
+                                                        <Button
+                                                            type="button"
+                                                            variant="destructive"
+                                                            size="sm"
+                                                            onClick={() =>
+                                                                removeEditAssignment(
+                                                                    index,
+                                                                )
+                                                            }
+                                                        >
+                                                            Hapus
+                                                        </Button>
+                                                    )}
+                                                </div>
+
+                                                <div className="grid gap-2">
+                                                    <Label>Judul Tugas</Label>
+                                                    <Input
+                                                        value={assignment.title}
+                                                        onChange={(e) =>
+                                                            updateEditAssignment(
+                                                                index,
+                                                                'title',
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        placeholder="Contoh: Tugas 1"
+                                                    />
+                                                    {editErrors[
+                                                        `assignments.${index}.title`
+                                                    ] && (
+                                                        <p className="text-sm font-medium text-red-500">
+                                                            {
+                                                                editErrors[
+                                                                    `assignments.${index}.title`
+                                                                ]
+                                                            }
+                                                        </p>
+                                                    )}
+                                                </div>
+
+                                                <div
+                                                    className="mt-3 grid gap-2"
+                                                    data-color-mode="light"
+                                                >
+                                                    <Label>Petunjuk</Label>
+                                                    <MDEditor
+                                                        value={
+                                                            assignment.description
+                                                        }
+                                                        onChange={(value) =>
+                                                            updateEditAssignment(
+                                                                index,
+                                                                'description',
+                                                                value ?? '',
+                                                            )
+                                                        }
+                                                        preview="edit"
+                                                        visibleDragbar={false}
+                                                        height={220}
+                                                    />
+                                                    {editErrors[
+                                                        `assignments.${index}.description`
+                                                    ] && (
+                                                        <p className="text-sm font-medium text-red-500">
+                                                            {
+                                                                editErrors[
+                                                                    `assignments.${index}.description`
+                                                                ]
+                                                            }
+                                                        </p>
+                                                    )}
+                                                </div>
+
+                                                <div className="mt-3 grid gap-2">
+                                                    <Label>Jenis</Label>
+                                                    <Input
+                                                        value={assignment.type}
+                                                        onChange={(e) =>
+                                                            updateEditAssignment(
+                                                                index,
+                                                                'type',
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        placeholder="Contoh: essay"
+                                                    />
+                                                    {editErrors[
+                                                        `assignments.${index}.type`
+                                                    ] && (
+                                                        <p className="text-sm font-medium text-red-500">
+                                                            {
+                                                                editErrors[
+                                                                    `assignments.${index}.type`
+                                                                ]
+                                                            }
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ),
                                     )}
                                 </div>
                             </div>

@@ -10,7 +10,6 @@ import {
     Card,
     CardAction,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';

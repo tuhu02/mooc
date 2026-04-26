@@ -14,7 +14,7 @@ type Props = {
 
 export default function CTASection({ auth, canRegister = true }: Props) {
     const getDashboardHref = () => {
-        if (!auth.user) return '/';
+        if (!auth.user) return '';
 
         if (auth.user.type === 'admin') {
             return admin.dashboard().url;

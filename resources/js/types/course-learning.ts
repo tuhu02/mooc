@@ -79,14 +79,19 @@ export type Props = {
     course: CourseWithModules;
     initialModuleSortOrder?: number | null;
     currentModule?: Module | null;
+    isEnrolled: boolean;
     navigation?: {
         previous?: {
             sort_order?: number | null;
             title: string;
+            is_preview?: boolean;
+            is_locked?: boolean;
         } | null;
         next?: {
             sort_order?: number | null;
             title: string;
+            is_preview?: boolean;
+            is_locked?: boolean;
         } | null;
     };
 };

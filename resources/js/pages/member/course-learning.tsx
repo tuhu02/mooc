@@ -12,6 +12,7 @@ export default function CourseLearningPage({
     course,
     currentModule,
     navigation,
+    isEnrolled,
 }: Props) {
     const selectedModule = currentModule ?? null;
 
@@ -38,7 +39,6 @@ export default function CourseLearningPage({
         } | null;
     } | null>(null);
 
-
     return (
         <>
             <AppLayout breadcrumbs={breadcrumbs}>
@@ -56,11 +56,12 @@ export default function CourseLearningPage({
                                     <div className="mb-6 overflow-hidden rounded-xl border border-slate-200 bg-black shadow-md">
                                         <VideoPlayer
                                             videoUrl={selectedModule.video}
-                                            thumbnail={selectedModule.thumbnail}
                                             title={selectedModule.title}
                                         />
                                     </div>
-                                ) : selectedModule?.thumbnail ? (
+                                ) : null}
+
+                                {selectedModule?.thumbnail ? (
                                     <div className="mb-6">
                                         <img
                                             src={`/storage/${selectedModule.thumbnail}`}
@@ -90,7 +91,7 @@ export default function CourseLearningPage({
                                 {selectedAttachmentUrl && (
                                     <div className="mt-6 rounded-lg border border-slate-200 bg-white p-4">
                                         <p className="mb-2 text-sm font-medium text-slate-700">
-                                            Attachment Modul
+                                            Lampiran Modul
                                         </p>
                                         <a
                                             href={selectedAttachmentUrl}
@@ -144,7 +145,7 @@ export default function CourseLearningPage({
                                                                 }`}
                                                             >
                                                                 {assignment.submission
-                                                                    ? 'Turned in'
+                                                                    ? 'Sudah dikumpulkan'
                                                                     : 'Belum dikumpulkan'}
                                                             </span>
                                                         </div>
@@ -184,10 +185,10 @@ export default function CourseLearningPage({
                         <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
                             <div>
                                 <h2 className="text-lg font-semibold text-slate-900">
-                                    Submit Assignment
+                                    Kumpulkan Tugas
                                 </h2>
-                                <p className="mt-0.5 text-sm text-slate-500">
-                                    {activeAssignment.title}
+                                <p className="text-base font-semibold text-slate-900">
+                                    Tugas
                                 </p>
                             </div>
                             <button
@@ -230,15 +231,27 @@ export default function CourseLearningPage({
                     </span>
 
                     {nextModule ? (
-                        <Link
-                            href={`/member/courses/${course.slug}/modules/${nextModule.sort_order}`}
-                            className="flex min-h-12 max-w-65 min-w-35 items-center justify-end gap-2 rounded-lg px-3 py-2 text-base text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
-                        >
-                            <span className="max-w-52.5 truncate text-right font-medium">
-                                {nextModule.title}
-                            </span>
-                            <ChevronRight className="h-5 w-5 shrink-0" />
-                        </Link>
+                        nextModule.is_locked ? (
+                            <Link
+                                href="/login"
+                                className="flex min-h-12 max-w-65 min-w-35 items-center justify-end gap-2 rounded-lg px-3 py-2 text-base text-slate-400 transition hover:bg-slate-100"
+                            >
+                                <span className="max-w-52.5 truncate text-right font-medium">
+                                    Login untuk lanjut
+                                </span>
+                                <ChevronRight className="h-5 w-5 shrink-0" />
+                            </Link>
+                        ) : (
+                            <Link
+                                href={`/member/courses/${course.slug}/modules/${nextModule.sort_order}`}
+                                className="flex min-h-12 max-w-65 min-w-35 items-center justify-end gap-2 rounded-lg px-3 py-2 text-base text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+                            >
+                                <span className="max-w-52.5 truncate text-right font-medium">
+                                    {nextModule.title}
+                                </span>
+                                <ChevronRight className="h-5 w-5 shrink-0" />
+                            </Link>
+                        )
                     ) : (
                         <div className="min-w-35" />
                     )}

@@ -2,6 +2,7 @@ import { BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion, type Variants } from 'framer-motion';
 import { Course } from '@/types';
+import { Link } from '@inertiajs/react';
 
 const containerVariants: Variants = {
     hidden: { opacity: 0 },
@@ -101,10 +102,15 @@ export default function FeaturedCourses({ courses }: Props) {
                                 </p>
 
                                 <Button
+                                    asChild
                                     variant="outline"
                                     className="mt-6 w-full border-slate-300 bg-transparent text-slate-900 hover:bg-slate-100 dark:border-slate-700 dark:text-white dark:hover:bg-slate-800"
                                 >
-                                    Lihat Kursus
+                                    <Link
+                                        href={`/member/courses/${course.slug}`}
+                                    >
+                                        Lihat Kursus
+                                    </Link>
                                 </Button>
                             </motion.article>
                         );

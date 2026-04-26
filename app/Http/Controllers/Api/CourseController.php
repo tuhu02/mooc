@@ -142,18 +142,6 @@ class CourseController extends Controller
         $user = $request->user();
         $member = $user?->member;
 
-        if (!$member) {
-            return response()->json([
-                'message' => 'Profil member tidak ditemukan.',
-            ], 404);
-        }
-
-        if (!$member->courses()->where('course_id', $course->id)->exists()) {
-            return response()->json([
-                'message' => 'Anda belum terdaftar di kursus ini. Silakan daftar terlebih dahulu.',
-            ], 403);
-        }
-
         $course->load([
             'categories',
             'modules' => fn($query) => $query
@@ -169,12 +157,15 @@ class CourseController extends Controller
                 ->orderBy('id'),
         ])->loadCount(['modules', 'members']);
 
-        $course->modules->each(function ($module) {
-            $module->assignments->each(function ($assignment) {
-                $assignment->submission = $assignment->submissions->first();
-                $assignment->makeHidden('submissions');
-            });
-        });
+        if ($member) {
+            $course->modules->each(function ($module) {
+                $module->assignments->each(function ($assignment) {
+                    $assignment->submission = $assignment->submissions->first();
+                    $assignment->makeHidden('submissions');
+                });
+            }); 
+        }
+
 
         $currentModule = $course->modules->firstWhere('sort_order', $sort_order);
 
@@ -191,6 +182,7 @@ class CourseController extends Controller
         $previousModule = $moduleIndex !== false && $moduleIndex > 0
             ? $course->modules[$moduleIndex - 1]
             : null;
+
         $nextModule = $moduleIndex !== false && $moduleIndex < ($course->modules->count() - 1)
             ? $course->modules[$moduleIndex + 1]
             : null;
