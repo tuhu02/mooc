@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Users, BookOpen, Layers, Tag, ArrowRight } from 'lucide-react';
-import { Link } from '@inertiajs/react';
+import { Deferred, Link } from '@inertiajs/react';
 import type { Course, Module } from '@/types';
 
 type Props = {
@@ -289,44 +289,26 @@ export default function DashboardPage({
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-3">
-                                {recent_modules === undefined ? (
-                                    Array.from({ length: 3 }).map((_, i) => (
-                                        <div
-                                            key={i}
-                                            className="space-y-1 border-b pb-3 last:border-b-0 last:pb-0"
-                                        >
+                                <Deferred
+                                    data="recent_courses"
+                                    fallback={
+                                        <div className="space-y-2">
                                             <Skeleton className="h-4 w-3/4" />
-                                            <Skeleton className="h-3 w-1/2" />
+                                            <Skeleton className="h-4 w-1/2" />
                                         </div>
-                                    ))
-                                ) : recent_modules.length > 0 ? (
-                                    recent_modules.map((module) => (
-                                        <div
-                                            key={module.id}
-                                            className="flex items-start justify-between gap-4 border-b pb-3 last:border-b-0 last:pb-0"
-                                        >
-                                            <div className="flex-1">
-                                                <p className="line-clamp-2 text-sm font-medium">
-                                                    {module.title}
-                                                </p>
-                                                <p className="mt-1 text-xs text-muted-foreground">
-                                                    Kursus:{' '}
-                                                    {module.course?.title ??
-                                                        'Unknown'}
-                                                </p>
+                                    }
+                                >
+                                    {recent_courses &&
+                                    recent_courses.length > 0 ? (
+                                        recent_courses.map((course) => (
+                                            <div key={course.id}>
+                                                {course.title}
                                             </div>
-                                            {module.duration && (
-                                                <span className="shrink-0 text-xs text-muted-foreground">
-                                                    {module.duration} min
-                                                </span>
-                                            )}
-                                        </div>
-                                    ))
-                                ) : (
-                                    <p className="text-sm text-muted-foreground">
-                                        Belum ada modul
-                                    </p>
-                                )}
+                                        ))
+                                    ) : (
+                                        <p>Belum ada kursus</p>
+                                    )}
+                                </Deferred>
                             </div>
                         </CardContent>
                     </Card>

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -10,9 +10,9 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Auth\Notifications\VerifyEmail;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Carbon;
 use App\Notifications\ApiVerifyEmailNotification;
+use App\Notifications\PendingEmailVerificationNotification;
 use Spatie\Permission\Traits\HasRoles;
 
 
@@ -31,7 +31,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'pending_email',
         'password',
         'address',
-        'type'
+        'type',
+        'pending_email',
     ];
 
     /**
@@ -77,6 +78,13 @@ class User extends Authenticatable implements MustVerifyEmail
         } else {
             $this->notify(new VerifyEmail);
         }
+    }
+
+
+    public function sendPendingEmailVerificationNotification()
+    {
+        Notification::route('mail', $this->pending_email)
+            ->notify(new PendingEmailVerificationNotification($this));
     }
 
     public function otps()

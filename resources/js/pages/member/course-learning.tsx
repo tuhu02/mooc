@@ -114,6 +114,7 @@ export default function CourseLearningPage({
                                                 (assignment: Assignment) => (
                                                     <div
                                                         key={assignment.id}
+                                                        title="Klik untuk mengumpulkan tugas"
                                                         onClick={() =>
                                                             setActiveAssignment(
                                                                 {
@@ -125,7 +126,7 @@ export default function CourseLearningPage({
                                                                 },
                                                             )
                                                         }
-                                                        className="rounded-xl border border-slate-200 bg-slate-50/60 p-4"
+                                                        className="cursor-pointer rounded-xl border border-slate-200 bg-slate-50/60 p-4 transition hover:border-sky-300 hover:bg-sky-50/60 hover:shadow-md"
                                                     >
                                                         <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                                                             <div>
@@ -134,6 +135,12 @@ export default function CourseLearningPage({
                                                                         assignment.title
                                                                     }
                                                                 </h3>
+
+                                                                <p className="mt-1 text-xs text-slate-500">
+                                                                    Klik untuk
+                                                                    mengumpulkan
+                                                                    tugas
+                                                                </p>
                                                             </div>
 
                                                             <span
@@ -148,6 +155,7 @@ export default function CourseLearningPage({
                                                                     : 'Belum dikumpulkan'}
                                                             </span>
                                                         </div>
+
                                                         {assignment.description && (
                                                             <div
                                                                 className="mt-2 text-sm text-slate-600"
