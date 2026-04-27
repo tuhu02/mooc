@@ -75,7 +75,10 @@ class ModuleController extends Controller
         }
 
         if ($request->hasFile('attachment')) {
-            $validated['attachment'] = $request->file('attachment')->store('module-attachments', 'public');
+            $file = $request->file('attachment');
+
+            $validated['attachment'] = $file->store('module-attachments', 'public');
+            $validated['attachment_name'] = $validated['attachment_name'] ?: $file->getClientOriginalName();
         }
 
         $maxSortOrder = Module::where('course_id', $validated['course_id'])->max('sort_order') ?? 0;
@@ -137,9 +140,10 @@ class ModuleController extends Controller
                 Storage::disk('public')->delete($module->attachment);
             }
 
-            $validated['attachment'] = $request->file('attachment')->store('module-attachments', 'public');
-        } else {
-            unset($validated['attachment']);
+            $file = $request->file('attachment');
+
+            $validated['attachment'] = $file->store('module-attachments', 'public');
+            $validated['attachment_name'] = $validated['attachment_name'] ?: $file->getClientOriginalName();
         }
 
         $module->update($validated);

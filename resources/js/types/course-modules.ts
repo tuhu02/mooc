@@ -23,6 +23,7 @@ export type CourseModule = {
     is_preview: boolean;
     sort_order: number;
     assignments?: CourseModuleAssignment[];
+    attachment_name?: string | null;
 };
 
 export type CourseWithModules = {
@@ -42,7 +43,9 @@ export type CreateCourseModuleForm = {
     thumbnail: File | null;
     attachment: File | null;
     assignments: AssignmentForm[];
+    attachment_name: string;
     from: 'course-show';
+    
 };
 
 export type EditCourseModuleForm = {
@@ -56,6 +59,7 @@ export type EditCourseModuleForm = {
     attachment: File | null;
     is_preview: boolean;
     assignments: AssignmentForm[];
+    attachment_name: string;    
     from: 'course-show';
 };
 

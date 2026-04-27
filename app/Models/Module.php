@@ -16,6 +16,7 @@ class Module extends Model
         'description',
         'duration',
         'attachment',
+        'attachment_name',
     ];
 
     protected $casts = [

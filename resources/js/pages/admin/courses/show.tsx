@@ -24,6 +24,13 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import MDEditor from '@uiw/react-md-editor';
 import { Plus, BookOpen } from 'lucide-react';
 import { type DragEndEvent } from '@dnd-kit/core';
@@ -63,7 +70,7 @@ export default function Show() {
         is_preview: false,
         thumbnail: null,
         attachment: null,
-
+        attachment_name: '',
         // DIUBAH: dari single assignment menjadi array
         assignments: [
             {
@@ -94,6 +101,7 @@ export default function Show() {
         thumbnail: null,
         is_preview: false,
         attachment: null,
+        attachment_name: '',
         assignments: [
             {
                 title: '',
@@ -129,6 +137,7 @@ export default function Show() {
             thumbnail: null,
             is_preview: module.is_preview ?? false,
             attachment: null,
+            attachment_name: module.attachment_name ?? '',
             assignments:
                 module.assignments && module.assignments.length > 0
                     ? module.assignments.map((assignment) => ({
@@ -540,17 +549,34 @@ export default function Show() {
 
                                                 <div className="mt-3 grid gap-2">
                                                     <Label>Jenis</Label>
-                                                    <Input
+                                                    <Select
                                                         value={assignment.type}
-                                                        onChange={(e) =>
-                                                            updateCreateAssignment(
+                                                        onValueChange={(
+                                                            value,
+                                                        ) =>
+                                                            updateEditAssignment(
                                                                 index,
                                                                 'type',
-                                                                e.target.value,
+                                                                value,
                                                             )
                                                         }
-                                                        placeholder="Contoh: essay"
-                                                    />
+                                                    >
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder="Pilih jenis tugas" />
+                                                        </SelectTrigger>
+
+                                                        <SelectContent>
+                                                            <SelectItem value="essay">
+                                                                Essay
+                                                            </SelectItem>
+                                                            <SelectItem value="file">
+                                                                Upload File
+                                                            </SelectItem>
+                                                            <SelectItem value="quiz">
+                                                                Quiz
+                                                            </SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
                                                 </div>
                                             </div>
                                         ),
@@ -584,16 +610,46 @@ export default function Show() {
                                 <Label htmlFor="create-attachment">
                                     Attachment
                                 </Label>
-                                <Input
-                                    id="create-attachment"
-                                    type="file"
-                                    onChange={(e) =>
-                                        setCreateData(
-                                            'attachment',
-                                            e.target.files?.[0] ?? null,
-                                        )
-                                    }
-                                />
+                                <div className="grid gap-2">
+                                    <Label htmlFor="create-attachment">
+                                        Attachment
+                                    </Label>
+
+                                    <Input
+                                        id="create-attachment"
+                                        type="file"
+                                        onChange={(e) => {
+                                            const file =
+                                                e.target.files?.[0] ?? null;
+
+                                            setCreateData('attachment', file);
+
+                                            if (file) {
+                                                setCreateData(
+                                                    'attachment_name',
+                                                    file.name,
+                                                );
+                                            }
+                                        }}
+                                    />
+
+                                    <Input
+                                        value={createData.attachment_name}
+                                        onChange={(e) =>
+                                            setCreateData(
+                                                'attachment_name',
+                                                e.target.value,
+                                            )
+                                        }
+                                        placeholder="Nama attachment"
+                                    />
+
+                                    {createErrors.attachment && (
+                                        <p className="text-sm font-medium text-red-500">
+                                            {createErrors.attachment}
+                                        </p>
+                                    )}
+                                </div>
                                 {createErrors.attachment && (
                                     <p className="text-sm font-medium text-red-500">
                                         {createErrors.attachment}
@@ -844,17 +900,34 @@ export default function Show() {
 
                                                 <div className="mt-3 grid gap-2">
                                                     <Label>Jenis</Label>
-                                                    <Input
+                                                    <Select
                                                         value={assignment.type}
-                                                        onChange={(e) =>
+                                                        onValueChange={(
+                                                            value,
+                                                        ) =>
                                                             updateEditAssignment(
                                                                 index,
                                                                 'type',
-                                                                e.target.value,
+                                                                value,
                                                             )
                                                         }
-                                                        placeholder="Contoh: essay"
-                                                    />
+                                                    >
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder="Pilih jenis tugas" />
+                                                        </SelectTrigger>
+
+                                                        <SelectContent>
+                                                            <SelectItem value="essay">
+                                                                Essay
+                                                            </SelectItem>
+                                                            <SelectItem value="file">
+                                                                Upload File
+                                                            </SelectItem>
+                                                            <SelectItem value="quiz">
+                                                                Quiz
+                                                            </SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
                                                     {editErrors[
                                                         `assignments.${index}.type`
                                                     ] && (
@@ -899,16 +972,46 @@ export default function Show() {
                                 <Label htmlFor="edit-attachment">
                                     Attachment Baru
                                 </Label>
-                                <Input
-                                    id="edit-attachment"
-                                    type="file"
-                                    onChange={(e) =>
-                                        setEditData(
-                                            'attachment',
-                                            e.target.files?.[0] ?? null,
-                                        )
-                                    }
-                                />
+                                <div className="grid gap-2">
+                                    <Label htmlFor="edit-attachment">
+                                        Attachment Baru
+                                    </Label>
+
+                                    <Input
+                                        id="edit-attachment"
+                                        type="file"
+                                        onChange={(e) => {
+                                            const file =
+                                                e.target.files?.[0] ?? null;
+
+                                            setEditData('attachment', file);
+
+                                            if (file) {
+                                                setEditData(
+                                                    'attachment_name',
+                                                    file.name,
+                                                );
+                                            }
+                                        }}
+                                    />
+
+                                    <Input
+                                        value={editData.attachment_name}
+                                        onChange={(e) =>
+                                            setEditData(
+                                                'attachment_name',
+                                                e.target.value,
+                                            )
+                                        }
+                                        placeholder="Nama attachment"
+                                    />
+
+                                    {editErrors.attachment && (
+                                        <p className="text-sm font-medium text-red-500">
+                                            {editErrors.attachment}
+                                        </p>
+                                    )}
+                                </div>
                                 {editErrors.attachment && (
                                     <p className="text-sm font-medium text-red-500">
                                         {editErrors.attachment}
