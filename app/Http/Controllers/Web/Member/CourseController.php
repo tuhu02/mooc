@@ -127,12 +127,11 @@ class CourseController extends Controller
             'categories',
             'modules' => fn($query) => $query
                 ->with([
-                    'assignments' => fn($q) => $q->when($member, fn($q) => $q->with([
-                        'submissions' => fn($s) => $s
-                            ->where('member_id', $member->id)
-                            ->latest()
-                            ->limit(1),
-                    ]))
+                    'assignments' => fn($q) => $q->with([
+                        'submissions' => fn($s) => $member
+                            ? $s->where('member_id', $member->id)->latest()->limit(1)
+                            : $s->whereRaw('1 = 0'),
+                    ]),
                 ])
                 ->orderBy('sort_order')
                 ->orderBy('id'),
@@ -141,7 +140,7 @@ class CourseController extends Controller
         if ($member) {
             foreach ($course->modules as $module) {
                 foreach ($module->assignments as $assignment) {
-                    $assignment->submission = $assignment->submissions;
+                    $assignment->submission = $assignment->submissions->first();
                     unset($assignment->submissions);
                 }
             }

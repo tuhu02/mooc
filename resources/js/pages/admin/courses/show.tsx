@@ -973,10 +973,6 @@ export default function Show() {
                                     Attachment Baru
                                 </Label>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="edit-attachment">
-                                        Attachment Baru
-                                    </Label>
-
                                     <Input
                                         id="edit-attachment"
                                         type="file"

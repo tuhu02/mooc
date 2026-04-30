@@ -148,7 +148,11 @@ class CourseController extends Controller
                 ->with([
                     'assignments' => fn($q) => $q->with([
                         'submissions' => fn($s) => $s
-                            ->when($member, fn($q) => $q->where('member_id', $member->id))
+                            ->when(
+                                $member,
+                                fn($q) => $q->where('member_id', $member->id),
+                                fn($q) => $q->whereRaw('1 = 0'),
+                            )
                             ->latest()
                             ->limit(1),
                     ]),
@@ -159,7 +163,7 @@ class CourseController extends Controller
 
         $course->modules->each(function ($module) {
             $module->assignments->each(function ($assignment) {
-                $assignment->submission = $assignment->submissions;
+                $assignment->submission = $assignment->submissions->first();
                 $assignment->makeHidden('submissions');
             });
         });
