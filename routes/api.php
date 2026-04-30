@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\LevelController;
 use App\Http\Controllers\Api\AssignmentSubmissionController;
+use App\Http\Controllers\Api\Auth\PendingEmailVerificationController;
 use App\Http\Controllers\Api\ProfileController;
 
 Route::get('/user', function (Request $request) {
@@ -31,10 +32,10 @@ Route::post('/email/resend-otp', [EmailVerificationController::class, 'resendOtp
     ->middleware(['throttle:6,1', 'auth:sanctum'])
     ->name('api.verification.resend');
 
-Route::post('/email/verify-pending-otp', [EmailVerificationController::class, 'verifyPendingEmail'])
+Route::post('/email/verify-pending-otp', [PendingEmailVerificationController::class, 'verify'])
     ->middleware('auth:sanctum');
 
-Route::post('/email/resend-pending-otp', [EmailVerificationController::class, 'resendPendingEmailOtp'])
+Route::post('/email/resend-pending-otp', [PendingEmailVerificationController::class, 'resend'])
     ->middleware(['throttle:6,1', 'auth:sanctum']);
 
 Route::post('/reset-password', [PasswordResetController::class, 'sendOtp']);

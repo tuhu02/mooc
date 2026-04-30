@@ -159,7 +159,7 @@ class CourseController extends Controller
 
         $course->modules->each(function ($module) {
             $module->assignments->each(function ($assignment) {
-                $assignment->submission = $assignment->submissions->first();
+                $assignment->submission = $assignment->submissions;
                 $assignment->makeHidden('submissions');
             });
         });
