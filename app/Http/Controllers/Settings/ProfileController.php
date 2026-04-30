@@ -70,7 +70,10 @@ class ProfileController extends Controller
                 ->notify(new PendingEmailVerifyLinkNotification($user, $user->pending_email));
         }
 
-        return to_route('profile.edit')->with('status', 'profile-updated');
+        return to_route('profile.edit')->with(
+            'status',
+            $emailChanged ? 'email-changed' : 'profile-updated'
+        );
     }
 
     /**
