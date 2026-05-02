@@ -137,12 +137,10 @@ class CourseController extends Controller
                 ->orderBy('id'),
         ])->loadCount(['modules', 'members']);
 
-        if ($member) {
-            foreach ($course->modules as $module) {
-                foreach ($module->assignments as $assignment) {
-                    $assignment->submission = $assignment->submissions->first();
-                    unset($assignment->submissions);
-                }
+        foreach ($course->modules as $module) {
+            foreach ($module->assignments as $assignment) {
+                $assignment->submission = $assignment->submissions->first();
+                unset($assignment->submissions);
             }
         }
 
@@ -208,7 +206,8 @@ class CourseController extends Controller
                 'duration' => $currentModule->duration,
                 'attachment' => $currentModule->attachment,
                 'is_preview' => $currentModule->is_preview,
-                'assignments' => $isEnrolled ? $currentModule->assignments : [],
+                'assignments' => $currentModule->assignments,
+                'canSubmitAssignment' => $isEnrolled,
             ] : null,
             'navigation' => [
                 'previous' => $previousModule ? [

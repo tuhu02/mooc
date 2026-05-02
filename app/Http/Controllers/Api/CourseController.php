@@ -226,7 +226,8 @@ class CourseController extends Controller
                 'duration' => $currentModule->duration,
                 'attachment' => $currentModule->attachment,
                 'is_preview' => $currentModule->is_preview,
-                'assignments' => $isEnrolled ? $currentModule->assignments : [],
+                'assignments' => $currentModule->assignments,
+                'can_submit_assignment' => $isEnrolled,
             ],
             'navigation' => [
                 'previous' => $previousModule ? [

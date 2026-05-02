@@ -12,6 +12,7 @@ export default function CourseLearningPage({
     course,
     currentModule,
     navigation,
+    isEnrolled,
 }: Props) {
     const selectedModule = currentModule ?? null;
 
@@ -110,12 +111,21 @@ export default function CourseLearningPage({
                                             <p className="text-base font-semibold text-slate-900">
                                                 Assignment
                                             </p>
+
                                             {selectedModule.assignments.map(
                                                 (assignment: Assignment) => (
                                                     <div
                                                         key={assignment.id}
-                                                        title="Klik untuk mengumpulkan tugas"
-                                                        onClick={() =>
+                                                        title={
+                                                            isEnrolled
+                                                                ? 'Klik untuk mengumpulkan tugas'
+                                                                : 'Login dan daftar course terlebih dahulu untuk mengumpulkan tugas'
+                                                        }
+                                                        onClick={() => {
+                                                            if (!isEnrolled) {
+                                                                return;
+                                                            }
+
                                                             setActiveAssignment(
                                                                 {
                                                                     id: assignment.id,
@@ -124,9 +134,13 @@ export default function CourseLearningPage({
                                                                         assignment.submission ??
                                                                         null,
                                                                 },
-                                                            )
-                                                        }
-                                                        className="cursor-pointer rounded-xl border border-slate-200 bg-slate-50/60 p-4 transition hover:border-sky-300 hover:bg-sky-50/60 hover:shadow-md"
+                                                            );
+                                                        }}
+                                                        className={`rounded-xl border border-slate-200 bg-slate-50/60 p-4 transition ${
+                                                            isEnrolled
+                                                                ? 'cursor-pointer hover:border-sky-300 hover:bg-sky-50/60 hover:shadow-md'
+                                                                : 'cursor-not-allowed opacity-90'
+                                                        }`}
                                                     >
                                                         <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                                                             <div>
@@ -137,23 +151,30 @@ export default function CourseLearningPage({
                                                                 </h3>
 
                                                                 <p className="mt-1 text-xs text-slate-500">
-                                                                    Klik untuk
-                                                                    mengumpulkan
-                                                                    tugas
+                                                                    {isEnrolled
+                                                                        ? 'Klik untuk mengumpulkan tugas'
+                                                                        : 'Login dan daftar course terlebih dahulu untuk mengumpulkan tugas'}
                                                                 </p>
                                                             </div>
 
-                                                            <span
-                                                                className={`inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-semibold ${
-                                                                    assignment.submission
-                                                                        ? 'bg-emerald-100 text-emerald-700'
-                                                                        : 'bg-amber-100 text-amber-700'
-                                                                }`}
-                                                            >
-                                                                {assignment.submission
-                                                                    ? 'Sudah dikumpulkan'
-                                                                    : 'Belum dikumpulkan'}
-                                                            </span>
+                                                            {isEnrolled ? (
+                                                                <span
+                                                                    className={`inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-semibold ${
+                                                                        assignment.submission
+                                                                            ? 'bg-emerald-100 text-emerald-700'
+                                                                            : 'bg-amber-100 text-amber-700'
+                                                                    }`}
+                                                                >
+                                                                    {assignment.submission
+                                                                        ? 'Sudah dikumpulkan'
+                                                                        : 'Belum dikumpulkan'}
+                                                                </span>
+                                                            ) : (
+                                                                <span className="inline-flex w-fit items-center rounded-full bg-slate-200 px-3 py-1 text-xs font-semibold text-slate-600">
+                                                                    Hanya dapat
+                                                                    dilihat
+                                                                </span>
+                                                            )}
                                                         </div>
 
                                                         {assignment.description && (
