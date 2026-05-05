@@ -61,35 +61,4 @@ class AssignmentSubmissionController extends Controller
             'submission' => $submission,
         ]);
     }
-
-    public function destroy(Assignment $assignment, AssignmentSubmission $submission)
-    {
-        $user = request()->user();
-        $member = $user?->member;
-
-        if (!$member) {
-            return response()->json([
-                'message' => 'Profil member tidak ditemukan.',
-            ], 404);
-        }
-
-        if (
-            $submission->assignment_id !== $assignment->id ||
-            $submission->member_id !== $member->id
-        ) {
-            return response()->json([
-                'message' => 'Submission tidak ditemukan.',
-            ], 404);
-        }
-
-        if ($submission->file) {
-            Storage::disk('public')->delete($submission->file);
-        }
-
-        $submission->delete();
-
-        return response()->json([
-            'message' => 'Submission berhasil dihapus.',
-        ]);
-    }
 }
