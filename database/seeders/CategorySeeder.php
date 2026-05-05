@@ -10,17 +10,17 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            'Web Development',
-            'Backend Development',
-            'Mobile Development',
-            'UI/UX Design',
-            'Machine Learning',
-            'Database',
-            'Version Control',
+            ['name' => 'Web Development', 'icon' => 'Globe'],
+            ['name' => 'Backend Development', 'icon' => 'Server'],
+            ['name' => 'Mobile Development', 'icon' => 'Mobile'],
+            ['name' => 'UI/UX Design', 'icon' => 'Palette'],
+            ['name' => 'Machine Learning', 'icon' => 'Brain'],
+            ['name' => 'Database', 'icon' => 'Database'],
+            ['name' => 'Version Control', 'icon' => 'Git Branch'],
         ];
 
-        foreach ($categories as $name) {
-            Category::firstOrCreate(['name' => $name]);
+        foreach ($categories as $data) {
+            Category::firstOrCreate(['name' => $data['name']], ['icon' => $data['icon']]);
         }
     }
 }
