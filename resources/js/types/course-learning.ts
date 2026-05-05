@@ -61,6 +61,7 @@ export type Module = {
     sort_order?: number | null;
     title: string;
     is_preview?: boolean;
+    is_locked?: boolean;
     thumbnail?: string | null;
     video?: string | null;
     description?: string | null;

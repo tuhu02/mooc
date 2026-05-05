@@ -194,6 +194,14 @@ class CourseController extends Controller
                 ]),
                 'modules_count' => $course->modules_count,
                 'members_count' => $course->members_count,
+                'modules' => $course->modules->map(fn($module) => [
+                    'id' => $module->id,
+                    'sort_order' => $module->sort_order,
+                    'title' => $module->title,
+                    'is_preview' => $module->is_preview,
+                    'is_locked' => !$module->is_preview && !$isEnrolled,
+                    'duration' => $module->duration,
+                ]),
             ],
             'initialModuleSortOrder' => $currentModule?->sort_order,
             'currentModule' => $currentModule ? [
