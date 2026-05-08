@@ -10,6 +10,7 @@ use App\Http\Controllers\Web\Admin\ModuleController;
 use App\Http\Controllers\Web\Admin\RoleController;
 use App\Http\Controllers\Web\Member\AssignmentSubmissionController;
 use App\Http\Controllers\Web\Member\CourseController;
+use App\Http\Controllers\Web\Member\EventController;
 use App\Http\Controllers\Web\WelcomeController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\MentorMiddleware;
@@ -24,6 +25,8 @@ Route::get('/', WelcomeController::class)->name('welcome');
 Route::prefix('member')->name('member.')->group(function () {
     Route::get('courses', [CourseController::class, 'index'])->name('courses.index');
     Route::get('courses/{course:slug}', [CourseController::class, 'show'])->name('courses.show');
+
+    Route::get('events', [EventController::class, 'index'])->name('events.index');
 
     Route::get('courses/{course:slug}/modules/{sort_order?}', [CourseController::class, 'learning'])
         ->name('courses.learning');

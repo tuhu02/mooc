@@ -133,8 +133,9 @@ class ModuleController extends Controller
             if ($module->thumbnail) {
                 Storage::disk('public')->delete($module->thumbnail);
             }
-
             $validated['thumbnail'] = $request->file('thumbnail')->store('modules', 'public');
+        } else {
+            unset($validated['thumbnail']);
         }
 
         if ($request->hasFile('attachment')) {
@@ -146,6 +147,9 @@ class ModuleController extends Controller
 
             $validated['attachment'] = $file->store('module-attachments', 'public');
             $validated['attachment_name'] = $validated['attachment_name'] ?: $file->getClientOriginalName();
+        } else {
+            unset($validated['attachment']);
+            unset($validated['attachment_name']);
         }
 
         $module->update($validated);

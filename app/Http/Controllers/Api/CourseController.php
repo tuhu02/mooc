@@ -219,6 +219,7 @@ class CourseController extends Controller
                     'id' => $module->id,
                     'sort_order' => $module->sort_order,
                     'title' => $module->title,
+                    'thumbnail' => $module->thumbnail,
                     'is_preview' => $module->is_preview,
                     'is_locked' => !$module->is_preview && !$isEnrolled,
                     'duration' => $module->duration,

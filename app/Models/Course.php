@@ -13,8 +13,10 @@ class Course extends Model
         'description',
         'slug',
         'is_active',
+        'is_highlight',
         'mentor_id',
         'level',
+        'type',
     ];
 
     public function mentor()

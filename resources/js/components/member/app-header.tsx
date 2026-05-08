@@ -1,5 +1,5 @@
 import { Link, router, usePage } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-react';
+import { Menu, Search } from 'lucide-react';
 import { Breadcrumbs } from '@/components/member/breadcrumbs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -46,6 +46,10 @@ const mainNavItems: NavItem[] = [
         title: 'Kursus',
         href: member.courses.index(),
     },
+    {
+        title: 'Event',
+        href: '/member/events',
+    },
 ];
 
 const activeItemStyles =
@@ -55,9 +59,13 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
     const page = usePage<{ auth: { user: User | null } }>();
     const { auth } = page.props;
     const user = auth?.user ?? null;
+
     const getInitials = useInitials();
     const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
+
     const [keyword, setKeyword] = useState('');
+    const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+
     const navItems = user
         ? mainNavItems
         : mainNavItems.filter((item) => item.title !== 'Dashboard');
@@ -66,10 +74,12 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
         event.preventDefault();
 
         const search = keyword.trim();
+
         const url = member.courses.index.url({
             query: search ? { q: search } : {},
         });
 
+        setIsMobileSearchOpen(false);
         router.visit(url);
     };
 
@@ -77,7 +87,6 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
         <>
             <div className="sticky top-0 z-50 border-b border-sidebar-border/80 bg-white dark:bg-neutral-950">
                 <div className="mx-auto flex h-16 items-center px-4 md:max-w-7xl">
-                    {/* Mobile Menu */}
                     <div className="lg:hidden">
                         <Sheet>
                             <SheetTrigger asChild>
@@ -89,6 +98,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                     <Menu className="h-5 w-5" />
                                 </Button>
                             </SheetTrigger>
+
                             <SheetContent
                                 side="left"
                                 className="flex h-full w-64 flex-col items-stretch justify-between bg-sidebar"
@@ -96,9 +106,11 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                 <SheetTitle className="sr-only">
                                     Navigation Menu
                                 </SheetTitle>
+
                                 <SheetHeader className="flex justify-start text-left">
                                     <AppLogoIcon className="h-6 w-6 fill-current text-black dark:text-white" />
                                 </SheetHeader>
+
                                 <div className="flex h-full flex-1 flex-col space-y-4 p-4">
                                     <div className="flex h-full flex-col justify-between text-sm">
                                         <div className="flex flex-col space-y-4">
@@ -121,6 +133,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                         </Sheet>
                     </div>
 
+                    {/* Logo */}
                     <Link
                         href={user ? dashboard() : member.courses.index()}
                         prefetch
@@ -154,8 +167,9 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                             )}
                                             {item.title}
                                         </Link>
+
                                         {isCurrentUrl(item.href) && (
-                                            <div className="absolute bottom-0 left-0 h-0.5 w-full translate-y-px bg-black dark:bg-white"></div>
+                                            <div className="absolute bottom-0 left-0 h-0.5 w-full translate-y-px bg-black dark:bg-white" />
                                         )}
                                     </NavigationMenuItem>
                                 ))}
@@ -165,11 +179,24 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
 
                     <div className="ml-auto flex items-center space-x-2">
                         <div className="relative flex items-center space-x-1">
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                onClick={() =>
+                                    setIsMobileSearchOpen((value) => !value)
+                                }
+                                className="h-9 w-9 lg:hidden"
+                            >
+                                <Search className="h-5 w-5" />
+                            </Button>
+
                             <form
                                 onSubmit={handleSearch}
-                                className="relative w-56 transition-all duration-300 ease-out focus-within:w-80"
+                                className="relative hidden w-56 transition-all duration-300 ease-out focus-within:w-80 lg:block"
                             >
                                 <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
+
                                 <input
                                     type="text"
                                     value={keyword}
@@ -180,7 +207,28 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                     className="h-10 w-full rounded-full border border-slate-300 bg-white py-2 pr-4 pl-9 text-sm text-slate-800 transition-all duration-300 ease-out placeholder:text-slate-400 focus:border-slate-400 focus:ring-2 focus:ring-slate-200 focus:outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-slate-500 dark:focus:ring-slate-700"
                                 />
                             </form>
+
+                            {isMobileSearchOpen && (
+                                <form
+                                    onSubmit={handleSearch}
+                                    className="absolute top-11 right-0 z-50 w-72 lg:hidden"
+                                >
+                                    <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
+
+                                    <input
+                                        type="text"
+                                        value={keyword}
+                                        onChange={(event) =>
+                                            setKeyword(event.target.value)
+                                        }
+                                        placeholder="Cari course..."
+                                        autoFocus
+                                        className="h-10 w-full rounded-full border border-slate-300 bg-white py-2 pr-4 pl-9 text-sm text-slate-800 shadow-lg transition-all placeholder:text-slate-400 focus:border-slate-400 focus:ring-2 focus:ring-slate-200 focus:outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-slate-500 dark:focus:ring-slate-700"
+                                    />
+                                </form>
+                            )}
                         </div>
+
                         {user ? (
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
@@ -197,6 +245,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                                 }
                                                 alt={user.name ?? 'User'}
                                             />
+
                                             <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
                                                 {getInitials(
                                                     user.name ?? 'User',
@@ -205,6 +254,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                         </Avatar>
                                     </Button>
                                 </DropdownMenuTrigger>
+
                                 <DropdownMenuContent
                                     className="w-56"
                                     align="end"
@@ -220,6 +270,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                 >
                                     Masuk
                                 </Link>
+
                                 <Button
                                     asChild
                                     size="sm"
@@ -232,6 +283,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                     </div>
                 </div>
             </div>
+
             {breadcrumbs.length > 1 && (
                 <div className="sticky top-16 z-40 flex w-full border-b border-sidebar-border/70 bg-white dark:bg-neutral-950">
                     <div className="mx-auto flex h-12 w-full items-center justify-start px-4 text-neutral-500 md:max-w-7xl">

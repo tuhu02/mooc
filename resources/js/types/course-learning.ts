@@ -39,6 +39,8 @@ export type Assignment = {
 };
 
 
+export type CourseType = 'default' | 'live';
+
 export type Course = {
     id: number;
     title: string;
@@ -53,6 +55,7 @@ export type Course = {
     members_count?: number;
     mentor?: Mentor;
     categories?: Category[];
+    type?: CourseType; // default: 'default', options: 'default' | 'live'
 };
 
 export type Module = {

@@ -25,7 +25,7 @@ export default function CourseLearningPage({
     const nextModule = navigation?.next ?? null;
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Course', href: '/member/courses' },
+        { title: 'Kursus', href: '/member/courses' },
         { title: course.title, href: `/member/courses/${course.slug}` },
         { title: 'Belajar', href: '' },
     ];
@@ -47,9 +47,8 @@ export default function CourseLearningPage({
 
                 <div className="flex min-h-screen flex-1 flex-col bg-slate-50">
                     <div className="mx-auto flex w-full max-w-7xl flex-1 gap-6 px-4 py-8 pb-24 md:px-6">
-                        {/* sidebar modul */}
                         <aside className="hidden w-72 shrink-0 lg:block">
-                            <div className="sticky top-24 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                            <div className="sticky top-32 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
                                 <div className="mb-4">
                                     <h2 className="text-base font-semibold text-slate-900">
                                         Daftar Modul
@@ -85,18 +84,23 @@ export default function CourseLearningPage({
                                                           : 'border-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                                                 }`}
                                             >
-                                                <div
-                                                    className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
-                                                        isActive
-                                                            ? 'bg-sky-600 text-white'
-                                                            : module.is_locked
-                                                              ? 'bg-slate-100 text-slate-400'
-                                                              : 'bg-slate-100 text-slate-600 group-hover:bg-white'
-                                                    }`}
-                                                >
-                                                    {module.sort_order}
-                                                </div>
-
+                                                {module.thumbnail && (
+                                                    <div
+                                                        className={`mt-0.5 h-12 w-16 shrink-0 overflow-hidden rounded-lg border ${
+                                                            isActive
+                                                                ? 'border-sky-300'
+                                                                : module.is_locked
+                                                                  ? 'border-slate-200 opacity-60'
+                                                                  : 'border-slate-200'
+                                                        }`}
+                                                    >
+                                                        <img
+                                                            src={`/storage/${module.thumbnail}`}
+                                                            alt={module.title}
+                                                            className="h-full w-full object-cover"
+                                                        />
+                                                    </div>
+                                                )}
                                                 <div className="min-w-0 flex-1">
                                                     <div className="flex items-center gap-2">
                                                         <span className="truncate font-medium">
@@ -110,7 +114,8 @@ export default function CourseLearningPage({
 
                                                     {module.duration && (
                                                         <p className="mt-1 text-xs text-slate-400">
-                                                            {module.duration}
+                                                            {module.duration} -
+                                                            Menit
                                                         </p>
                                                     )}
                                                 </div>
@@ -121,7 +126,6 @@ export default function CourseLearningPage({
                             </div>
                         </aside>
 
-                        {/* materi utama */}
                         <div className="min-w-0 flex-1">
                             <div className="px-2 pb-8">
                                 <h1 className="mb-6 text-2xl font-bold text-slate-900">
@@ -133,16 +137,6 @@ export default function CourseLearningPage({
                                         <VideoPlayer
                                             videoUrl={selectedModule.video}
                                             title={selectedModule.title}
-                                        />
-                                    </div>
-                                ) : null}
-
-                                {selectedModule?.thumbnail ? (
-                                    <div className="mb-6">
-                                        <img
-                                            src={`/storage/${selectedModule.thumbnail}`}
-                                            alt={selectedModule.title}
-                                            className="h-auto w-full max-w-2xl rounded-lg object-cover shadow-md"
                                         />
                                     </div>
                                 ) : null}

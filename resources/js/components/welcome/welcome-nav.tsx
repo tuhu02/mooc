@@ -54,47 +54,58 @@ export default function WelcomeNav({ auth, canRegister = true }: Props) {
             className="fixed top-0 z-50 w-full border-b border-slate-200 bg-white/90 backdrop-blur-md dark:border-slate-800 dark:bg-slate-950/90"
         >
             <div className="mx-auto flex max-w-7xl items-center justify-between p-4 md:px-8">
-                <div className="flex items-center gap-2">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-black font-bold text-white dark:bg-white dark:text-black">
-                        IGS
+                <div className="flex items-center gap-8">
+                    <div className="flex items-center gap-2">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-black font-bold text-white dark:bg-white dark:text-black">
+                            IGS
+                        </div>
+                        <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+                            MOOC
+                        </span>
                     </div>
-                    <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
-                        MOOC
-                    </span>
+
+                    <div className="hidden items-center gap-6 lg:flex">
+                        <Link
+                            href="/"
+                            className="text-sm font-semibold text-slate-700 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
+                        >
+                            Beranda
+                        </Link>
+
+                        <Link
+                            href={member.courses.index().url}
+                            className="text-sm font-semibold text-slate-700 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
+                        >
+                            Kursus
+                        </Link>
+
+                        <Link
+                            href="/member/events"
+                            className="text-sm font-semibold text-slate-700 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
+                        >
+                            Event
+                        </Link>
+
+                        <Link
+                            href="/courses"
+                            className="text-sm font-semibold text-slate-700 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
+                        >
+                            Tentang
+                        </Link>
+
+                        <Link
+                            href="/courses"
+                            className="text-sm font-semibold text-slate-700 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
+                        >
+                            FAQ
+                        </Link>
+                    </div>
                 </div>
 
-                <div className="hidden items-center gap-6 lg:flex">
-                    <Link
-                        href="/"
-                        className="text-sm font-semibold text-slate-700 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
-                    >
-                        Beranda
-                    </Link>
-
-                    <Link
-                        href="/courses"
-                        className="text-sm font-semibold text-slate-700 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
-                    >
-                        Tentang
-                    </Link>
-
-                    <Link
-                        href={member.courses.index().url}
-                        className="text-sm font-semibold text-slate-700 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
-                    >
-                        Kursus
-                    </Link>
-
-                    <Link
-                        href="/courses"
-                        className="text-sm font-semibold text-slate-700 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
-                    >
-                        FAQ
-                    </Link>
-
+                <div className="flex items-center gap-4">
                     <form
                         onSubmit={handleSearch}
-                        className="relative w-56 transition-all duration-300 ease-out focus-within:w-80"
+                        className="relative hidden w-56 transition-all duration-300 ease-out focus-within:w-80 lg:block"
                     >
                         <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
                         <input
@@ -105,9 +116,7 @@ export default function WelcomeNav({ auth, canRegister = true }: Props) {
                             className="h-10 w-full rounded-full border border-slate-300 bg-white py-2 pr-4 pl-9 text-sm text-slate-800 transition-all duration-300 ease-out placeholder:text-slate-400 focus:border-slate-400 focus:ring-2 focus:ring-slate-200 focus:outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-slate-500 dark:focus:ring-slate-700"
                         />
                     </form>
-                </div>
 
-                <div className="flex items-center gap-4">
                     {auth.user ? (
                         <Link href={dashboardHref || '/'}>
                             <Button className="rounded-full bg-black px-6 text-white hover:bg-slate-800 dark:bg-white dark:text-black dark:hover:bg-slate-200">
@@ -122,6 +131,7 @@ export default function WelcomeNav({ auth, canRegister = true }: Props) {
                             >
                                 Masuk
                             </Link>
+
                             {canRegister && (
                                 <Link href={register().url}>
                                     <Button className="rounded-full bg-black px-6 text-white hover:bg-slate-800 dark:bg-white dark:text-black dark:hover:bg-slate-200">
