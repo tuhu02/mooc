@@ -33,51 +33,57 @@ export default function ModuleBottomNavigation({
 
     return (
         <div className="sticky bottom-0 w-full border-t border-slate-200 bg-white/95 shadow-[0_-8px_24px_rgba(15,23,42,0.08)] backdrop-blur-sm">
-            <div className="flex w-full items-center justify-between gap-4 px-4 py-3 md:px-6 md:py-4">
-                {prevModule && prevHref ? (
-                    <Link
-                        href={prevHref}
-                        className="flex min-h-12 max-w-65 min-w-35 items-center gap-2 rounded-lg px-3 py-2 text-base text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
-                    >
-                        <ChevronLeft className="h-5 w-5 shrink-0" />
-                        <span className="max-w-52.5 truncate font-medium">
-                            {prevModule.title}
-                        </span>
-                    </Link>
-                ) : (
-                    <div className="min-w-35" />
-                )}
-
-                <span className="mx-2 max-w-xs truncate text-center text-base font-semibold text-slate-900 md:mx-4 md:max-w-md md:text-lg">
-                    {currentTitle ?? ''}
-                </span>
-
-                {nextModule && nextHref ? (
-                    nextModule.is_locked ? (
+            <div className="grid w-full grid-cols-[30%_40%_30%] items-center gap-2 px-4 py-3 md:px-6 md:py-4">
+                <div className="min-w-0">
+                    {prevModule && prevHref ? (
                         <Link
-                            href="/login"
-                            className="flex min-h-12 max-w-65 min-w-35 items-center justify-end gap-2 rounded-lg px-3 py-2 text-base text-slate-400 transition hover:bg-slate-100"
+                            href={prevHref}
+                            className="flex min-h-12 min-w-0 items-center gap-2 rounded-lg px-3 py-2 text-base text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
                         >
-                            <span className="max-w-52.5 truncate text-right font-medium">
-                                {nextModule.title}
+                            <ChevronLeft className="h-5 w-5 shrink-0" />
+                            <span className="min-w-0 truncate font-medium">
+                                {prevModule.title}
                             </span>
-                            <Lock className="h-4 w-4 shrink-0" />
-                            <ChevronRight className="h-5 w-5 shrink-0" />
                         </Link>
                     ) : (
-                        <Link
-                            href={nextHref}
-                            className="flex min-h-12 max-w-65 min-w-35 items-center justify-end gap-2 rounded-lg px-3 py-2 text-base text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
-                        >
-                            <span className="max-w-52.5 truncate text-right font-medium">
-                                {nextModule.title}
-                            </span>
-                            <ChevronRight className="h-5 w-5 shrink-0" />
-                        </Link>
-                    )
-                ) : (
-                    <div className="min-w-35" />
-                )}
+                        <div />
+                    )}
+                </div>
+
+                <div className="min-w-0 px-2 text-center">
+                    <span className="block truncate text-base font-semibold text-slate-900 md:text-lg">
+                        {currentTitle ?? ''}
+                    </span>
+                </div>
+
+                <div className="min-w-0">
+                    {nextModule && nextHref ? (
+                        nextModule.is_locked ? (
+                            <Link
+                                href="/login"
+                                className="flex min-h-12 min-w-0 items-center justify-end gap-2 rounded-lg px-3 py-2 text-base text-slate-400 transition hover:bg-slate-100"
+                            >
+                                <span className="min-w-0 truncate text-right font-medium">
+                                    {nextModule.title}
+                                </span>
+                                <Lock className="h-4 w-4 shrink-0" />
+                                <ChevronRight className="h-5 w-5 shrink-0" />
+                            </Link>
+                        ) : (
+                            <Link
+                                href={nextHref}
+                                className="flex min-h-12 min-w-0 items-center justify-end gap-2 rounded-lg px-3 py-2 text-base text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+                            >
+                                <span className="min-w-0 truncate text-right font-medium">
+                                    {nextModule.title}
+                                </span>
+                                <ChevronRight className="h-5 w-5 shrink-0" />
+                            </Link>
+                        )
+                    ) : (
+                        <div />
+                    )}
+                </div>
             </div>
         </div>
     );

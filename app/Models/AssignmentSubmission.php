@@ -9,9 +9,14 @@ class AssignmentSubmission extends Model
     protected $fillable = [
         'assignment_id',
         'member_id',
-        'submission_name',
-        'description',
         'file',
+        'feedback',
+        'status',
+        'reviewed_at',
+    ];
+
+    protected $casts = [
+        'reviewed_at' => 'datetime',
     ];
 
     public function assignment()

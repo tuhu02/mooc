@@ -24,6 +24,9 @@ export type Submission = {
     assignment_id: number;
     submission_name?: string | null;
     file?: string | null;
+    feedback?: string | null;
+    status?: 'submitted' | 'reviewed' | 'revision_required';
+    reviewed_at?: string | null;
 };
 
 export type Assignment = {

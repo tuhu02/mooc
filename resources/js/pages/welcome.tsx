@@ -1,5 +1,5 @@
 import { Head, usePage } from '@inertiajs/react';
-import WelcomeNav from '@/components/welcome/welcome-nav';
+import MemberLayout from '@/layouts/member-layout';
 import HeroSection from '@/components/welcome/hero-section';
 import FeaturesSection from '@/components/welcome/feature-section';
 import RoadmapSection from '@/components/welcome/roadmap-section';
@@ -18,22 +18,22 @@ export default function Welcome({
     const { auth } = usePage().props;
 
     return (
-        <div className="min-h-screen bg-white text-slate-900 selection:bg-slate-200 selection:text-slate-900 dark:bg-slate-950 dark:text-slate-100 dark:selection:bg-slate-800 dark:selection:text-slate-100">
+        <MemberLayout>
             <Head title="Selamat Datang di IGS MOOC" />
 
-            <WelcomeNav auth={auth} canRegister={canRegister} />
+            <div className="min-h-screen bg-white text-slate-900 selection:bg-slate-200 selection:text-slate-900 dark:bg-slate-950 dark:text-slate-100 dark:selection:bg-slate-800 dark:selection:text-slate-100">
+                <HeroSection canRegister={canRegister} />
 
-            <HeroSection canRegister={canRegister} />
+                <FeaturesSection />
 
-            <FeaturesSection />
+                <RoadmapSection />
 
-            <RoadmapSection />
+                <FeaturedCourses courses={courses} />
 
-            <FeaturedCourses courses={courses} />
+                <CTASection auth={auth} canRegister={canRegister} />
 
-            <CTASection auth={auth} canRegister={canRegister} />
-
-            <FooterSection />
-        </div>
+                <FooterSection />
+            </div>
+        </MemberLayout>
     );
 }

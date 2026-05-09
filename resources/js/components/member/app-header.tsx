@@ -50,6 +50,14 @@ const mainNavItems: NavItem[] = [
         title: 'Event',
         href: '/member/events',
     },
+    {
+        title: 'Tentang',
+        href: '',
+    },
+    {
+        title: 'FAQ',
+        href: '',
+    },
 ];
 
 const activeItemStyles =

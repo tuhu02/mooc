@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Web\Admin\AdminController;
+use App\Http\Controllers\Web\Admin\AssignmentSubmissionReviewController;
 use App\Http\Controllers\Web\Admin\CategoryController;
 use App\Http\Controllers\Web\Admin\CourseController as AdminCourseController;
 use App\Http\Controllers\Web\Admin\DashboardController as AdminDashboardController;
@@ -61,6 +62,12 @@ Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->name('admi
     Route::resource('/courses', AdminCourseController::class);
     Route::post('/modules/reorder', [ModuleController::class, 'reorder'])->name('modules.reorder');
     Route::resource('/modules', ModuleController::class)->except(['show']);
+
+    Route::get('/submissions', [AssignmentSubmissionReviewController::class, 'index'])
+        ->name('submissions.index');
+
+    Route::put('/submissions/{submission}/review', [AssignmentSubmissionReviewController::class, 'review'])
+        ->name('submissions.review');
 });
 
 require __DIR__ . '/settings.php';

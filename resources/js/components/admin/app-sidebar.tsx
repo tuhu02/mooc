@@ -3,8 +3,8 @@
 import * as React from 'react';
 import {
     BookOpen,
+    FileCheck2,
     GalleryVerticalEnd,
-    Layers,
     PieChart,
     Shield,
     Users,
@@ -152,6 +152,46 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         title: 'Add Roles',
                         url: '/admin/roles/create',
                         isActive: url === '/admin/roles/create',
+                    },
+                ],
+            },
+            {
+                title: 'Koreksi Tugas',
+                url: '/admin/submissions',
+                icon: FileCheck2,
+                isActive: url.startsWith('/admin/submissions'),
+                items: [
+                    {
+                        title: 'Semua Submission',
+                        url: '/admin/submissions',
+                        isActive: url === '/admin/submissions',
+                    },
+                    {
+                        title: 'Belum Dikoreksi',
+                        url: '/admin/submissions?status=submitted',
+                        isActive:
+                            url.startsWith('/admin/submissions') &&
+                            new URLSearchParams(window.location.search).get(
+                                'status',
+                            ) === 'submitted',
+                    },
+                    {
+                        title: 'Sudah Dikoreksi',
+                        url: '/admin/submissions?status=reviewed',
+                        isActive:
+                            url.startsWith('/admin/submissions') &&
+                            new URLSearchParams(window.location.search).get(
+                                'status',
+                            ) === 'reviewed',
+                    },
+                    {
+                        title: 'Perlu Revisi',
+                        url: '/admin/submissions?status=revision_required',
+                        isActive:
+                            url.startsWith('/admin/submissions') &&
+                            new URLSearchParams(window.location.search).get(
+                                'status',
+                            ) === 'revision_required',
                     },
                 ],
             },
