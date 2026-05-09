@@ -62,6 +62,7 @@ class ProfileController extends Controller
         $emailChanged = $validated['email'] !== $user->email;
 
         $user->name = $validated['name'];
+        $user->address = $validated['address'] ?? $user->address;
 
         if ($emailChanged) {
             $user->pending_email = $validated['email'];

@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class LearningCourseResource extends JsonResource
+{
+    public function __construct($resource, protected bool $isEnrolled)
+    {
+        parent::__construct($resource);
+    }
+
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'slug' => $this->slug,
+            'thumbnail' => $this->thumbnail,
+            'description' => $this->description,
+            'level' => $this->level,
+            'is_active' => $this->is_active,
+            'is_highlight' => $this->is_highlight,
+
+            'modules' => $this->whenLoaded('modules', function () {
+                return $this->modules->map(fn ($module) => new LearningModuleListResource(
+                    $module,
+                    $this->isEnrolled
+                ));
+            }, []),
+        ];
+    }
+}
