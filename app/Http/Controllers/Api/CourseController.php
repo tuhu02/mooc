@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CourseLearningResource;
 use App\Http\Resources\CourseResource;
 use App\Models\Course;
 use Illuminate\Http\Request;
@@ -200,58 +201,13 @@ class CourseController extends Controller
 
         return response()->json([
             'message' => 'Data pembelajaran course berhasil diambil.',
-            'course' => [
-                'id' => $course->id,
-                'title' => $course->title,
-                'slug' => $course->slug,
-                'thumbnail' => $course->thumbnail,
-                'description' => $course->description,
-                'level' => $course->level,
-                'is_active' => $course->is_active,
-                'is_highlight' => $course->is_highlight,
-                'categories' => $course->categories->map(fn($category) => [
-                    'id' => $category->id,
-                    'name' => $category->name,
-                ]),
-                'modules_count' => $course->modules_count,
-                'members_count' => $course->members_count,
-                'modules' => $course->modules->map(fn($module) => [
-                    'id' => $module->id,
-                    'sort_order' => $module->sort_order,
-                    'title' => $module->title,
-                    'thumbnail' => $module->thumbnail,
-                    'is_preview' => $module->is_preview,
-                    'is_locked' => !$module->is_preview && !$isEnrolled,
-                    'duration' => $module->duration,
-                ]),
-            ],
-            'current_module' => [
-                'id' => $currentModule->id,
-                'sort_order' => $currentModule->sort_order,
-                'title' => $currentModule->title,
-                'thumbnail' => $currentModule->thumbnail,
-                'video' => $currentModule->video,
-                'description' => $currentModule->description,
-                'duration' => $currentModule->duration,
-                'attachment' => $currentModule->attachment,
-                'is_preview' => $currentModule->is_preview,
-                'assignments' => $currentModule->assignments,
-                'can_submit_assignment' => $isEnrolled,
-            ],
-            'navigation' => [
-                'previous' => $previousModule ? [
-                    'sort_order' => $previousModule->sort_order,
-                    'title' => $previousModule->title,
-                    'is_preview' => $previousModule->is_preview,
-                    'is_locked' => !$previousModule->is_preview && !$isEnrolled,
-                ] : null,
-                'next' => $nextModule ? [
-                    'sort_order' => $nextModule->sort_order,
-                    'title' => $nextModule->title,
-                    'is_preview' => $nextModule->is_preview,
-                    'is_locked' => !$nextModule->is_preview && !$isEnrolled,
-                ] : null,
-            ],
+            'data' => new CourseLearningResource(
+                $course,
+                $currentModule,
+                $previousModule,
+                $nextModule,
+                $isEnrolled
+            ),
         ]);
     }
 }

@@ -10,7 +10,7 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
+        $categories = fn() => Category::all();
 
         return response()->json([
             'message' => 'Data kategori berhasil diambil.',
