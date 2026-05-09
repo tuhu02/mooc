@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('courses', function (Blueprint $table) {
-            $table->enum('type', ['default', 'live'])->default('default')->after('is_highlight');
+            $table->enum('type', ['default', 'event'])->default('default')->after('is_highlight');
         });
     }
 

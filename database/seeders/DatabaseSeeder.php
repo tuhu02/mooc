@@ -18,11 +18,11 @@ class DatabaseSeeder extends Seeder
             MemberSeeder::class,
             CategorySeeder::class,
             CourseSeeder::class,
-            LiveCourseSeeder::class,
+            // LiveCourseSeeder::class,
             ModuleSeeder::class,
             ModulePreviewSeeder::class,
             CourseEnrollmentSeeder::class,
-            ModuleThumbnailSeeder::class,
+            // ModuleThumbnailSeeder::class,
         ]);
     }
 }

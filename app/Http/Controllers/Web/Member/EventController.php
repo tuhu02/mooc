@@ -14,11 +14,11 @@ class EventController extends Controller
     {
         $events = Course::query()
             ->with('categories')
-            ->where('type', 'live')
+            ->where('type', 'event')
             ->latest()
             ->cursorPaginate(9);
 
-        $categories = Category::query()
+        $categories = fn() => Category::query()
             ->orderBy('name')
             ->get();
 
