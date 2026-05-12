@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
             ModuleSeeder::class,
             ModulePreviewSeeder::class,
             CourseEnrollmentSeeder::class,
-            // ModuleThumbnailSeeder::class,
+            ModuleThumbnailSeeder::class,
         ]);
     }
 }

@@ -17,14 +17,14 @@ export default function MemberLearningLayout({
     return (
         <AppShell>
             <AppHeader breadcrumbs={breadcrumbs} />
-
-            <div className="min-h-screen bg-slate-50">
-                <div className="mx-auto flex w-full max-w-7xl gap-6 px-4 py-8 pb-24 md:px-6">
-                    <aside className="hidden w-72 shrink-0 lg:block">
-                        {sidebar}
+            <div className="min-h-screen bg-white">
+                <div className="mx-auto flex w-full max-w-7xl items-start px-4">
+                    <aside className="hidden w-56 shrink-0 py-8 lg:block">
+                        <div className="sticky top-28">{sidebar}</div>
                     </aside>
-
-                    <main className="min-w-0 flex-1">{children}</main>
+                    <main className="min-w-0 flex-1 px-8 py-8 pb-24">
+                        {children}
+                    </main>
                 </div>
             </div>
         </AppShell>
