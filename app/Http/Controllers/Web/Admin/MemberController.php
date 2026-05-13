@@ -2,26 +2,24 @@
 
 namespace App\Http\Controllers\Web\Admin;
 
-use App\Events\EmailChanged;
 use App\Http\Controllers\Controller;
 use App\Models\Member;
 use App\Models\User;
-use App\Notifications\PendingEmailChangeVerificationNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Redirect;
+
 
 
 class MemberController extends Controller
 {
     public function index()
     {
-        $members = Member::with('user')->orderBy('id')->cursorPaginate(10);
+        $members = fn() =>Member::with('user')->orderBy('id')->cursorPaginate(10);
 
         return Inertia::render('admin/members/index', [
-            'members' => fn() => $members
+            'members' => $members
         ]);
     }
 
@@ -47,6 +45,7 @@ class MemberController extends Controller
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'password' => $validated['password'],
+                'address' => $validated['address'],
                 'type' => 'member'
             ]);
 
@@ -55,7 +54,6 @@ class MemberController extends Controller
                 'institution' => $validated['institution'],
                 'gender' => $validated['gender'],
                 'date_of_birth' => $validated['date_of_birth'],
-                'address' => $validated['address'],
             ]);
         });
 
@@ -89,10 +87,11 @@ class MemberController extends Controller
             $user->fill([
                 'name' => $validated['name'],
                 'email' => $validated['email'],
+                'address' => $validated['address'],
             ]);
 
             if ($user->isDirty('email')) {
-                $user->verified_at = null;
+                $user->email_verified_at = null;
             }
 
             if (!empty($validated['password'])) {
@@ -101,12 +100,13 @@ class MemberController extends Controller
 
             $user->save();
 
-            $member->update([
+            $member->fill([
                 'institution' => $validated['institution'],
                 'gender' => $validated['gender'],
                 'date_of_birth' => $validated['date_of_birth'],
-                'address' => $validated['address'],
             ]);
+
+            $member->save();
         });
 
         return Redirect::route('admin.members.index')->with('success', 'Member Successfully Updated!');;
@@ -119,6 +119,6 @@ class MemberController extends Controller
             $member->user->delete();
         });
 
-        return redirect()->back()->with('success', 'Member Successfully Deleted!');;
+        return redirect()->back()->with('success', 'Member berhasil dihapus');;
     }
 }

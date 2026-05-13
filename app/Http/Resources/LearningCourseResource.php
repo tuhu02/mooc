@@ -26,6 +26,16 @@ class LearningCourseResource extends JsonResource
             'is_active' => $this->is_active,
             'is_highlight' => $this->is_highlight,
 
+            'categories' => $this->whenLoaded('categories', function () {
+                return $this->categories->map(fn ($category) => [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                ]);
+            }, []),
+
+            'modules_count' => $this->modules_count ?? 0,
+            'members_count' => $this->members_count ?? 0,
+
             'modules' => $this->whenLoaded('modules', function () {
                 return $this->modules->map(fn ($module) => new LearningModuleListResource(
                     $module,

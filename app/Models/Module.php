@@ -15,8 +15,6 @@ class Module extends Model
         'video',
         'description',
         'duration',
-        'attachment',
-        'attachment_name',
     ];
 
     protected $casts = [
@@ -31,5 +29,10 @@ class Module extends Model
     public function assignments()
     {
         return $this->hasMany(Assignment::class);
+    }
+
+    public function attachments()
+    {
+        return $this->hasMany(ModuleAttachment::class, 'module_id');
     }
 }

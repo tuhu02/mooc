@@ -157,6 +157,7 @@ class CourseController extends Controller
                             ->latest()
                             ->limit(1),
                     ]),
+                    'attachments' => fn($q) => $q->orderBy('id'),
                 ])
                 ->orderBy('sort_order')
                 ->orderBy('id'),

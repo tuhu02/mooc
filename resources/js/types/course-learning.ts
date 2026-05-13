@@ -73,6 +73,14 @@ export type Module = {
     description?: string | null;
     duration?: number | null;
     attachment?: string | null;
+    attachment_name?: string | null;
+    attachments?: Array<{
+        id: number;
+        file_path: string;
+        file_name: string;
+        file_type?: string | null;
+        file_size?: number | null;
+    }>;
     created_at?: string;
     updated_at?: string;
     course?: Course;

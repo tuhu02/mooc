@@ -61,6 +61,8 @@ Route::middleware(['auth', AdminMiddleware::class])->prefix('admin')->name('admi
     Route::resource('/categories', CategoryController::class)->except(['show']);
     Route::resource('/courses', AdminCourseController::class);
     Route::post('/modules/reorder', [ModuleController::class, 'reorder'])->name('modules.reorder');
+    Route::put('/modules/{module}/attachments/{attachment}', [ModuleController::class, 'updateAttachment'])->name('modules.update-attachment');
+    Route::delete('/modules/{module}/attachments/{attachment}', [ModuleController::class, 'deleteAttachment'])->name('modules.delete-attachment');
     Route::resource('/modules', ModuleController::class)->except(['show']);
 
     Route::get('/submissions', [AssignmentSubmissionReviewController::class, 'index'])

@@ -4,14 +4,30 @@ namespace App\Http\Controllers\Web\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Module;
+use App\Models\ModuleAttachment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
 
 class ModuleController extends Controller
 {
+    public function edit(Module $module)
+    {
+        $module->load([
+            'assignments',
+            'attachments',
+            'course:id,title',
+        ]);
+
+        return Inertia::render('admin/modules/edit', [
+            'module' => $module,
+            'course' => $module->course,
+        ]);
+    }
+
     public function reorder(Request $request)
     {
         $validated = $request->validate([
@@ -61,6 +77,8 @@ class ModuleController extends Controller
             'duration' => 'nullable|integer|min:0',
             'attachment' => 'nullable|file|max:10240',
             'attachment_name' => 'nullable|string|max:255',
+            'attachments' => 'nullable|array',
+            'attachments.*' => 'nullable|file|max:10240',
             'is_preview' => 'boolean',
             'assignments' => 'nullable|array',
             'assignments.*.title' => 'nullable|string|max:255',
@@ -69,12 +87,14 @@ class ModuleController extends Controller
         ]);
 
         $assignments = $validated['assignments'] ?? [];
-        unset($validated['assignments']);
+        $attachments = $validated['attachments'] ?? [];
+        unset($validated['assignments'], $validated['attachments']);
 
         if ($request->hasFile('thumbnail')) {
             $validated['thumbnail'] = $request->file('thumbnail')->store('modules', 'public');
         }
 
+        // Keep old attachment logic for backward compatibility
         if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
 
@@ -86,6 +106,22 @@ class ModuleController extends Controller
         $validated['sort_order'] = $maxSortOrder + 1;
 
         $module = Module::create($validated);
+
+        // Handle multiple attachments
+        if (!empty($attachments)) {
+            foreach ($attachments as $file) {
+                if ($file instanceof \Illuminate\Http\UploadedFile) {
+                    $filePath = $file->store('module-attachments', 'public');
+                    
+                    $module->attachments()->create([
+                        'file_path' => $filePath,
+                        'file_name' => $file->getClientOriginalName(),
+                        'file_type' => $file->getClientMimeType(),
+                        'file_size' => $file->getSize(),
+                    ]);
+                }
+            }
+        }
 
         foreach ($assignments as $assignment) {
             if (
@@ -119,6 +155,11 @@ class ModuleController extends Controller
             'duration' => 'nullable|integer|min:0',
             'attachment' => 'nullable|file|max:10240',
             'attachment_name' => 'nullable|string|max:255',
+            'attachments' => 'nullable|array',
+            'attachments.*' => 'nullable|file|max:10240',
+            'deleted_attachment_ids' => 'nullable|array',
+            'deleted_attachment_ids.*' => 'nullable|integer|exists:module_attachments,id',
+            'updated_attachments' => 'nullable|array',
             'is_preview' => 'boolean',
             'assignments' => 'nullable|array',
             'assignments.*.title' => 'nullable|string|max:255',
@@ -127,7 +168,10 @@ class ModuleController extends Controller
         ]);
 
         $assignments = $validated['assignments'] ?? [];
-        unset($validated['assignments']);
+        $attachments = $validated['attachments'] ?? [];
+        $deletedAttachmentIds = $validated['deleted_attachment_ids'] ?? [];
+        $updatedAttachments = $validated['updated_attachments'] ?? [];
+        unset($validated['assignments'], $validated['attachments'], $validated['deleted_attachment_ids'], $validated['updated_attachments']);
 
         if ($request->hasFile('thumbnail')) {
             if ($module->thumbnail) {
@@ -154,6 +198,74 @@ class ModuleController extends Controller
 
         $module->update($validated);
 
+        // Handle deleted attachments
+        if (!empty($deletedAttachmentIds)) {
+            foreach ($deletedAttachmentIds as $attachmentId) {
+                $attachment = ModuleAttachment::where('id', $attachmentId)
+                    ->where('module_id', $module->id)
+                    ->first();
+
+                if ($attachment) {
+                    if ($attachment->file_path && !str_contains($attachment->file_path, '://')) {
+                        Storage::disk('public')->delete($attachment->file_path);
+                    }
+                    $attachment->delete();
+                }
+            }
+        }
+
+        // Handle updated attachments (name and/or file)
+        if (!empty($updatedAttachments)) {
+            foreach ($updatedAttachments as $attachmentId => $updateData) {
+                $attachment = ModuleAttachment::where('id', $attachmentId)
+                    ->where('module_id', $module->id)
+                    ->first();
+
+                if (!$attachment) {
+                    continue;
+                }
+
+                // Update name if provided
+                if (isset($updateData['name']) && !empty($updateData['name'])) {
+                    $attachment->file_name = $updateData['name'];
+                }
+
+                // Update file if provided
+                if (isset($updateData['file']) && $updateData['file'] instanceof \Illuminate\Http\UploadedFile) {
+                    // Delete old file
+                    if ($attachment->file_path && !str_contains($attachment->file_path, '://')) {
+                        Storage::disk('public')->delete($attachment->file_path);
+                    }
+
+                    // Store new file
+                    $file = $updateData['file'];
+                    $filePath = $file->store('module-attachments', 'public');
+                    
+                    $attachment->file_path = $filePath;
+                    $attachment->file_type = $file->getClientMimeType();
+                    $attachment->file_size = $file->getSize();
+                }
+
+                $attachment->save();
+            }
+        }
+
+        // Handle multiple attachments - add new ones
+        if (!empty($attachments)) {
+            foreach ($attachments as $file) {
+                if ($file instanceof \Illuminate\Http\UploadedFile) {
+                    $filePath = $file->store('module-attachments', 'public');
+                    
+                    $module->attachments()->create([
+                        'file_path' => $filePath,
+                        'file_name' => $file->getClientOriginalName(),
+                        'file_type' => $file->getClientMimeType(),
+                        'file_size' => $file->getSize(),
+                    ]);
+                }
+            }
+        }
+
         $module->assignments()->delete();
 
         foreach ($assignments as $assignment) {
@@ -172,7 +284,7 @@ class ModuleController extends Controller
             ]);
         }
 
-        return Redirect::route('admin.courses.show', $module->course_id)
+        return Redirect::route('admin.modules.edit', $module)
             ->with('success', 'Modul berhasil diperbarui!');
     }
 
@@ -188,9 +300,75 @@ class ModuleController extends Controller
             Storage::disk('public')->delete($module->attachment);
         }
 
+        // Delete all module attachments
+        foreach ($module->attachments as $attachment) {
+            if (!str_contains($attachment->file_path, '://')) {
+                Storage::disk('public')->delete($attachment->file_path);
+            }
+        }
+
         $module->delete();
 
         return Redirect::route('admin.courses.show', $courseId)
             ->with('success', 'Modul berhasil dihapus!');
+    }
+
+    public function deleteAttachment(Module $module, ModuleAttachment $attachment)
+    {
+        if ($attachment->module_id !== $module->id) {
+            abort(404);
+        }
+
+        if ($attachment->file_path && !str_contains($attachment->file_path, '://')) {
+            Storage::disk('public')->delete($attachment->file_path);
+        }
+
+        $attachment->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Attachment berhasil dihapus!',
+        ]);
+    }
+
+    public function updateAttachment(Request $request, Module $module, ModuleAttachment $attachment)
+    {
+        if ($attachment->module_id !== $module->id) {
+            abort(404);
+        }
+
+        $validated = $request->validate([
+            'file_name' => 'nullable|string|max:255',
+            'file' => 'nullable|file|max:10240',
+        ]);
+
+        // Update name if provided
+        if (isset($validated['file_name']) && !empty($validated['file_name'])) {
+            $attachment->file_name = $validated['file_name'];
+        }
+
+        // Update file if provided
+        if ($request->hasFile('file')) {
+            // Delete old file
+            if ($attachment->file_path && !str_contains($attachment->file_path, '://')) {
+                Storage::disk('public')->delete($attachment->file_path);
+            }
+
+            // Store new file
+            $file = $request->file('file');
+            $filePath = $file->store('module-attachments', 'public');
+            
+            $attachment->file_path = $filePath;
+            $attachment->file_type = $file->getClientMimeType();
+            $attachment->file_size = $file->getSize();
+        }
+
+        $attachment->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Attachment berhasil diperbarui!',
+            'attachment' => $attachment,
+        ]);
     }
 }

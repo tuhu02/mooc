@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { ChevronLeft, ChevronRight, Lock } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 type ModuleNavigationItem = {
     title: string;
@@ -32,8 +33,13 @@ export default function ModuleBottomNavigation({
             : null;
 
     return (
-        <div className="sticky bottom-0 w-full border-t border-slate-200 bg-white/95 shadow-[0_-8px_24px_rgba(15,23,42,0.08)] backdrop-blur-sm">
-            <div className="grid w-full grid-cols-[30%_40%_30%] items-center gap-2 px-4 py-3 md:px-6 md:py-4">
+        <div
+            className={cn(
+                'fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/95 shadow-[0_-8px_24px_rgba(15,23,42,0.08)] backdrop-blur-sm',
+                'lg:left-72',
+            )}
+        >
+            <div className="mx-auto grid w-full max-w-none grid-cols-[30%_40%_30%] items-center gap-2 px-4 py-3 sm:px-6 md:px-8 md:py-4">
                 <div className="min-w-0">
                     {prevModule && prevHref ? (
                         <Link

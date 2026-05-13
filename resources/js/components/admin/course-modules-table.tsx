@@ -24,18 +24,19 @@ import {
     verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { Link } from '@inertiajs/react';
 import { Pencil, Trash2, GripVertical } from 'lucide-react';
 
 type CourseModulesTableProps = {
     modules: CourseModule[];
-    onEdit: (module: CourseModule) => void;
+    getEditHref: (module: CourseModule) => string;
     onDelete: (moduleId: number) => void;
     onDragEnd: (event: DragEndEvent) => void;
 };
 
 export function CourseModulesTable({
     modules,
-    onEdit,
+    getEditHref,
     onDelete,
     onDragEnd,
 }: CourseModulesTableProps) {
@@ -77,7 +78,7 @@ export function CourseModulesTable({
                                 <SortableModuleRow
                                     key={module.id}
                                     module={module}
-                                    onEdit={onEdit}
+                                    getEditHref={getEditHref}
                                     onDelete={onDelete}
                                 />
                             ))}
@@ -91,13 +92,13 @@ export function CourseModulesTable({
 
 type SortableModuleRowProps = {
     module: CourseModule;
-    onEdit: (module: CourseModule) => void;
+    getEditHref: (module: CourseModule) => string;
     onDelete: (moduleId: number) => void;
 };
 
 function SortableModuleRow({
     module,
-    onEdit,
+    getEditHref,
     onDelete,
 }: SortableModuleRowProps) {
     const {
@@ -145,13 +146,11 @@ function SortableModuleRow({
 
             <TableCell>
                 <div className="flex justify-end gap-2">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => onEdit(module)}
-                    >
-                        <Pencil className="mr-2 h-4 w-4" />
-                        Edit
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href={getEditHref(module)} prefetch>
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Edit
+                        </Link>
                     </Button>
 
                     <Button

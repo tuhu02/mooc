@@ -109,7 +109,7 @@ export default function Page() {
                                                 size="sm"
                                                 disabled={processing}
                                                 onClick={() =>
-                                                    handleDelete(member.user.id)
+                                                    handleDelete(member.id)
                                                 }
                                             >
                                                 <Trash2 className="mr-2 h-4 w-4" />

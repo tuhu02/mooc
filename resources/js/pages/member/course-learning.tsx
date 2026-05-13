@@ -17,9 +17,12 @@ export default function CourseLearningPage({
 }: Props) {
     const selectedModule = currentModule ?? null;
 
-    const selectedAttachmentUrl = selectedModule?.attachment
-        ? `/storage/${selectedModule.attachment}`
-        : null;
+    const hasModuleAttachments =
+        (selectedModule?.attachments?.length ?? 0) > 0;
+    const hasLegacyAttachment = Boolean(selectedModule?.attachment);
+    /** Kolom lama: hanya tampil jika belum ada lampiran multi (hindari duplikat). */
+    const showLegacyAttachmentRow =
+        hasLegacyAttachment && !hasModuleAttachments;
 
     const prevModule = navigation?.previous ?? null;
     const nextModule = navigation?.next ?? null;
@@ -41,7 +44,7 @@ export default function CourseLearningPage({
     } | null>(null);
 
     const moduleSidebar = (
-        <div className="sticky top-28 rounded-xl">
+        <div className="rounded-xl">
             <div className="mb-4">
                 <h2 className="text-base font-semibold text-slate-900">
                     Daftar Modul
@@ -123,10 +126,18 @@ export default function CourseLearningPage({
             <MemberLearningLayout
                 breadcrumbs={breadcrumbs}
                 sidebar={moduleSidebar}
+                footer={
+                    <ModuleBottomNavigation
+                        courseSlug={course.slug}
+                        currentTitle={selectedModule?.title}
+                        prevModule={prevModule}
+                        nextModule={nextModule}
+                    />
+                }
             >
                 <Head title={`${course.title} - Learning`} />
 
-                <div className="px-2 pb-8">
+                <div className="w-full max-w-none">
                     <div className="mb-6">
                         <h1 className="text-2xl font-bold text-slate-900">
                             {selectedModule?.title ?? 'Pilih Materi'}
@@ -157,20 +168,61 @@ export default function CourseLearningPage({
                         )}
                     </div>
 
-                    {selectedAttachmentUrl && (
-                        <div className="mt-6 rounded-lg border border-slate-200 bg-white p-4">
-                            <p className="mb-2 text-sm font-medium text-slate-700">
+                    {(hasModuleAttachments || showLegacyAttachmentRow) && (
+                        <div className="mt-6 space-y-3 rounded-lg border border-slate-200 bg-white p-4">
+                            <p className="mb-4 text-sm font-medium text-slate-700">
                                 Lampiran Modul
                             </p>
-                            <a
-                                href={selectedAttachmentUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="inline-flex items-center gap-2 text-sm font-medium text-sky-700 underline-offset-2 hover:underline"
-                            >
-                                <Paperclip className="h-4 w-4" />
-                                Buka attachment
-                            </a>
+
+                            <div className="space-y-2">
+                                {showLegacyAttachmentRow && selectedModule && (
+                                    <a
+                                        key="legacy-attachment"
+                                        href={`/storage/${selectedModule.attachment}`}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="flex items-center gap-2 rounded-md bg-slate-50 p-3 transition hover:bg-slate-100"
+                                    >
+                                        <Paperclip className="h-4 w-4 shrink-0 text-slate-600" />
+                                        <div className="min-w-0 flex-1">
+                                            <p className="truncate text-sm font-medium text-slate-700">
+                                                {selectedModule.attachment_name?.trim() ||
+                                                    selectedModule.attachment?.split(
+                                                        '/',
+                                                    ).pop() ||
+                                                    'Lampiran'}
+                                            </p>
+                                        </div>
+                                    </a>
+                                )}
+
+                                {selectedModule?.attachments?.map((att) => (
+                                    <a
+                                        key={att.id}
+                                        href={`/storage/${att.file_path}`}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="flex items-center gap-2 rounded-md bg-slate-50 p-3 transition hover:bg-slate-100"
+                                    >
+                                        <Paperclip className="h-4 w-4 shrink-0 text-slate-600" />
+                                        <div className="min-w-0 flex-1">
+                                            <p className="truncate text-sm font-medium text-slate-700">
+                                                {att.file_name}
+                                            </p>
+                                            {att.file_size ? (
+                                                <p className="text-xs text-slate-500">
+                                                    {(
+                                                        att.file_size /
+                                                        1024 /
+                                                        1024
+                                                    ).toFixed(2)}{' '}
+                                                    MB
+                                                </p>
+                                            ) : null}
+                                        </div>
+                                    </a>
+                                ))}
+                            </div>
                         </div>
                     )}
 
@@ -294,13 +346,6 @@ export default function CourseLearningPage({
                     </div>
                 </div>
             )}
-
-            <ModuleBottomNavigation
-                courseSlug={course.slug}
-                currentTitle={selectedModule?.title}
-                prevModule={prevModule}
-                nextModule={nextModule}
-            />
         </>
     );
 }

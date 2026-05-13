@@ -132,6 +132,7 @@ class CourseController extends Controller
                             ? $s->where('member_id', $member->id)->latest()->limit(1)
                             : $s->whereRaw('1 = 0'),
                     ]),
+                    'attachments' => fn($q) => $q->orderBy('id'),
                 ])
                 ->orderBy('sort_order')
                 ->orderBy('id'),
@@ -214,6 +215,14 @@ class CourseController extends Controller
                 'description' => $currentModule->description,
                 'duration' => $currentModule->duration,
                 'attachment' => $currentModule->attachment,
+                'attachment_name' => $currentModule->attachment_name,
+                'attachments' => $currentModule->attachments->map(fn($att) => [
+                    'id' => $att->id,
+                    'file_path' => $att->file_path,
+                    'file_name' => $att->file_name,
+                    'file_type' => $att->file_type,
+                    'file_size' => $att->file_size,
+                ])->values()->all(),
                 'is_preview' => $currentModule->is_preview,
                 'assignments' => $currentModule->assignments,
                 'canSubmitAssignment' => $isEnrolled,

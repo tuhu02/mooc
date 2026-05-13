@@ -134,7 +134,7 @@ class CourseController extends Controller
         $course->load([
             'mentor.user',
             'categories',
-            'modules' => fn($query) => $query->with('assignments')->orderBy('sort_order')->orderBy('id'),
+            'modules' => fn($query) => $query->with(['assignments', 'attachments'])->orderBy('sort_order')->orderBy('id'),
         ]);
 
         return Inertia::render('admin/courses/show', [

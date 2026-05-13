@@ -22,6 +22,7 @@ class CourseLearningResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'is_enrolled' => $this->isEnrolled,
             'course' => new LearningCourseResource($this->resource, $this->isEnrolled),
 
             'current_module' => new CurrentLearningModuleResource(
