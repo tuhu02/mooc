@@ -94,6 +94,12 @@ class CourseController extends Controller
         $user = Auth::user();
         $member = $user->member;
 
+        if (!$member) {
+            return redirect()
+                ->route('member.courses.show', $course->slug)
+                ->with('error', 'Profil member tidak ditemukan. Hubungi admin.');
+        }
+
         $firstPreviewSortOrder = $course->modules()
             ->where('is_preview', true)
             ->orderBy('sort_order')

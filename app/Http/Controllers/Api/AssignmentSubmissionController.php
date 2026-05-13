@@ -53,6 +53,8 @@ class AssignmentSubmissionController extends Controller
             ],
             [
                 'file' => $filePath,
+                'status' => 'submitted',
+                'reviewed_at' => null,
             ],
         );
 

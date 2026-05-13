@@ -6,8 +6,25 @@ import { useState } from 'react';
 import MDEditor from '@uiw/react-md-editor';
 import VideoPlayer from '@/components/member/video-player';
 import AssignmentSubmissionForm from '@/components/member/assignment-submission-form';
-import { Assignment, Props } from '@/types/course-learning';
+import { memberAssignmentStatusPresentation } from '@/lib/member-assignment-status';
+import type { Assignment, Props, Submission } from '@/types/course-learning';
 import ModuleBottomNavigation from '@/components/member/module-bottom-navigation';
+
+function assignmentCardHint(
+    submission: Submission | null | undefined,
+): string {
+    if (!submission) {
+        return 'Klik untuk mengumpulkan tugas';
+    }
+    switch (submission.status ?? 'submitted') {
+        case 'reviewed':
+            return 'Klik untuk melihat tugas';
+        case 'revision_required':
+            return 'Klik untuk mengunggah revisi';
+        default:
+            return 'Klik untuk melihat atau mengganti berkas';
+    }
+}
 
 export default function CourseLearningPage({
     course,
@@ -36,11 +53,7 @@ export default function CourseLearningPage({
     const [activeAssignment, setActiveAssignment] = useState<{
         id: number;
         title: string;
-        submission?: {
-            id: number;
-            submission_name?: string | null;
-            file?: string | null;
-        } | null;
+        submission?: Submission | null;
     } | null>(null);
 
     const moduleSidebar = (
@@ -234,12 +247,20 @@ export default function CourseLearningPage({
                                 </p>
 
                                 {selectedModule.assignments.map(
-                                    (assignment: Assignment) => (
+                                    (assignment: Assignment) => {
+                                        const statusPill =
+                                            memberAssignmentStatusPresentation(
+                                                assignment.submission,
+                                            );
+
+                                        return (
                                         <div
                                             key={assignment.id}
                                             title={
                                                 isEnrolled
-                                                    ? 'Klik untuk mengumpulkan tugas'
+                                                    ? assignmentCardHint(
+                                                          assignment.submission,
+                                                      )
                                                     : 'Login dan daftar course terlebih dahulu untuk mengumpulkan tugas'
                                             }
                                             onClick={() => {
@@ -265,22 +286,18 @@ export default function CourseLearningPage({
                                                     </h3>
                                                     <p className="mt-1 text-xs text-slate-500">
                                                         {isEnrolled
-                                                            ? 'Klik untuk mengumpulkan tugas'
+                                                            ? assignmentCardHint(
+                                                                  assignment.submission,
+                                                              )
                                                             : 'Login dan daftar course terlebih dahulu untuk mengumpulkan tugas'}
                                                     </p>
                                                 </div>
 
                                                 {isEnrolled ? (
                                                     <span
-                                                        className={`inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-semibold ${
-                                                            assignment.submission
-                                                                ? 'bg-emerald-100 text-emerald-700'
-                                                                : 'bg-amber-100 text-amber-700'
-                                                        }`}
+                                                        className={`inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-semibold ${statusPill.pillClassName}`}
                                                     >
-                                                        {assignment.submission
-                                                            ? 'Sudah dikumpulkan'
-                                                            : 'Belum dikumpulkan'}
+                                                        {statusPill.label}
                                                     </span>
                                                 ) : (
                                                     <span className="inline-flex w-fit items-center rounded-full bg-slate-200 px-3 py-1 text-xs font-semibold text-slate-600">
@@ -303,7 +320,8 @@ export default function CourseLearningPage({
                                                 </div>
                                             )}
                                         </div>
-                                    ),
+                                        );
+                                    },
                                 )}
                             </div>
                         )}
@@ -324,8 +342,8 @@ export default function CourseLearningPage({
                                 <h2 className="text-lg font-semibold text-slate-900">
                                     Kumpulkan Tugas
                                 </h2>
-                                <p className="text-base font-semibold text-slate-900">
-                                    Tugas
+                                <p className="mt-0.5 text-sm font-medium text-slate-800">
+                                    {activeAssignment.title}
                                 </p>
                             </div>
                             <button

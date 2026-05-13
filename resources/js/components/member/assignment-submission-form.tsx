@@ -1,12 +1,15 @@
 import { useForm } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Download, Eye, FileText, UploadCloud } from 'lucide-react';
+import { memberAssignmentStatusPresentation } from '@/lib/member-assignment-status';
+import type { MemberSubmissionStatus } from '@/lib/member-assignment-status';
 
 type Submission = {
     id: number;
     submission_name?: string | null;
     file?: string | null;
+    feedback?: string | null;
+    status?: MemberSubmissionStatus | null;
 };
 
 type Props = {
@@ -20,12 +23,23 @@ export default function AssignmentSubmissionForm({
     submission,
     onSuccess,
 }: Props) {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        file: null as File | null,
-    });
+    const { data, setData, post, processing, errors, reset, setError, clearErrors } =
+        useForm({
+            file: null as File | null,
+        });
+
+    const maxBytes = 10 * 1024 * 1024;
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setData('file', e.target.files?.[0] || null);
+        const selected = e.target.files?.[0] ?? null;
+        if (selected && selected.size > maxBytes) {
+            e.target.value = '';
+            setData('file', null);
+            setError('file', 'Ukuran file melebihi 10MB.');
+            return;
+        }
+        clearErrors('file');
+        setData('file', selected);
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -36,11 +50,28 @@ export default function AssignmentSubmissionForm({
                 reset();
                 onSuccess?.();
             },
-        } as any);
+        });
     };
+
+    const statusPresentation = submission
+        ? memberAssignmentStatusPresentation(submission)
+        : null;
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
+            {submission && statusPresentation ? (
+                <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm">
+                    <p className="font-medium text-slate-800">
+                        Status: {statusPresentation.label}
+                    </p>
+                    {submission.feedback?.trim() ? (
+                        <p className="mt-1 whitespace-pre-wrap text-slate-600">
+                            {submission.feedback}
+                        </p>
+                    ) : null}
+                </div>
+            ) : null}
+
             <div>
                 <label className="block text-sm font-medium text-slate-700">
                     {submission ? 'Ganti File' : 'File'}{' '}
@@ -48,6 +79,7 @@ export default function AssignmentSubmissionForm({
                 </label>
                 <Input
                     type="file"
+                    name="file"
                     onChange={handleFileChange}
                     className="mt-1"
                 />
