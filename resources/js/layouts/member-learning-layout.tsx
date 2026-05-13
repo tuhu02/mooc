@@ -7,7 +7,6 @@ import type { ReactNode } from 'react';
 type MemberLearningLayoutProps = {
     children: ReactNode;
     sidebar: ReactNode;
-    /** Bar navigasi modul: fixed di bawah viewport, lebar mengikuti kolom konten. */
     footer?: ReactNode;
     breadcrumbs?: BreadcrumbItem[];
 };
@@ -26,7 +25,6 @@ export default function MemberLearningLayout({
 
             <div className="min-h-screen bg-white">
                 <div className="flex w-full items-stretch">
-                    {/* Desktop: fixed so daftar modul tidak ikut scroll konten utama */}
                     <aside
                         className={cn(
                             'hidden shrink-0 border-r border-slate-200 bg-white lg:fixed lg:z-30 lg:flex lg:w-72 lg:flex-col lg:overflow-y-auto lg:px-4 lg:py-8',

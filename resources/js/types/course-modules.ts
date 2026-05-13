@@ -152,3 +152,18 @@ export type ModuleAttachmentsProps = {
 
     errors: Record<string, string | undefined>;
 };
+
+
+export type ModuleNavigationItem = {
+    title: string;
+    sort_order?: number | null;
+    is_preview?: boolean;
+    is_locked?: boolean;
+};
+
+export type ModuleBottomNavigationProps = {
+    courseSlug: string;
+    currentTitle?: string | null;
+    prevModule?: ModuleNavigationItem | null;
+    nextModule?: ModuleNavigationItem | null;
+};

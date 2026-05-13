@@ -1,20 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { ChevronLeft, ChevronRight, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-type ModuleNavigationItem = {
-    title: string;
-    sort_order?: number | null;
-    is_preview?: boolean;
-    is_locked?: boolean;
-};
-
-type ModuleBottomNavigationProps = {
-    courseSlug: string;
-    currentTitle?: string | null;
-    prevModule?: ModuleNavigationItem | null;
-    nextModule?: ModuleNavigationItem | null;
-};
+import type { ModuleBottomNavigationProps } from '@/types/course-modules';
 
 export default function ModuleBottomNavigation({
     courseSlug,
@@ -35,7 +22,7 @@ export default function ModuleBottomNavigation({
     return (
         <div
             className={cn(
-                'fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/95 shadow-[0_-8px_24px_rgba(15,23,42,0.08)] backdrop-blur-sm',
+                'fixed right-0 bottom-0 left-0 border-t border-border bg-background/95 shadow-[0_-8px_24px_rgba(15,23,42,0.08)] backdrop-blur-sm',
                 'lg:left-72',
             )}
         >
@@ -44,7 +31,7 @@ export default function ModuleBottomNavigation({
                     {prevModule && prevHref ? (
                         <Link
                             href={prevHref}
-                            className="flex min-h-12 min-w-0 items-center gap-2 rounded-lg px-3 py-2 text-base text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+                            className="flex min-h-12 min-w-0 items-center gap-2 rounded-lg px-3 py-2 text-base text-muted-foreground transition hover:bg-accent hover:text-foreground"
                         >
                             <ChevronLeft className="h-5 w-5 shrink-0" />
                             <span className="min-w-0 truncate font-medium">
@@ -57,7 +44,7 @@ export default function ModuleBottomNavigation({
                 </div>
 
                 <div className="min-w-0 px-2 text-center">
-                    <span className="block truncate text-base font-semibold text-slate-900 md:text-lg">
+                    <span className="block truncate text-base font-semibold text-foreground md:text-lg">
                         {currentTitle ?? ''}
                     </span>
                 </div>
@@ -67,7 +54,7 @@ export default function ModuleBottomNavigation({
                         nextModule.is_locked ? (
                             <Link
                                 href="/login"
-                                className="flex min-h-12 min-w-0 items-center justify-end gap-2 rounded-lg px-3 py-2 text-base text-slate-400 transition hover:bg-slate-100"
+                                className="flex min-h-12 min-w-0 items-center justify-end gap-2 rounded-lg px-3 py-2 text-base text-muted-foreground opacity-70 transition hover:bg-accent"
                             >
                                 <span className="min-w-0 truncate text-right font-medium">
                                     {nextModule.title}
@@ -78,7 +65,7 @@ export default function ModuleBottomNavigation({
                         ) : (
                             <Link
                                 href={nextHref}
-                                className="flex min-h-12 min-w-0 items-center justify-end gap-2 rounded-lg px-3 py-2 text-base text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+                                className="flex min-h-12 min-w-0 items-center justify-end gap-2 rounded-lg px-3 py-2 text-base text-muted-foreground transition hover:bg-accent hover:text-foreground"
                             >
                                 <span className="min-w-0 truncate text-right font-medium">
                                     {nextModule.title}
