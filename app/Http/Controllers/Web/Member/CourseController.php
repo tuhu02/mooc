@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Web\Member;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CourseResource;
+use App\Http\Resources\CurrentLearningModuleResource;
+use App\Http\Resources\LearningCourseResource;
+use App\Http\Resources\ModuleNavigationResource;
 use App\Models\Category;
 use App\Models\Course;
 use Illuminate\Http\Request;
@@ -38,6 +42,7 @@ class CourseController extends Controller
             })
             ->orderBy('id', 'desc')
             ->cursorPaginate(6)
+            ->through(fn (Course $course) => (new CourseResource($course))->resolve())
             ->withQueryString();
 
         return Inertia::render('member/course', [
@@ -83,7 +88,7 @@ class CourseController extends Controller
         });
 
         return Inertia::render('member/course-detail', [
-            'course' => $course,
+            'course' => (new CourseResource($course))->resolve(),
             'isEnrolled' => $isEnrolled,
         ]);
     }
@@ -186,65 +191,18 @@ class CourseController extends Controller
 
         return Inertia::render('member/course-learning', [
             'isEnrolled' => $isEnrolled,
-            'course' => [
-                'id' => $course->id,
-                'title' => $course->title,
-                'slug' => $course->slug,
-                'thumbnail' => $course->thumbnail,
-                'description' => $course->description,
-                'level' => $course->level,
-                'is_active' => $course->is_active,
-                'is_highlight' => $course->is_highlight,
-                'categories' => $course->categories->map(fn($category) => [
-                    'id' => $category->id,
-                    'name' => $category->name,
-                ]),
-                'modules_count' => $course->modules_count,
-                'members_count' => $course->members_count,
-                'modules' => $course->modules->map(fn($module) => [
-                    'id' => $module->id,
-                    'sort_order' => $module->sort_order,
-                    'title' => $module->title,
-                    'thumbnail' => $module->thumbnail,
-                    'is_preview' => $module->is_preview,
-                    'is_locked' => !$module->is_preview && !$isEnrolled,
-                    'duration' => $module->duration,
-                ]),
-            ],
+            'course' => (new LearningCourseResource($course, $isEnrolled))->resolve(),
             'initialModuleSortOrder' => $currentModule?->sort_order,
-            'currentModule' => $currentModule ? [
-                'id' => $currentModule->id,
-                'sort_order' => $currentModule->sort_order,
-                'title' => $currentModule->title,
-                'thumbnail' => $currentModule->thumbnail,
-                'video' => $currentModule->video,
-                'description' => $currentModule->description,
-                'duration' => $currentModule->duration,
-                'attachment' => $currentModule->attachment,
-                'attachment_name' => $currentModule->attachment_name,
-                'attachments' => $currentModule->attachments->map(fn($att) => [
-                    'id' => $att->id,
-                    'file_path' => $att->file_path,
-                    'file_name' => $att->file_name,
-                    'file_type' => $att->file_type,
-                    'file_size' => $att->file_size,
-                ])->values()->all(),
-                'is_preview' => $currentModule->is_preview,
-                'assignments' => $currentModule->assignments,
-                'canSubmitAssignment' => $isEnrolled,
-            ] : null,
+            'currentModule' => $currentModule
+                ? (new CurrentLearningModuleResource($currentModule, $isEnrolled))->resolve()
+                : null,
             'navigation' => [
-                'previous' => $previousModule ? [
-                    'sort_order' => $previousModule->sort_order,
-                    'title' => $previousModule->title,
-                    'is_preview' => $previousModule->is_preview,
-                    'is_locked' => !$previousModule->is_preview && !$isEnrolled,
-                ] : null,
-                'next' => $nextModule ? [
-                    'sort_order' => $nextModule->sort_order,
-                    'title' => $nextModule->title,
-                    'is_locked' => !$nextModule->is_preview && !$isEnrolled,
-                ] : null,
+                'previous' => $previousModule
+                    ? (new ModuleNavigationResource($previousModule, $isEnrolled))->resolve()
+                    : null,
+                'next' => $nextModule
+                    ? (new ModuleNavigationResource($nextModule, $isEnrolled))->resolve()
+                    : null,
             ],
         ]);
     }

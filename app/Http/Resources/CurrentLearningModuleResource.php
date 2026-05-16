@@ -33,7 +33,7 @@ class CurrentLearningModuleResource extends JsonResource
             ])->values()->all(),
             'is_preview' => $this->is_preview,
             'assignments' => $this->assignments,
-            'can_submit_assignment' => $this->isEnrolled,
+            'canSubmitAssignment' => $this->isEnrolled,
         ];
     }
 }

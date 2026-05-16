@@ -4,8 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Models\Module;
-
 
 class LearningCourseResource extends JsonResource
 {
@@ -33,14 +31,18 @@ class LearningCourseResource extends JsonResource
                 ]);
             }, []),
 
-            'modules_count' => $this->modules_count ?? 0,
+            'modules_count' => $this->whenLoaded('modules', function () {
+                return $this->modules->count();
+            }, $this->modules_count ?? 0),
             'members_count' => $this->members_count ?? 0,
 
-            'modules' => $this->whenLoaded('modules', function () {
-                return $this->modules->map(fn ($module) => new LearningModuleListResource(
-                    $module,
-                    $this->isEnrolled
-                ));
+            'modules' => $this->whenLoaded('modules', function () use ($request) {
+                return $this->modules
+                    ->map(fn ($module) => (new LearningModuleListResource(
+                        $module,
+                        $this->isEnrolled
+                    ))->resolve($request))
+                    ->all();
             }, []),
         ];
     }

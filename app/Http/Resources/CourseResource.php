@@ -41,26 +41,24 @@ class CourseResource extends JsonResource
 
             'modules' => $this->whenLoaded('modules', function () {
                 return $this->modules->map(function ($module) {
-                    $data = [
+                    return [
                         'id' => $module->id,
                         'sort_order' => $module->sort_order,
                         'title' => $module->title,
                         'is_preview' => $module->is_preview,
+                        'thumbnail' => $module->thumbnail,
+                        'video' => $module->video,
+                        'description' => $module->description,
+                        'duration' => $module->duration,
+                        'attachment' => $module->attachment,
+                        'assignments' => $module->assignments ?? [],
                     ];
-
-                    if ($module->relationLoaded('assignments') || isset($module->video)) {
-                        $data['thumbnail'] = $module->thumbnail;
-                        $data['video'] = $module->video;
-                        $data['description'] = $module->description;
-                        $data['duration'] = $module->duration;
-                        $data['attachment'] = $module->attachment;
-                    }
-
-                    return $data;
                 });
             }, []),
-            'modules_count' => $this->whenCounted('modules'),
-            'members_count' => $this->whenCounted('members'),
+            'modules_count' => $this->resource->modules_count !== null
+                ? (int) $this->resource->modules_count
+                : ($this->relationLoaded('modules') ? $this->modules->count() : 0),
+            'members_count' => (int) ($this->resource->members_count ?? 0),
         ];
     }
 }
