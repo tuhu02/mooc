@@ -173,11 +173,6 @@ class CourseController extends Controller
             ? $member->courses()->where('course_id', $course->id)->exists()
             : false;
 
-        if ($currentModule && !$currentModule->is_preview && !$isEnrolled) {
-            return redirect()->route('member.courses.show', $course->slug)
-                ->with('error', 'Modul ini terkunci. Silakan login atau daftar kursus terlebih dahulu.');
-        }
-
         $moduleIndex = $currentModule
             ? $course->modules->search(fn($module) => $module->id === $currentModule->id)
             : false;

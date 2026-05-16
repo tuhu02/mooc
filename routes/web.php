@@ -30,7 +30,9 @@ Route::prefix('member')->name('member.')->group(function () {
     Route::get('events', [EventController::class, 'index'])->name('events.index');
 
     Route::get('courses/{course:slug}/modules/{sort_order?}', [CourseController::class, 'learning'])
+        ->middleware('course.learning.access')
         ->name('courses.learning');
+
 
     Route::middleware(['auth', MemberMiddleware::class])->group(function () {
         Route::get('dashboard', function () {

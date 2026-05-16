@@ -19,7 +19,6 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-
 Route::post('/register', RegisterController::class);
 Route::post('/login', LoginController::class);
 Route::post('/logout', LogoutController::class)->middleware('auth:sanctum');
@@ -47,16 +46,18 @@ Route::get('/search', [SearchController::class, 'index']);
 Route::get('/courses', [CourseController::class, 'index']);
 Route::get('/courses/{course:slug}', [CourseController::class, 'show']);
 
+Route::get('/courses/{course:slug}/modules/{sort_order}', [CourseController::class, 'learning'])
+    ->middleware('api.course.learning.access');
+
+Route::get('/categories', [CategoryController::class, 'index']);
+Route::get('/level', [LevelController::class, 'index']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show']);
     Route::put('/profile', [ProfileController::class, 'update']);
 
     Route::post('/courses/{course:slug}/enroll', [CourseController::class, 'enroll']);
-    Route::get('/courses/{course:slug}/modules/{sort_order}', [CourseController::class, 'learning']);
 
     Route::post('/assignments/{assignment}/submissions', [AssignmentSubmissionController::class, 'store']);
     Route::delete('/assignments/{assignment}/submissions/{submission}', [AssignmentSubmissionController::class, 'destroy']);
 });
-
-Route::get('/categories', [CategoryController::class, 'index']);
-Route::get('/level', [LevelController::class, 'index']);

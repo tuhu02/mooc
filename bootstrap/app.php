@@ -23,6 +23,11 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
         ]);
+
+        $middleware->alias([
+            'course.learning.access' => EnsureCanAccessCourseLearning::class,
+            'api.course.learning.access' => EnsureCanAccessApiCourseLearning::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
