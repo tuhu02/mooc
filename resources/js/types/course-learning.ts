@@ -58,7 +58,7 @@ export type Course = {
     members_count?: number;
     mentor?: Mentor;
     categories?: Category[];
-    type?: CourseType; // default: 'default', options: 'default' | 'live'
+    type?: CourseType;
 };
 
 export type Module = {
@@ -72,6 +72,7 @@ export type Module = {
     video?: string | null;
     description?: string | null;
     duration?: number | null;
+    available_at?: string | null;
     attachment?: string | null;
     attachment_name?: string | null;
     attachments?: Array<{
@@ -104,6 +105,7 @@ export type Props = {
     initialModuleSortOrder?: number | null;
     currentModule?: Module | null;
     isEnrolled: boolean;
+    emptyState?: string | null;
     navigation?: {
         previous?: {
             sort_order?: number | null;

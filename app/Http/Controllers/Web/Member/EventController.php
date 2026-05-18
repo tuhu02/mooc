@@ -16,13 +16,13 @@ class EventController extends Controller
 {
     public function index(Request $request)
     {
-        $events = Course::query()
+        $events = fn() => Course::query()
             ->where('type', 'event')
             ->with('categories')
             ->withCount(['modules', 'members'])
             ->orderBy('id', 'desc')
             ->cursorPaginate(6)
-            ->through(fn(Course $course) => (new CourseResource($course))->resolve())
+            ->through(fn (Course $course) => (new CourseResource($course))->resolve())
             ->withQueryString();
 
         return Inertia::render('member/event/event', [
@@ -36,7 +36,6 @@ class EventController extends Controller
 
         $user = Auth::user();
         $member = $user?->member;
-        $memberId = $member?->id;
 
         $isEnrolled = $member
             ? $member->courses()->where('course_id', $course->id)->exists()
@@ -45,18 +44,14 @@ class EventController extends Controller
         $course->load([
             'categories',
             'mentor.user',
-            'modules' => fn($query) => $query
+            'modules' => fn ($query) => $query
                 ->with([
-                    'assignments' => fn($assignmentQuery) => $assignmentQuery->with([
-                        'submissions' => fn($submissionQuery) => $submissionQuery
-                            ->when(
-                                $memberId,
-                                fn($q) => $q->where('member_id', $memberId),
-                                fn($q) => $q->whereRaw('1 = 0'),
-                            )
-                            ->latest()
-                            ->limit(1),
+                    'assignments' => fn ($q) => $q->with([
+                        'submissions' => fn ($s) => $member
+                            ? $s->where('member_id', $member->id)->latest()->limit(1)
+                            : $s->whereRaw('1 = 0'),
                     ]),
+                    'attachments' => fn ($q) => $q->orderBy('id'),
                 ])
                 ->orderBy('sort_order')
                 ->orderBy('id'),
@@ -88,37 +83,46 @@ class EventController extends Controller
                 ->with('error', 'Profil member tidak ditemukan. Hubungi admin.');
         }
 
-        if ($member->courses()->where('course_id', $course->id)->exists()) {
-            $firstAvailableSortOrder = $course->modules()
-                ->where(function ($q) {
-                    $q->whereNull('available_at')
-                        ->orWhere('available_at', '<=', now());
-                })
-                ->orderBy('sort_order')
-                ->orderBy('id')
-                ->value('sort_order');
-
-            return redirect()->route('member.events.learning', [
-                'course' => $course->slug,
-                'sort_order' => $firstAvailableSortOrder,
-            ])->with('info', 'Anda sudah terdaftar di event ini.');
-        }
-
-        $member->courses()->attach($course->id, ['enrolled_at' => now()]);
-
         $firstAvailableSortOrder = $course->modules()
-            ->where(function ($q) {
-                $q->whereNull('available_at')
-                    ->orWhere('available_at', '<=', now());
-            })
+            ->whereDate('available_at', today())
+            ->where('available_at', '<=', now())
             ->orderBy('sort_order')
             ->orderBy('id')
             ->value('sort_order');
 
-        return redirect()->route('member.events.learning', [
-            'course' => $course->slug,
-            'sort_order' => $firstAvailableSortOrder,
-        ])->with('success', 'Berhasil mendaftar ke event! Selamat belajar.');
+        if ($member->courses()->where('course_id', $course->id)->exists()) {
+            if (!$firstAvailableSortOrder) {
+                return redirect()
+                    ->route('member.events.learning', [
+                        'course' => $course->slug,
+                    ])
+                    ->with('info', 'Anda sudah terdaftar. Sesi hari ini belum tersedia.');
+            }
+
+            return redirect()
+                ->route('member.events.learning', [
+                    'course' => $course->slug,
+                    'sort_order' => $firstAvailableSortOrder,
+                ])
+                ->with('info', 'Anda sudah terdaftar di event ini.');
+        }
+
+        $member->courses()->attach($course->id, ['enrolled_at' => now()]);
+
+        if (!$firstAvailableSortOrder) {
+            return redirect()
+                ->route('member.events.learning', [
+                    'course' => $course->slug,
+                ])
+                ->with('success', 'Berhasil mendaftar ke event! Sesi hari ini belum tersedia.');
+        }
+
+        return redirect()
+            ->route('member.events.learning', [
+                'course' => $course->slug,
+                'sort_order' => $firstAvailableSortOrder,
+            ])
+            ->with('success', 'Berhasil mendaftar ke event! Selamat belajar.');
     }
 
     public function learning(Course $course, ?int $sort_order = null)
@@ -130,14 +134,15 @@ class EventController extends Controller
 
         $course->load([
             'categories',
-            'modules' => fn($query) => $query
+            'modules' => fn ($query) => $query
+                ->whereDate('available_at', today())
                 ->with([
-                    'assignments' => fn($q) => $q->with([
-                        'submissions' => fn($s) => $member
+                    'assignments' => fn ($q) => $q->with([
+                        'submissions' => fn ($s) => $member
                             ? $s->where('member_id', $member->id)->latest()->limit(1)
                             : $s->whereRaw('1 = 0'),
                     ]),
-                    'attachments' => fn($q) => $q->orderBy('id'),
+                    'attachments' => fn ($q) => $q->orderBy('id'),
                 ])
                 ->orderBy('sort_order')
                 ->orderBy('id'),
@@ -154,23 +159,37 @@ class EventController extends Controller
             ? $member->courses()->where('course_id', $course->id)->exists()
             : false;
 
-        $firstModuleSortOrder = $course->modules->first()?->sort_order;
-        $targetSortOrder = $sort_order ?? $firstModuleSortOrder;
+        $availableModules = $course->modules->filter(function ($module) {
+            return $module->available_at && now()->greaterThanOrEqualTo($module->available_at);
+        })->values();
 
-        $currentModule = $targetSortOrder === null
+        $firstAvailableModule = $availableModules->first();
+
+        $targetSortOrder = $sort_order ?? $firstAvailableModule?->sort_order;
+
+        $targetModule = $targetSortOrder === null
             ? null
             : $course->modules->firstWhere('sort_order', $targetSortOrder);
 
-        if ($targetSortOrder !== null && !$currentModule) {
-            abort(404, 'Sesi dengan urutan tersebut tidak ditemukan.');
+        $currentModule = null;
+        $emptyState = null;
+
+        if ($course->modules->isEmpty()) {
+            $emptyState = 'Belum ada sesi yang dijadwalkan untuk hari ini.';
+        } elseif (!$targetModule) {
+            $emptyState = 'Sesi yang dipilih tidak tersedia hari ini.';
+        } elseif ($targetModule->available_at && now()->lt($targetModule->available_at)) {
+            $emptyState = 'Sesi ini belum tersedia. Silakan cek kembali sesuai jadwal.';
+        } else {
+            $currentModule = $targetModule;
         }
 
-        if ($currentModule?->available_at && now()->lt($currentModule->available_at)) {
-            abort(403, 'Sesi ini belum tersedia.');
+        if (!$currentModule && !$emptyState) {
+            $emptyState = 'Sesi belum tersedia.';
         }
 
         $moduleIndex = $currentModule
-            ? $course->modules->search(fn($module) => $module->id === $currentModule->id)
+            ? $course->modules->search(fn ($module) => $module->id === $currentModule->id)
             : false;
 
         $previousModule = $moduleIndex !== false && $moduleIndex > 0
@@ -196,6 +215,7 @@ class EventController extends Controller
                     ? (new ModuleNavigationResource($nextModule, $isEnrolled))->resolve()
                     : null,
             ],
+            'emptyState' => $emptyState,
         ]);
     }
 }
