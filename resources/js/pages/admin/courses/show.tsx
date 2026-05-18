@@ -1,11 +1,7 @@
 import AdminLayout from '@/layouts/admin-layout';
 import { useEffect, useState } from 'react';
-import { useForm, usePage, router } from '@inertiajs/react';
-import type {
-    CourseModule,
-    CourseShowPageProps,
-    CreateCourseModuleForm,
-} from '@/types/course-modules';
+import { router, usePage, Link } from '@inertiajs/react';
+import type { CourseModule, CourseShowPageProps } from '@/types/course-modules';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -19,112 +15,16 @@ import { type DragEndEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { destroy, edit } from '@/routes/admin/modules';
 import { CourseModulesTable } from '@/components/admin/course-modules-table';
-import { CreateModuleDialog } from '@/components/admin/create-module-dialog';
 
 export default function Show() {
     const { course } = usePage<CourseShowPageProps>().props;
     const [modules, setModules] = useState<CourseModule[]>(
         course.modules ?? [],
     );
-    const [isCreateOpen, setIsCreateOpen] = useState(false);
 
     useEffect(() => {
         setModules(course.modules ?? []);
     }, [course.modules]);
-
-    const {
-        data: createData,
-        setData: setCreateData,
-        post: createPost,
-        processing: creating,
-        errors: createErrors,
-        reset: resetCreate,
-        clearErrors: clearCreateErrors,
-    } = useForm<CreateCourseModuleForm>({
-        course_id: course.id,
-        title: '',
-        description: '',
-        video: '',
-        duration: '',
-        is_preview: false,
-        thumbnail: null,
-        attachment: null,
-        attachment_name: '',
-        attachments: [],
-        assignments: [
-            {
-                title: '',
-                description: '',
-                type: '',
-            },
-        ],
-
-        from: 'course-show',
-    });
-
-    const closeCreateModal = () => {
-        setIsCreateOpen(false);
-        resetCreate();
-        clearCreateErrors();
-        setCreateData('course_id', course.id);
-        setCreateData('from', 'course-show');
-    };
-
-    const addCreateAssignment = () => {
-        setCreateData('assignments', [
-            ...createData.assignments,
-            { title: '', description: '', type: '' },
-        ]);
-    };
-
-    const removeCreateAssignment = (index: number) => {
-        setCreateData(
-            'assignments',
-            createData.assignments.filter((_, i) => i !== index),
-        );
-    };
-
-    const updateCreateAssignment = (
-        index: number,
-        field: 'title' | 'description' | 'type',
-        value: string,
-    ) => {
-        setCreateData(
-            'assignments',
-            createData.assignments.map((assignment, i) =>
-                i === index ? { ...assignment, [field]: value } : assignment,
-            ),
-        );
-    };
-
-    const addCreateAttachment = () => {
-        setCreateData('attachments', [...createData.attachments, null]);
-    };
-
-    const removeCreateAttachment = (index: number) => {
-        setCreateData(
-            'attachments',
-            createData.attachments.filter((_, i) => i !== index),
-        );
-    };
-
-    const updateCreateAttachment = (index: number, file: File | null) => {
-        setCreateData(
-            'attachments',
-            createData.attachments.map((f, i) => (i === index ? file : f)),
-        );
-    };
-
-    const submitCreate = (e: React.FormEvent) => {
-        e.preventDefault();
-        createPost('/admin/modules', {
-            preserveScroll: true,
-            forceFormData: true,
-            onSuccess: () => {
-                closeCreateModal();
-            },
-        });
-    };
 
     const handleDelete = (moduleId: number) => {
         if (confirm('Yakin ingin menghapus modul ini?')) {
@@ -193,10 +93,12 @@ export default function Show() {
                             </CardDescription>
                         </div>
 
-                        <Button onClick={() => setIsCreateOpen(true)}>
-                            <Plus className="mr-2 h-4 w-4" />
-                            Tambah Modul
-                        </Button>
+                        <Link href={`/admin/modules/${course.id}/create`}>
+                            <Button>
+                                <Plus className="mr-2 h-4 w-4" />
+                                Tambah Modul
+                            </Button>
+                        </Link>
                     </CardHeader>
                 </Card>
 
@@ -224,34 +126,18 @@ export default function Show() {
                                 <p className="text-sm text-slate-500">
                                     Belum ada modul untuk course ini.
                                 </p>
-                                <Button
-                                    className="mt-4"
-                                    onClick={() => setIsCreateOpen(true)}
-                                >
-                                    <Plus className="mr-2 h-4 w-4" />
-                                    Tambah Modul Pertama
-                                </Button>
+                                <Link href={`/admin/courses/create`}>
+                                    <Button className="mt-4">
+                                        <Plus className="mr-2 h-4 w-4" />
+                                        Tambah Modul Pertama
+                                    </Button>
+                                </Link>
                             </div>
                         )}
                     </CardContent>
                 </Card>
 
-                <CreateModuleDialog
-                    open={isCreateOpen}
-                    onOpenChange={setIsCreateOpen}
-                    data={createData}
-                    onDataChange={setCreateData}
-                    errors={createErrors}
-                    processing={creating}
-                    onAddAssignment={addCreateAssignment}
-                    onRemoveAssignment={removeCreateAssignment}
-                    onUpdateAssignment={updateCreateAssignment}
-                    onAddAttachment={addCreateAttachment}
-                    onRemoveAttachment={removeCreateAttachment}
-                    onUpdateAttachment={updateCreateAttachment}
-                    onSubmit={submitCreate}
-                    onClose={closeCreateModal}
-                />
+                <div className="min-h-screen flex-1 rounded-xl bg-muted/50 md:min-h-min" />
             </div>
         </AdminLayout>
     );

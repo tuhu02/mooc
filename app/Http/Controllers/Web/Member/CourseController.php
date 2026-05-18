@@ -23,6 +23,7 @@ class CourseController extends Controller
         $courses = fn() => Course::query()
             ->with('categories')
             ->withCount(['modules', 'members'])
+            ->where('type', 'default')
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('title', 'like', "%{$search}%")
@@ -47,7 +48,7 @@ class CourseController extends Controller
 
         return Inertia::render('member/course', [
             'categories' => fn() => Category::all(),
-            'query' => fn() => $search,
+            'query' => $search,
             'courses' => $courses,
         ]);
     }
@@ -134,6 +135,25 @@ class CourseController extends Controller
         $user = Auth::user();
         $member = $user?->member;
 
+        if ($currentModule && $member && $isEnrolled) {
+            ModuleProgress::firstOrCreate([
+                'member_id' => $member->id,
+                'module_id' => $currentModule->id,
+                'course_id' => $course->id,
+            ], [
+                'completed_at' => now(),
+            ]);
+        }
+
+        $completedIds = $member
+        ? ModuleProgress::where('member_id', $member->id)
+            ->where('course_id', $course->id)
+            ->pluck('module_id')
+        : collect();
+
+        $totalModules = $course->modules->count();
+        $completedCount = $completedIds->count();
+
         $course->load([
             'categories',
             'modules' => fn($query) => $query
@@ -199,6 +219,14 @@ class CourseController extends Controller
                     ? (new ModuleNavigationResource($nextModule, $isEnrolled))->resolve()
                     : null,
             ],
+            'progress' => [
+            'completed' => $completedCount,
+            'total' => $totalModules,
+            'percentage' => $totalModules > 0
+                ? round(($completedCount / $totalModules) * 100)
+                : 0,
+            ],
+            'completedModuleIds' => $completedIds->values(),
         ]);
     }
 }

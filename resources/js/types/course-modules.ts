@@ -30,6 +30,7 @@ export type CourseModule = {
     video?: string | null;
     duration?: number | null;
     thumbnail?: string | null;
+    available_at?: string | null;
 
     /**
      * Field lama untuk single attachment.
@@ -40,8 +41,12 @@ export type CourseModule = {
 
     is_preview: boolean;
     sort_order: number;
-    /** Untuk remount form setelah simpan (dari Laravel timestamps). */
+
+    /**
+     * Untuk remount form setelah simpan dari Laravel timestamps.
+     */
     updated_at?: string;
+
     assignments?: CourseModuleAssignment[];
     attachments?: ModuleAttachmentType[];
 };
@@ -49,7 +54,9 @@ export type CourseModule = {
 export type CourseWithModules = {
     id: number;
     title: string;
-    description?: string;
+    slug: string;
+    description?: string | null;
+    type: 'default' | 'event';
     modules: CourseModule[];
 };
 
@@ -60,6 +67,7 @@ export type CreateCourseModuleForm = {
     video: string;
     is_preview: boolean;
     duration: string;
+    available_at: string | null;
     thumbnail: File | null;
 
     /**
@@ -86,6 +94,7 @@ export type EditCourseModuleForm = {
     description: string;
     video: string;
     duration: string;
+    available_at: string | null;
     thumbnail: File | null;
 
     /**
@@ -109,9 +118,15 @@ export type EditCourseModuleForm = {
 
     /**
      * Untuk update nama atau file dari existing attachment.
-     * Format: {attachmentId: {name?: string, file?: File | null}}
+     * Format: { attachmentId: { name?: string, file?: File | null } }
      */
-    updated_attachments: Record<number, {name?: string, file?: File | null}>;
+    updated_attachments: Record<
+        number,
+        {
+            name?: string;
+            file?: File | null;
+        }
+    >;
 
     assignments: AssignmentForm[];
     from: 'course-show';
@@ -126,6 +141,7 @@ export type AdminModuleEditPageProps = {
     course: {
         id: number;
         title: string;
+        type: 'default' | 'event';
     };
 };
 
@@ -136,7 +152,13 @@ export type ModuleAttachmentsProps = {
 
     existingAttachments?: ModuleAttachmentType[];
     selectedModule?: CourseModule | null;
-    updatedAttachments?: Record<number, {name?: string, file?: File | null}>;
+    updatedAttachments?: Record<
+        number,
+        {
+            name?: string;
+            file?: File | null;
+        }
+    >;
     deletedAttachmentIds?: number[];
     expandedAttachmentId?: number | null;
 
@@ -146,13 +168,18 @@ export type ModuleAttachmentsProps = {
 
     onMarkExistingAttachmentForDelete?: (attachmentId: number) => void;
     onUndoExistingAttachmentDelete?: (attachmentId: number) => void;
-    onUpdateExistingAttachmentName?: (attachmentId: number, newName: string) => void;
-    onUpdateExistingAttachmentFile?: (attachmentId: number, file: File | null) => void;
+    onUpdateExistingAttachmentName?: (
+        attachmentId: number,
+        newName: string,
+    ) => void;
+    onUpdateExistingAttachmentFile?: (
+        attachmentId: number,
+        file: File | null,
+    ) => void;
     onToggleExpandAttachment?: (attachmentId: number | null) => void;
 
     errors: Record<string, string | undefined>;
 };
-
 
 export type ModuleNavigationItem = {
     title: string;
@@ -163,7 +190,8 @@ export type ModuleNavigationItem = {
 
 export type ModuleBottomNavigationProps = {
     courseSlug: string;
-    currentTitle?: string | null;
-    prevModule?: ModuleNavigationItem | null;
-    nextModule?: ModuleNavigationItem | null;
+    currentTitle?: string;
+    prevModule: { sort_order?: number | null; title: string; is_preview?: boolean; is_locked?: boolean; } | null;
+    nextModule: { sort_order?: number | null; title: string; is_preview?: boolean; is_locked?: boolean; } | null;
+    basePath?: string;
 };

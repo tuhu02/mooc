@@ -5,6 +5,9 @@ use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use App\Http\Middleware\EnsureCanAccessCourseLearning;
+use App\Http\Middleware\EnsureCanAccessApiCourseLearning;
+use App\Http\Middleware\EnsureCanAccessEventLearning;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -27,6 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'course.learning.access' => EnsureCanAccessCourseLearning::class,
             'api.course.learning.access' => EnsureCanAccessApiCourseLearning::class,
+            'event.learning.access' => EnsureCanAccessEventLearning::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

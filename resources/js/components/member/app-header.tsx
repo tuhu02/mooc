@@ -24,7 +24,7 @@ import {
 import { UserMenuContent } from '@/components/member/user-menu-content';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { useInitials } from '@/hooks/use-initials';
-import { cn } from '@/lib/utils';
+import { cn, toUrl } from '@/lib/utils';
 import type { BreadcrumbItem, NavItem } from '@/types';
 import type { User } from '@/types/auth';
 import AppLogo from '@/components/member/app-logo';
@@ -69,7 +69,15 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
     const user = auth?.user ?? null;
 
     const getInitials = useInitials();
-    const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
+    const { isCurrentUrl, whenCurrentUrl, currentUrl } = useCurrentUrl();
+
+    // Helper function to check if current URL is within a section (including detail pages)
+    const isCurrentSection = (basePath: string): boolean => {
+        // Don't highlight if basePath is empty
+        if (!basePath) return false;
+
+        return currentUrl === basePath || currentUrl.startsWith(basePath + '/');
+    };
 
     const [keyword, setKeyword] = useState('');
     const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
@@ -163,10 +171,11 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                             href={item.href}
                                             className={cn(
                                                 navigationMenuTriggerStyle(),
-                                                whenCurrentUrl(
-                                                    item.href,
-                                                    activeItemStyles,
-                                                ),
+                                                isCurrentSection(
+                                                    toUrl(item.href),
+                                                )
+                                                    ? activeItemStyles
+                                                    : '',
                                                 'h-9 cursor-pointer px-3',
                                             )}
                                         >
@@ -176,7 +185,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                             {item.title}
                                         </Link>
 
-                                        {isCurrentUrl(item.href) && (
+                                        {isCurrentSection(toUrl(item.href)) && (
                                             <div className="absolute bottom-0 left-0 h-0.5 w-full translate-y-px bg-black dark:bg-white" />
                                         )}
                                     </NavigationMenuItem>

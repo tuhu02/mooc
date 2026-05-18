@@ -84,6 +84,32 @@ export type Course = {
     members_count?: number;
     mentor?: Mentor;
     categories?: Category[];
+    type: 'default' | 'event';
+};
+
+export type PreviewAssignment = {
+    id: number;
+    title: string;
+    description?: string | null;
+    submission?: unknown;
+};
+
+export type PreviewModule = Omit<Module, 'assignments'> & {
+    is_preview: boolean;
+    video?: string | null;
+    thumbnail?: string | null;
+    description?: string | null;
+    attachment?: string | null;
+    assignments?: PreviewAssignment[];
+};
+
+export type CourseDetail = Course & {
+    modules?: PreviewModule[];
+};
+
+export type CourseDetailProps = {
+    course: CourseDetail;
+    isEnrolled?: boolean;
 };
 
 export type Module = {
@@ -100,6 +126,25 @@ export type Module = {
     updated_at?: string;
     course?: Course;
     assignments?: Assignment[];
+    available_at?: string | null;
+};
+
+export type EventModule = Omit<Module, 'assignments'> & {
+    available_at?: string | null;
+    video?: string | null;
+    thumbnail?: string | null;
+    description?: string | null;
+    attachment?: string | null;
+    assignments?: PreviewAssignment[];
+};
+
+export type EventDetail = Course & {
+    modules?: EventModule[];
+};
+
+export type EventDetailProps = {
+    course: EventDetail;
+    isEnrolled?: boolean;
 };
 
 export type Assignment = {

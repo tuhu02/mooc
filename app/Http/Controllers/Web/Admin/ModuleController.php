@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Course;
 use App\Models\Module;
 use App\Models\ModuleAttachment;
 use Illuminate\Http\Request;
@@ -14,12 +15,19 @@ use Inertia\Inertia;
 
 class ModuleController extends Controller
 {
+    public function create(Course $course)
+    {
+        return Inertia::render('admin/modules/create', [
+            'course' => $course->only(['id', 'title', 'type']),
+        ]);
+    }
+
     public function edit(Module $module)
     {
         $module->load([
             'assignments',
             'attachments',
-            'course:id,title',
+            'course:id,title,type',
         ]);
 
         return Inertia::render('admin/modules/edit', [
@@ -74,6 +82,7 @@ class ModuleController extends Controller
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
             'video' => 'nullable|url|max:2048',
             'description' => 'nullable|string',
+            'available_at' => 'nullable|date',
             'duration' => 'nullable|integer|min:0',
             'attachment' => 'nullable|file|max:10240',
             'attachment_name' => 'nullable|string|max:255',
@@ -160,6 +169,7 @@ class ModuleController extends Controller
             'deleted_attachment_ids' => 'nullable|array',
             'deleted_attachment_ids.*' => 'nullable|integer|exists:module_attachments,id',
             'updated_attachments' => 'nullable|array',
+            'available_at' => 'nullable|date',
             'is_preview' => 'boolean',
             'assignments' => 'nullable|array',
             'assignments.*.title' => 'nullable|string|max:255',

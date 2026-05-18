@@ -10,6 +10,7 @@ class Module extends Model
         'course_id',
         'sort_order',
         'is_preview',
+        'available_at',
         'title',
         'thumbnail',
         'video',
@@ -19,6 +20,7 @@ class Module extends Model
 
     protected $casts = [
         'is_preview' => 'boolean',
+        'available_at' => 'datetime',
     ];
 
     public function course()

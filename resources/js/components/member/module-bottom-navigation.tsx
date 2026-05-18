@@ -8,15 +8,16 @@ export default function ModuleBottomNavigation({
     currentTitle,
     prevModule,
     nextModule,
+    basePath = 'courses',
 }: ModuleBottomNavigationProps) {
     const prevHref =
         prevModule?.sort_order != null
-            ? `/member/courses/${courseSlug}/modules/${prevModule.sort_order}`
+            ? `/member/${basePath}/${courseSlug}/modules/${prevModule.sort_order}`
             : null;
 
     const nextHref =
         nextModule?.sort_order != null
-            ? `/member/courses/${courseSlug}/modules/${nextModule.sort_order}`
+            ? `/member/${basePath}/${courseSlug}/modules/${nextModule.sort_order}`
             : null;
 
     return (

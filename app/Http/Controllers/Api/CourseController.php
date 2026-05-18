@@ -23,6 +23,7 @@ class CourseController extends Controller
         $courses = Course::query()
             ->with('categories')
             ->withCount(['modules', 'members'])
+            ->where('type', 'default')
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('title', 'like', "%{$search}%")
@@ -45,9 +46,7 @@ class CourseController extends Controller
 
         return response()->json([
             'message' => 'Data Course Berhasil Diambil',
-
             'courses' => CourseResource::collection($courses->items()),
-
             'meta' => [
                 'next_cursor' => $courses->nextCursor()?->encode(),
                 'previous_cursor' => $courses->previousCursor()?->encode(),

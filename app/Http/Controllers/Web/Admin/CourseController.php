@@ -19,7 +19,7 @@ class CourseController extends Controller
      */
     public function index()
     {
-        $courses = Course::with(['mentor.user', 'categories'])->latest()->get();
+        $courses = Course::with(['mentor.user', 'categories'])->latest()->orderBy('id', 'desc')->cursorPaginate(10);
 
         return Inertia::render('admin/courses/index', [
             'courses' => fn() => $courses,

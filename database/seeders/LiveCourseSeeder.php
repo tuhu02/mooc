@@ -57,7 +57,7 @@ class LiveCourseSeeder extends Seeder
             ],
         ];
 
-        foreach ($liveCourses as $index => $item) {
+        foreach ($liveCourses as $item) {
             $slug      = Course::generateUniqueSlug(Str::slug($item['title']));
             $thumbnail = $this->copyThumbnailToPublicDisk($item['title'], $slug);
 
@@ -70,7 +70,7 @@ class LiveCourseSeeder extends Seeder
                 'level'        => $item['level'],
                 'is_active'    => true,
                 'is_highlight' => $item['is_highlight'],
-                'type'         => 'live',
+                'type'         => 'event',
             ]);
 
             $course->categories()->sync($item['category_ids']);
@@ -82,7 +82,6 @@ class LiveCourseSeeder extends Seeder
         $sourcePath = $this->resolveSourceImagePath($title, $slug);
 
         if (! $sourcePath) {
-            // Gunakan thumbnail fallback jika tidak ada gambar spesifik live course
             $fallback = $this->resolveFallbackThumbnail();
 
             if (! $fallback) {
@@ -102,10 +101,10 @@ class LiveCourseSeeder extends Seeder
 
     private function resolveSourceImagePath(string $title, string $slug): ?string
     {
-        $extensions  = ['png', 'jpg', 'jpeg', 'webp'];
-        $baseSlug    = Str::slug($title);
-        $separatorSlug = Str::of($title)->replace('/', ' ')->slug('-')->value();
-        $sourceDir   = public_path('courses');
+        $extensions     = ['png', 'jpg', 'jpeg', 'webp'];
+        $baseSlug       = Str::slug($title);
+        $separatorSlug  = Str::of($title)->replace('/', ' ')->slug('-')->value();
+        $sourceDir      = public_path('courses');
 
         foreach ($extensions as $extension) {
             $candidates = [
@@ -125,9 +124,6 @@ class LiveCourseSeeder extends Seeder
         return null;
     }
 
-    /**
-     * Ambil salah satu thumbnail yang sudah ada sebagai fallback.
-     */
     private function resolveFallbackThumbnail(): ?string
     {
         $extensions = ['png', 'jpg', 'jpeg', 'webp'];
@@ -143,6 +139,7 @@ class LiveCourseSeeder extends Seeder
             }
 
             $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+
             if (in_array($ext, $extensions, true)) {
                 return "{$sourceDir}/{$file}";
             }

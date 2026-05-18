@@ -1,11 +1,7 @@
 import AdminLayout from '@/layouts/admin-layout';
 import { useState, type FormEvent } from 'react';
 import { Link, useForm, usePage } from '@inertiajs/react';
-import type {
-    AdminModuleEditPageProps,
-    CourseModule,
-    EditCourseModuleForm,
-} from '@/types/course-modules';
+import type { CreateCourseModuleForm } from '@/types/course-modules';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -30,64 +26,42 @@ import { ModuleFormFields } from '@/components/admin/module-form-fields';
 import { ModuleAssignments } from '@/components/admin/module-assignments';
 import { ModuleAttachments } from '@/components/admin/module-attachments';
 import { show as courseShow } from '@/routes/admin/courses';
-import { update } from '@/routes/admin/modules';
 
-function buildInitialForm(
-    courseId: number,
-    module: CourseModule,
-): EditCourseModuleForm {
-    return {
-        _method: 'PUT',
-        course_id: courseId,
-        title: module.title ?? '',
-        description: module.description ?? '',
-        video: module.video ?? '',
-        duration:
-            module.duration !== null && module.duration !== undefined
-                ? String(module.duration)
-                : '',
-        available_at: module.available_at ?? null,
-        thumbnail: null,
-        is_preview: module.is_preview ?? false,
-        attachment: null,
-        attachment_name: module.attachment_name ?? '',
-        attachments: [],
-        deleted_attachment_ids: [],
-        updated_attachments: {},
-        assignments:
-            module.assignments && module.assignments.length > 0
-                ? module.assignments.map((a) => ({
-                      id: a.id,
-                      title: a.title ?? '',
-                      description: a.description ?? '',
-                      type: a.type ?? '',
-                  }))
-                : [
-                      {
-                          title: '',
-                          description: '',
-                          type: '',
-                      },
-                  ],
-        from: 'course-show',
+type AdminModuleCreatePageProps = {
+    course: {
+        id: number;
+        title: string;
+        type: string;
     };
-}
-
-type ModuleEditFormProps = {
-    module: CourseModule;
-    course: AdminModuleEditPageProps['course'];
 };
 
-function ModuleEditForm({ module, course }: ModuleEditFormProps) {
-    const [deletedAttachmentIds, setDeletedAttachmentIds] = useState<number[]>(
-        [],
-    );
-    const [expandedAttachmentId, setExpandedAttachmentId] = useState<
-        number | null
-    >(null);
-
+function ModuleCreateForm({
+    course,
+}: {
+    course: AdminModuleCreatePageProps['course'];
+}) {
     const { data, setData, post, processing, errors } =
-        useForm<EditCourseModuleForm>(buildInitialForm(course.id, module));
+        useForm<CreateCourseModuleForm>({
+            course_id: course.id,
+            title: '',
+            description: '',
+            video: '',
+            duration: '',
+            is_preview: false,
+            available_at: null,
+            thumbnail: null,
+            attachment: null,
+            attachment_name: '',
+            attachments: [],
+            assignments: [
+                {
+                    title: '',
+                    description: '',
+                    type: '',
+                },
+            ],
+            from: 'course-show',
+        });
 
     const addAssignment = () => {
         setData('assignments', [
@@ -134,55 +108,9 @@ function ModuleEditForm({ module, course }: ModuleEditFormProps) {
         );
     };
 
-    const markExistingAttachmentForDelete = (attachmentId: number) => {
-        setDeletedAttachmentIds([...deletedAttachmentIds, attachmentId]);
-        setData('deleted_attachment_ids', [
-            ...data.deleted_attachment_ids,
-            attachmentId,
-        ]);
-    };
-
-    const undoExistingAttachmentDelete = (attachmentId: number) => {
-        setDeletedAttachmentIds(
-            deletedAttachmentIds.filter((id) => id !== attachmentId),
-        );
-        setData(
-            'deleted_attachment_ids',
-            data.deleted_attachment_ids.filter((id) => id !== attachmentId),
-        );
-    };
-
-    const updateExistingAttachmentName = (
-        attachmentId: number,
-        newName: string,
-    ) => {
-        const updated = data.updated_attachments[attachmentId] || {};
-        setData('updated_attachments', {
-            ...data.updated_attachments,
-            [attachmentId]: {
-                ...updated,
-                name: newName,
-            },
-        });
-    };
-
-    const updateExistingAttachmentFile = (
-        attachmentId: number,
-        file: File | null,
-    ) => {
-        const updated = data.updated_attachments[attachmentId] || {};
-        setData('updated_attachments', {
-            ...data.updated_attachments,
-            [attachmentId]: {
-                ...updated,
-                file: file,
-            },
-        });
-    };
-
     const submit = (e: FormEvent) => {
         e.preventDefault();
-        post(update.url(module.id), {
+        post('/admin/modules', {
             forceFormData: true,
         });
     };
@@ -191,15 +119,15 @@ function ModuleEditForm({ module, course }: ModuleEditFormProps) {
         <div className="space-y-6 p-6">
             <Card>
                 <CardHeader>
-                    <CardTitle>Edit modul</CardTitle>
+                    <CardTitle>Tambah modul baru</CardTitle>
                     <CardDescription>
-                        Ubah konten, tugas, dan lampiran untuk modul ini.
+                        Buat modul baru untuk course "{course.title}"
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={submit} className="space-y-4">
                         <ModuleFormFields
-                            prefix="edit"
+                            prefix="create"
                             title={data.title}
                             video={data.video}
                             duration={data.duration}
@@ -227,7 +155,7 @@ function ModuleEditForm({ module, course }: ModuleEditFormProps) {
                         />
 
                         <ModuleAssignments
-                            prefix="edit"
+                            prefix="create"
                             assignments={data.assignments}
                             onAddAssignment={addAssignment}
                             onRemoveAssignment={removeAssignment}
@@ -236,11 +164,9 @@ function ModuleEditForm({ module, course }: ModuleEditFormProps) {
                         />
 
                         <div className="grid gap-2">
-                            <Label htmlFor="edit-thumbnail">
-                                Thumbnail baru
-                            </Label>
+                            <Label htmlFor="create-thumbnail">Thumbnail</Label>
                             <Input
-                                id="edit-thumbnail"
+                                id="create-thumbnail"
                                 type="file"
                                 accept="image/*"
                                 onChange={(e) =>
@@ -258,29 +184,11 @@ function ModuleEditForm({ module, course }: ModuleEditFormProps) {
                         </div>
 
                         <ModuleAttachments
-                            prefix="edit"
+                            prefix="create"
                             attachmentFiles={data.attachments}
-                            existingAttachments={module.attachments}
-                            selectedModule={module}
-                            updatedAttachments={data.updated_attachments}
-                            deletedAttachmentIds={deletedAttachmentIds}
-                            expandedAttachmentId={expandedAttachmentId}
                             onAddAttachment={addAttachment}
                             onRemoveAttachment={removeAttachment}
                             onUpdateAttachment={updateAttachment}
-                            onMarkExistingAttachmentForDelete={
-                                markExistingAttachmentForDelete
-                            }
-                            onUndoExistingAttachmentDelete={
-                                undoExistingAttachmentDelete
-                            }
-                            onUpdateExistingAttachmentName={
-                                updateExistingAttachmentName
-                            }
-                            onUpdateExistingAttachmentFile={
-                                updateExistingAttachmentFile
-                            }
-                            onToggleExpandAttachment={setExpandedAttachmentId}
                             errors={{
                                 attachment: errors.attachment,
                                 attachments: errors.attachments,
@@ -289,7 +197,7 @@ function ModuleEditForm({ module, course }: ModuleEditFormProps) {
 
                         <div className="flex items-center gap-3">
                             <input
-                                id="edit-is-preview"
+                                id="create-is-preview"
                                 type="checkbox"
                                 checked={data.is_preview}
                                 onChange={(e) =>
@@ -297,7 +205,7 @@ function ModuleEditForm({ module, course }: ModuleEditFormProps) {
                                 }
                                 className="h-4 w-4 rounded border-gray-300"
                             />
-                            <Label htmlFor="edit-is-preview">
+                            <Label htmlFor="create-is-preview">
                                 Jadikan modul ini sebagai preview
                             </Label>
                         </div>
@@ -309,9 +217,7 @@ function ModuleEditForm({ module, course }: ModuleEditFormProps) {
                                 </Link>
                             </Button>
                             <Button type="submit" disabled={processing}>
-                                {processing
-                                    ? 'Menyimpan...'
-                                    : 'Simpan perubahan'}
+                                {processing ? 'Menyimpan...' : 'Simpan modul'}
                             </Button>
                         </div>
                     </form>
@@ -321,8 +227,8 @@ function ModuleEditForm({ module, course }: ModuleEditFormProps) {
     );
 }
 
-export default function EditModulePage() {
-    const { module, course } = usePage<AdminModuleEditPageProps>().props;
+export default function CreateModulePage() {
+    const { course } = usePage<AdminModuleCreatePageProps>().props;
 
     return (
         <AdminLayout>
@@ -346,19 +252,14 @@ export default function EditModulePage() {
                                 <BreadcrumbSeparator className="hidden md:block" />
                                 <BreadcrumbItem>
                                     <BreadcrumbPage>
-                                        Edit modul: {module.title}
+                                        Tambah modul
                                     </BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
                         </Breadcrumb>
                     </div>
                 </header>
-
-                <ModuleEditForm
-                    key={`${module.id}-${module.updated_at ?? '0'}`}
-                    module={module}
-                    course={course}
-                />
+                <ModuleCreateForm course={course} />
             </SidebarInset>
         </AdminLayout>
     );

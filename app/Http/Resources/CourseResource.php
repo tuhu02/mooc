@@ -51,6 +51,7 @@ class CourseResource extends JsonResource
                         'description' => $module->description,
                         'duration' => $module->duration,
                         'attachment' => $module->attachment,
+                        'available_at' => $module->available_at,
                         'assignments' => $module->assignments ?? [],
                     ];
                 });

@@ -19,7 +19,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { usePage, useForm, Link, router } from '@inertiajs/react';
+import { usePage, useForm, Link } from '@inertiajs/react';
 import { Trash2, Pencil } from 'lucide-react';
 import {
     index,
@@ -27,11 +27,11 @@ import {
     edit,
     destroy as destroyRoute,
 } from '@/routes/admin/courses';
-
-import { Course } from '@/types';
+import { CursorPagination, Course } from '@/types';
+import { PaginationComponent } from '@/components/admin';
 
 export default function Page() {
-    const { courses } = usePage<{ courses: Course[] }>().props;
+    const { courses } = usePage<{ courses: CursorPagination<Course> }>().props;
 
     const { delete: destroy, processing } = useForm();
 
@@ -49,10 +49,12 @@ export default function Page() {
                 <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
                     <div className="flex items-center gap-2 px-4">
                         <SidebarTrigger className="-ml-1" />
+
                         <Separator
                             orientation="vertical"
                             className="mr-2 data-[orientation=vertical]:h-4"
                         />
+
                         <Breadcrumb>
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
@@ -60,7 +62,9 @@ export default function Page() {
                                         Courses
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>
+
                                 <BreadcrumbSeparator className="hidden md:block" />
+
                                 <BreadcrumbItem>
                                     <BreadcrumbPage>All course</BreadcrumbPage>
                                 </BreadcrumbItem>
@@ -68,54 +72,91 @@ export default function Page() {
                         </Breadcrumb>
                     </div>
                 </header>
+
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                     <div className="flex justify-between">
                         <h1 className="text-xl font-semibold">
                             Manage Courses
                         </h1>
+
                         <Link href={create.url()}>
                             <Button className="w-auto">Tambah</Button>
                         </Link>
                     </div>
+
                     <Table>
                         <TableCaption>A list of Course</TableCaption>
+
                         <TableHeader>
                             <TableRow>
                                 <TableHead>Thumbnail</TableHead>
                                 <TableHead>Title</TableHead>
+                                <TableHead>Type</TableHead>
                                 <TableHead>Mentor</TableHead>
                                 <TableHead>Status</TableHead>
                                 <TableHead>Categories</TableHead>
                                 <TableHead>Aksi</TableHead>
                             </TableRow>
                         </TableHeader>
+
                         <TableBody>
-                            {courses.map((course) => (
+                            {courses.data.map((course) => (
                                 <TableRow
                                     key={course.id}
                                     className="cursor-pointer hover:bg-muted/50"
                                 >
                                     <TableCell>
-                                        <img
-                                            src={`/storage/${course.thumbnail}`}
-                                            alt={course.title}
-                                            className="h-12 w-20 rounded object-cover"
-                                        />
+                                        {course.thumbnail ? (
+                                            <img
+                                                src={`/storage/${course.thumbnail}`}
+                                                alt={course.title}
+                                                className="h-12 w-20 rounded object-cover"
+                                            />
+                                        ) : (
+                                            <div className="flex h-12 w-20 items-center justify-center rounded bg-muted text-xs text-muted-foreground">
+                                                No Image
+                                            </div>
+                                        )}
                                     </TableCell>
-                                    <TableCell>{course.title}</TableCell>
+
+                                    <TableCell className="font-medium">
+                                        {course.title}
+                                    </TableCell>
+
+                                    <TableCell>
+                                        {course.type === 'event' ? (
+                                            <span className="inline-flex rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-700">
+                                                Event
+                                            </span>
+                                        ) : (
+                                            <span className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                                                Course
+                                            </span>
+                                        )}
+                                    </TableCell>
+
                                     <TableCell>
                                         {course.mentor?.user?.name ?? '-'}
                                     </TableCell>
+
                                     <TableCell>
-                                        {course.is_active
-                                            ? 'Active'
-                                            : 'Not Active'}
+                                        {course.is_active ? (
+                                            <span className="inline-flex rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                                                Active
+                                            </span>
+                                        ) : (
+                                            <span className="inline-flex rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">
+                                                Not Active
+                                            </span>
+                                        )}
                                     </TableCell>
+
                                     <TableCell>
                                         {course.categories
                                             ?.map((category) => category.name)
                                             .join(', ') || '-'}
                                     </TableCell>
+
                                     <TableCell>
                                         <div className="flex gap-2">
                                             <Button
@@ -161,6 +202,9 @@ export default function Page() {
                             ))}
                         </TableBody>
                     </Table>
+
+                    <PaginationComponent pagination={courses} />
+
                     <div className="min-h-screen flex-1 rounded-xl bg-muted/50 md:min-h-min" />
                 </div>
             </SidebarInset>

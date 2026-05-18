@@ -20,6 +20,7 @@ interface CreateModuleDialogProps {
     onDataChange: (key: keyof CreateCourseModuleForm, value: any) => void;
     errors: Record<string, string | undefined>;
     processing: boolean;
+    courseType: string;
     onAddAssignment: () => void;
     onRemoveAssignment: (index: number) => void;
     onUpdateAssignment: (
@@ -41,6 +42,7 @@ export function CreateModuleDialog({
     onDataChange,
     errors,
     processing,
+    courseType,
     onAddAssignment,
     onRemoveAssignment,
     onUpdateAssignment,
@@ -58,6 +60,7 @@ export function CreateModuleDialog({
                     onClose();
                     return;
                 }
+
                 onOpenChange(newOpen);
             }}
         >
@@ -76,6 +79,8 @@ export function CreateModuleDialog({
                         video={data.video}
                         duration={data.duration}
                         description={data.description}
+                        available_at={data.available_at}
+                        courseType={courseType}
                         onTitleChange={(value) => onDataChange('title', value)}
                         onVideoChange={(value) => onDataChange('video', value)}
                         onDurationChange={(value) =>
@@ -84,11 +89,15 @@ export function CreateModuleDialog({
                         onDescriptionChange={(value) =>
                             onDataChange('description', value)
                         }
+                        onAvailableAtChange={(value) =>
+                            onDataChange('available_at', value)
+                        }
                         errors={{
                             title: errors.title,
                             video: errors.video,
                             duration: errors.duration,
                             description: errors.description,
+                            available_at: errors.available_at,
                         }}
                     />
 
@@ -114,6 +123,7 @@ export function CreateModuleDialog({
                                 )
                             }
                         />
+
                         {errors.thumbnail && (
                             <p className="text-sm font-medium text-red-500">
                                 {errors.thumbnail}
@@ -143,6 +153,7 @@ export function CreateModuleDialog({
                             }
                             className="h-4 w-4 rounded border-gray-300"
                         />
+
                         <Label htmlFor="create-is-preview">
                             Jadikan modul ini sebagai preview
                         </Label>
@@ -157,6 +168,7 @@ export function CreateModuleDialog({
                         >
                             Batal
                         </Button>
+
                         <Button type="submit" disabled={processing}>
                             {processing ? 'Menyimpan...' : 'Simpan Modul'}
                         </Button>

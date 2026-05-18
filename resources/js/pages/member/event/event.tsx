@@ -6,7 +6,6 @@ import { PaginationComponent } from '@/components/member/pagination-component';
 
 import {
     Card,
-    CardAction,
     CardDescription,
     CardHeader,
     CardTitle,
