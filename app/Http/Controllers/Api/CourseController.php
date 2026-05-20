@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\CourseLearningResource;
 use App\Http\Resources\CourseResource;
 use App\Models\Course;
+use App\Models\ModuleProgress;
 use Illuminate\Http\Request;
 
 class CourseController extends Controller
@@ -187,6 +188,34 @@ class CourseController extends Controller
             ], 403);
         }
 
+        // Simpan progress ketika member membuka modul.
+        if ($member && $isEnrolled) {
+            ModuleProgress::updateOrCreate(
+                [
+                    'member_id' => $member->id,
+                    'module_id' => $currentModule->id,
+                ],
+                [
+                    'course_id' => $course->id,
+                    'completed_at' => now(),
+                ]
+            );
+        }
+
+        // Hitung progress course.
+        $totalModules = $course->modules->count();
+
+        $completedModules = $member
+            ? ModuleProgress::where('member_id', $member->id)
+                ->where('course_id', $course->id)
+                ->whereNotNull('completed_at')
+                ->count()
+            : 0;
+
+        $progressPercentage = $totalModules > 0
+            ? round(($completedModules / $totalModules) * 100)
+            : 0;
+
         $moduleIndex = $course->modules->search(
             fn($module) => $module->sort_order === $sort_order
         );
@@ -208,6 +237,9 @@ class CourseController extends Controller
                 $nextModule,
                 $isEnrolled
             ),
+            'progress_percentage' => $progressPercentage,
+            'completed_modules' => $completedModules,
+            'total_modules' => $totalModules,
         ]);
     }
 }

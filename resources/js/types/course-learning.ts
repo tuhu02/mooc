@@ -1,23 +1,23 @@
 export type Mentor = {
-    id: number,
-    institution: string,
-    gender: string,
-    date_of_birth: string,
-    bio: string,
-    user_id: number,
+    id: number;
+    institution: string;
+    gender: string;
+    date_of_birth: string;
+    bio: string;
+    user_id: number;
     user: {
         id: number;
         name: string;
         email: string;
         address: string;
-    }
+    };
     avatar?: string | null;
-}
+};
 
 export type Category = {
     id: number;
     name: string;
-}
+};
 
 export type Submission = {
     id: number;
@@ -40,7 +40,6 @@ export type Assignment = {
     module?: Module;
     submission?: Submission | null;
 };
-
 
 export type CourseType = 'default' | 'live';
 
@@ -88,7 +87,6 @@ export type Module = {
     assignments?: Assignment[];
 };
 
-
 export type ModuleGroup = {
     id: number;
     title: string;
@@ -98,6 +96,12 @@ export type ModuleGroup = {
 export type CourseWithModules = Course & {
     module_groups?: ModuleGroup[];
     modules?: Module[];
+};
+
+export type LearningProgress = {
+    completed: number;
+    total: number;
+    percentage: number;
 };
 
 export type Props = {
@@ -120,4 +124,6 @@ export type Props = {
             is_locked?: boolean;
         } | null;
     };
+    progress: LearningProgress;
+    completedModuleIds: number[];
 };

@@ -10,12 +10,11 @@ import { memberAssignmentStatusPresentation } from '@/lib/member-assignment-stat
 import type { Assignment, Props, Submission } from '@/types/course-learning';
 import ModuleBottomNavigation from '@/components/member/module-bottom-navigation';
 
-function assignmentCardHint(
-    submission: Submission | null | undefined,
-): string {
+function assignmentCardHint(submission: Submission | null | undefined): string {
     if (!submission) {
         return 'Klik untuk mengumpulkan tugas';
     }
+
     switch (submission.status ?? 'submitted') {
         case 'reviewed':
             return 'Klik untuk melihat tugas';
@@ -31,13 +30,12 @@ export default function CourseLearningPage({
     currentModule,
     navigation,
     isEnrolled,
+    progress,
 }: Props) {
     const selectedModule = currentModule ?? null;
 
-    const hasModuleAttachments =
-        (selectedModule?.attachments?.length ?? 0) > 0;
+    const hasModuleAttachments = (selectedModule?.attachments?.length ?? 0) > 0;
     const hasLegacyAttachment = Boolean(selectedModule?.attachment);
-    /** Kolom lama: hanya tampil jika belum ada lampiran multi (hindari duplikat). */
     const showLegacyAttachmentRow =
         hasLegacyAttachment && !hasModuleAttachments;
 
@@ -58,6 +56,33 @@ export default function CourseLearningPage({
 
     const moduleSidebar = (
         <div className="rounded-xl">
+            <div className="mb-5 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="mb-2 flex items-center justify-between gap-3">
+                    <div>
+                        <p className="text-sm font-semibold text-slate-900">
+                            Progress Belajar
+                        </p>
+                        <p className="mt-1 text-xs text-slate-500">
+                            {progress.completed} dari {progress.total} modul
+                            selesai
+                        </p>
+                    </div>
+
+                    <span className="shrink-0 text-sm font-bold text-sky-600">
+                        {progress.percentage}%
+                    </span>
+                </div>
+
+                <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-200">
+                    <div
+                        className="h-full rounded-full bg-sky-500 transition-all duration-300"
+                        style={{
+                            width: `${progress.percentage}%`,
+                        }}
+                    />
+                </div>
+            </div>
+
             <div className="mb-4">
                 <h2 className="text-base font-semibold text-slate-900">
                     Daftar Modul
@@ -197,12 +222,13 @@ export default function CourseLearningPage({
                                         className="flex items-center gap-2 rounded-md bg-slate-50 p-3 transition hover:bg-slate-100"
                                     >
                                         <Paperclip className="h-4 w-4 shrink-0 text-slate-600" />
+
                                         <div className="min-w-0 flex-1">
                                             <p className="truncate text-sm font-medium text-slate-700">
                                                 {selectedModule.attachment_name?.trim() ||
-                                                    selectedModule.attachment?.split(
-                                                        '/',
-                                                    ).pop() ||
+                                                    selectedModule.attachment
+                                                        ?.split('/')
+                                                        .pop() ||
                                                     'Lampiran'}
                                             </p>
                                         </div>
@@ -218,10 +244,12 @@ export default function CourseLearningPage({
                                         className="flex items-center gap-2 rounded-md bg-slate-50 p-3 transition hover:bg-slate-100"
                                     >
                                         <Paperclip className="h-4 w-4 shrink-0 text-slate-600" />
+
                                         <div className="min-w-0 flex-1">
                                             <p className="truncate text-sm font-medium text-slate-700">
                                                 {att.file_name}
                                             </p>
+
                                             {att.file_size ? (
                                                 <p className="text-xs text-slate-500">
                                                     {(
@@ -254,72 +282,75 @@ export default function CourseLearningPage({
                                             );
 
                                         return (
-                                        <div
-                                            key={assignment.id}
-                                            title={
-                                                isEnrolled
-                                                    ? assignmentCardHint(
-                                                          assignment.submission,
-                                                      )
-                                                    : 'Login dan daftar course terlebih dahulu untuk mengumpulkan tugas'
-                                            }
-                                            onClick={() => {
-                                                if (!isEnrolled) return;
-                                                setActiveAssignment({
-                                                    id: assignment.id,
-                                                    title: assignment.title,
-                                                    submission:
-                                                        assignment.submission ??
-                                                        null,
-                                                });
-                                            }}
-                                            className={`rounded-xl border border-slate-200 bg-slate-50/60 p-4 transition ${
-                                                isEnrolled
-                                                    ? 'cursor-pointer hover:border-sky-300 hover:bg-sky-50/60 hover:shadow-md'
-                                                    : 'cursor-not-allowed opacity-90'
-                                            }`}
-                                        >
-                                            <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                                                <div>
-                                                    <h3 className="font-semibold text-slate-900">
-                                                        {assignment.title}
-                                                    </h3>
-                                                    <p className="mt-1 text-xs text-slate-500">
-                                                        {isEnrolled
-                                                            ? assignmentCardHint(
-                                                                  assignment.submission,
-                                                              )
-                                                            : 'Login dan daftar course terlebih dahulu untuk mengumpulkan tugas'}
-                                                    </p>
+                                            <div
+                                                key={assignment.id}
+                                                title={
+                                                    isEnrolled
+                                                        ? assignmentCardHint(
+                                                              assignment.submission,
+                                                          )
+                                                        : 'Login dan daftar course terlebih dahulu untuk mengumpulkan tugas'
+                                                }
+                                                onClick={() => {
+                                                    if (!isEnrolled) return;
+
+                                                    setActiveAssignment({
+                                                        id: assignment.id,
+                                                        title: assignment.title,
+                                                        submission:
+                                                            assignment.submission ??
+                                                            null,
+                                                    });
+                                                }}
+                                                className={`rounded-xl border border-slate-200 bg-slate-50/60 p-4 transition ${
+                                                    isEnrolled
+                                                        ? 'cursor-pointer hover:border-sky-300 hover:bg-sky-50/60 hover:shadow-md'
+                                                        : 'cursor-not-allowed opacity-90'
+                                                }`}
+                                            >
+                                                <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                                                    <div>
+                                                        <h3 className="font-semibold text-slate-900">
+                                                            {assignment.title}
+                                                        </h3>
+
+                                                        <p className="mt-1 text-xs text-slate-500">
+                                                            {isEnrolled
+                                                                ? assignmentCardHint(
+                                                                      assignment.submission,
+                                                                  )
+                                                                : 'Login dan daftar course terlebih dahulu untuk mengumpulkan tugas'}
+                                                        </p>
+                                                    </div>
+
+                                                    {isEnrolled ? (
+                                                        <span
+                                                            className={`inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-semibold ${statusPill.pillClassName}`}
+                                                        >
+                                                            {statusPill.label}
+                                                        </span>
+                                                    ) : (
+                                                        <span className="inline-flex w-fit items-center rounded-full bg-slate-200 px-3 py-1 text-xs font-semibold text-slate-600">
+                                                            Daftar untuk akses
+                                                            tugas
+                                                        </span>
+                                                    )}
                                                 </div>
 
-                                                {isEnrolled ? (
-                                                    <span
-                                                        className={`inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-semibold ${statusPill.pillClassName}`}
+                                                {assignment.description && (
+                                                    <div
+                                                        className="mt-2 text-sm text-slate-600"
+                                                        data-color-mode="light"
                                                     >
-                                                        {statusPill.label}
-                                                    </span>
-                                                ) : (
-                                                    <span className="inline-flex w-fit items-center rounded-full bg-slate-200 px-3 py-1 text-xs font-semibold text-slate-600">
-                                                        Daftar untuk akses tugas
-                                                    </span>
+                                                        <MDEditor.Markdown
+                                                            source={
+                                                                assignment.description
+                                                            }
+                                                            className="bg-transparent!"
+                                                        />
+                                                    </div>
                                                 )}
                                             </div>
-
-                                            {assignment.description && (
-                                                <div
-                                                    className="mt-2 text-sm text-slate-600"
-                                                    data-color-mode="light"
-                                                >
-                                                    <MDEditor.Markdown
-                                                        source={
-                                                            assignment.description
-                                                        }
-                                                        className="bg-transparent!"
-                                                    />
-                                                </div>
-                                            )}
-                                        </div>
                                         );
                                     },
                                 )}
@@ -332,8 +363,9 @@ export default function CourseLearningPage({
                 <div
                     className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
                     onClick={(e) => {
-                        if (e.target === e.currentTarget)
+                        if (e.target === e.currentTarget) {
                             setActiveAssignment(null);
+                        }
                     }}
                 >
                     <div className="w-full max-w-lg rounded-xl bg-white shadow-xl">
@@ -342,10 +374,12 @@ export default function CourseLearningPage({
                                 <h2 className="text-lg font-semibold text-slate-900">
                                     Kumpulkan Tugas
                                 </h2>
+
                                 <p className="mt-0.5 text-sm font-medium text-slate-800">
                                     {activeAssignment.title}
                                 </p>
                             </div>
+
                             <button
                                 onClick={() => setActiveAssignment(null)}
                                 className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600"

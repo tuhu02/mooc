@@ -69,11 +69,9 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
     const user = auth?.user ?? null;
 
     const getInitials = useInitials();
-    const { isCurrentUrl, whenCurrentUrl, currentUrl } = useCurrentUrl();
+    const { currentUrl } = useCurrentUrl();
 
-    // Helper function to check if current URL is within a section (including detail pages)
     const isCurrentSection = (basePath: string): boolean => {
-        // Don't highlight if basePath is empty
         if (!basePath) return false;
 
         return currentUrl === basePath || currentUrl.startsWith(basePath + '/');
