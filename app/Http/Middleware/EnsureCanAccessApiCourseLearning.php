@@ -30,7 +30,7 @@ class EnsureCanAccessApiCourseLearning
             ], 404);
         }
 
-        $user = $request->user();
+        $user = auth('sanctum')->user();
         $member = $user?->member;
 
         $isEnrolled = $member

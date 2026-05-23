@@ -140,7 +140,7 @@ class CourseController extends Controller
 
     public function learning(Request $request, Course $course, int $sort_order)
     {
-        $user = $request->user();
+        $user = auth('sanctum')->user();
         $member = $user?->member;
 
         $course->load([
@@ -206,9 +206,9 @@ class CourseController extends Controller
 
         $completedModules = $member
             ? ModuleProgress::where('member_id', $member->id)
-                ->where('course_id', $course->id)
-                ->whereNotNull('completed_at')
-                ->count()
+            ->where('course_id', $course->id)
+            ->whereNotNull('completed_at')
+            ->count()
             : 0;
 
         $progressPercentage = $totalModules > 0
