@@ -82,7 +82,7 @@ class ModuleController extends Controller
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
             'video' => 'nullable|url|max:2048',
             'description' => 'nullable|string',
-            'available_at' => 'nullable|date',
+            'available_at' => 'nullable|date_format:Y-m-d\TH:i:s',
             'duration' => 'nullable|integer|min:0',
             'attachment' => 'nullable|file|max:10240',
             'attachment_name' => 'nullable|string|max:255',
@@ -121,7 +121,7 @@ class ModuleController extends Controller
             foreach ($attachments as $file) {
                 if ($file instanceof \Illuminate\Http\UploadedFile) {
                     $filePath = $file->store('module-attachments', 'public');
-                    
+
                     $module->attachments()->create([
                         'file_path' => $filePath,
                         'file_name' => $file->getClientOriginalName(),
@@ -169,7 +169,7 @@ class ModuleController extends Controller
             'deleted_attachment_ids' => 'nullable|array',
             'deleted_attachment_ids.*' => 'nullable|integer|exists:module_attachments,id',
             'updated_attachments' => 'nullable|array',
-            'available_at' => 'nullable|date',
+            'available_at' => 'nullable|date_format:Y-m-d\TH:i:s',
             'is_preview' => 'boolean',
             'assignments' => 'nullable|array',
             'assignments.*.title' => 'nullable|string|max:255',
@@ -250,7 +250,7 @@ class ModuleController extends Controller
                     // Store new file
                     $file = $updateData['file'];
                     $filePath = $file->store('module-attachments', 'public');
-                    
+
                     $attachment->file_path = $filePath;
                     $attachment->file_type = $file->getClientMimeType();
                     $attachment->file_size = $file->getSize();
@@ -265,7 +265,7 @@ class ModuleController extends Controller
             foreach ($attachments as $file) {
                 if ($file instanceof \Illuminate\Http\UploadedFile) {
                     $filePath = $file->store('module-attachments', 'public');
-                    
+
                     $module->attachments()->create([
                         'file_path' => $filePath,
                         'file_name' => $file->getClientOriginalName(),
@@ -367,7 +367,7 @@ class ModuleController extends Controller
             // Store new file
             $file = $request->file('file');
             $filePath = $file->store('module-attachments', 'public');
-            
+
             $attachment->file_path = $filePath;
             $attachment->file_type = $file->getClientMimeType();
             $attachment->file_size = $file->getSize();

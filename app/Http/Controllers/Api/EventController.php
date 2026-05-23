@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\CourseResource;
 use App\Http\Resources\CurrentLearningModuleResource;
 use App\Http\Resources\EventResource;
 use App\Http\Resources\LearningCourseResource;
@@ -115,10 +114,14 @@ class EventController extends Controller
         $user = Auth::user();
         $member = $user?->member;
 
+        $now = now(config('app.timezone'));
+
         $course->load([
             'categories',
             'modules' => fn($query) => $query
-                ->whereDate('available_at', today())
+                ->whereNotNull('available_at')
+                ->whereDate('available_at', $now->toDateString())
+                ->where('available_at', '<=', $now)
                 ->with([
                     'assignments' => fn($q) => $q->with([
                         'submissions' => fn($s) => $member
@@ -129,7 +132,9 @@ class EventController extends Controller
                 ])
                 ->orderBy('sort_order')
                 ->orderBy('id'),
-        ])->loadCount(['modules', 'members']);
+        ])->loadCount(['members']);
+
+        $course->modules_count = $course->modules->count();
 
         foreach ($course->modules as $module) {
             foreach ($module->assignments as $assignment) {
@@ -142,33 +147,19 @@ class EventController extends Controller
             ? $member->courses()->where('course_id', $course->id)->exists()
             : false;
 
-        $availableModules = $course->modules->filter(function ($module) {
-            return $module->available_at && now()->greaterThanOrEqualTo($module->available_at);
-        })->values();
-
-        $firstAvailableModule = $availableModules->first();
-
-        $targetSortOrder = $sort_order ?? $firstAvailableModule?->sort_order;
-
-        $targetModule = $targetSortOrder === null
-            ? null
-            : $course->modules->firstWhere('sort_order', $targetSortOrder);
+        $targetModule = $sort_order === null
+            ? $course->modules->first()
+            : $course->modules->firstWhere('sort_order', $sort_order);
 
         $currentModule = null;
         $emptyState = null;
 
         if ($course->modules->isEmpty()) {
-            $emptyState = 'Belum ada sesi yang dijadwalkan untuk hari ini.';
+            $emptyState = 'Sesi belum tersedia. Silakan cek kembali sesuai jadwal.';
         } elseif (!$targetModule) {
-            $emptyState = 'Sesi yang dipilih tidak tersedia hari ini.';
-        } elseif ($targetModule->available_at && now()->lt($targetModule->available_at)) {
-            $emptyState = 'Sesi ini belum tersedia. Silakan cek kembali sesuai jadwal.';
+            $emptyState = 'Sesi yang dipilih belum tersedia.';
         } else {
             $currentModule = $targetModule;
-        }
-
-        if (!$currentModule && !$emptyState) {
-            $emptyState = 'Sesi belum tersedia.';
         }
 
         $moduleIndex = $currentModule
