@@ -6,11 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\CourseLearningResource;
 use App\Http\Resources\CourseResource;
 use App\Models\Course;
-use App\Models\ModuleProgress;
 use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
+    /// ================= INDEX =================
     public function index(Request $request)
     {
         $request->validate([
@@ -22,9 +22,11 @@ class CourseController extends Controller
         $search = trim((string) $request->input('q', ''));
 
         $courses = Course::query()
-            ->with('categories')
+            ->with([
+                'categories',
+                'modules' // 🔥 TAMBAH BIAR COUNT & DATA SIAP
+            ])
             ->withCount(['modules', 'members'])
-            ->where('type', 'default')
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('title', 'like', "%{$search}%")
@@ -47,7 +49,9 @@ class CourseController extends Controller
 
         return response()->json([
             'message' => 'Data Course Berhasil Diambil',
+
             'courses' => CourseResource::collection($courses->items()),
+
             'meta' => [
                 'next_cursor' => $courses->nextCursor()?->encode(),
                 'previous_cursor' => $courses->previousCursor()?->encode(),
@@ -56,6 +60,7 @@ class CourseController extends Controller
         ]);
     }
 
+    /// ================= SHOW =================
     public function show(Request $request, Course $course)
     {
         $member = $request->user()?->member;
@@ -63,8 +68,9 @@ class CourseController extends Controller
         $course->load([
             'categories',
             'mentor.user',
+
+            // 🔥 FIX UTAMA: HAPUS FILTER is_preview
             'modules' => fn($query) => $query
-                ->where('is_preview', true)
                 ->with([
                     'assignments' => fn($assignmentQuery) => $assignmentQuery->with([
                         'submissions' => fn($submissionQuery) => $submissionQuery
@@ -90,11 +96,15 @@ class CourseController extends Controller
 
         return response()->json([
             'message' => 'Detail course berhasil diambil.',
+
+            // 🔥 PENTING: pastikan CourseResource kamu sudah include modules
             'course' => new CourseResource($course),
+
             'is_enrolled' => $isEnrolled,
         ]);
     }
 
+    /// ================= ENROLL =================
     public function enroll(Request $request, Course $course)
     {
         $user = $request->user();
@@ -138,6 +148,7 @@ class CourseController extends Controller
         ], 201);
     }
 
+    /// ================= LEARNING =================
     public function learning(Request $request, Course $course, int $sort_order)
     {
         $user = $request->user();
@@ -145,6 +156,8 @@ class CourseController extends Controller
 
         $course->load([
             'categories',
+
+            // 🔥 FIX: jangan filter is_preview
             'modules' => fn($query) => $query
                 ->with([
                     'assignments' => fn($q) => $q->with([
@@ -157,7 +170,6 @@ class CourseController extends Controller
                             ->latest()
                             ->limit(1),
                     ]),
-                    'attachments' => fn($q) => $q->orderBy('id'),
                 ])
                 ->orderBy('sort_order')
                 ->orderBy('id'),
@@ -184,36 +196,9 @@ class CourseController extends Controller
 
         if (!$currentModule->is_preview && !$isEnrolled) {
             return response()->json([
-                'message' => 'Modul ini terkunci. Silakan login dan daftar terlebih dahulu.',
+                'message' => 'Modul ini terkunci. Silakan daftar terlebih dahulu.',
             ], 403);
         }
-
-        // Simpan progress ketika member membuka modul.
-        if ($member && $isEnrolled) {
-            ModuleProgress::updateOrCreate(
-                [
-                    'member_id' => $member->id,
-                    'module_id' => $currentModule->id,
-                ],
-                [
-                    'course_id' => $course->id,
-                    'completed_at' => now(),
-                ]
-            );
-        }
-
-        $totalModules = $course->modules->count();
-
-        $completedModules = $member
-            ? ModuleProgress::where('member_id', $member->id)
-                ->where('course_id', $course->id)
-                ->whereNotNull('completed_at')
-                ->count()
-            : 0;
-
-        $progressPercentage = $totalModules > 0
-            ? round(($completedModules / $totalModules) * 100)
-            : 0;
 
         $moduleIndex = $course->modules->search(
             fn($module) => $module->sort_order === $sort_order
@@ -229,6 +214,7 @@ class CourseController extends Controller
 
         return response()->json([
             'message' => 'Data pembelajaran course berhasil diambil.',
+
             'data' => new CourseLearningResource(
                 $course,
                 $currentModule,
@@ -236,9 +222,6 @@ class CourseController extends Controller
                 $nextModule,
                 $isEnrolled
             ),
-            'progress_percentage' => $progressPercentage,
-            'completed_modules' => $completedModules,
-            'total_modules' => $totalModules,
         ]);
     }
 }
