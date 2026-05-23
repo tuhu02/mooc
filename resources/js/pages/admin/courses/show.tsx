@@ -117,6 +117,7 @@ export default function Show() {
                         {modules?.length > 0 ? (
                             <CourseModulesTable
                                 modules={modules}
+                                courseType={course.type}
                                 getEditHref={(m) => edit.url(m.id)}
                                 onDelete={handleDelete}
                                 onDragEnd={handleDragEnd}

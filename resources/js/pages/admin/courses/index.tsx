@@ -19,7 +19,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { usePage, useForm, Link } from '@inertiajs/react';
+import { usePage, useForm, Link, router } from '@inertiajs/react';
 import { Trash2, Pencil } from 'lucide-react';
 import {
     index,
@@ -29,9 +29,20 @@ import {
 } from '@/routes/admin/courses';
 import { CursorPagination, Course } from '@/types';
 import { PaginationComponent } from '@/components/admin';
+import { useState } from 'react';
 
 export default function Page() {
     const { courses } = usePage<{ courses: CursorPagination<Course> }>().props;
+    const { url } = usePage();
+
+    // Get type from URL query parameter
+    const searchParams = new URLSearchParams(url.split('?')[1] || '');
+    const typeFromUrl = searchParams.get('type') || 'all';
+    const [typeFilter, setTypeFilter] = useState<'all' | 'course' | 'event'>(
+        (typeFromUrl === 'course' || typeFromUrl === 'event'
+            ? typeFromUrl
+            : 'all') as 'all' | 'course' | 'event',
+    );
 
     const { delete: destroy, processing } = useForm();
 
@@ -41,6 +52,13 @@ export default function Page() {
                 preserveScroll: true,
             });
         }
+    };
+
+    const handleFilterChange = (filter: 'all' | 'course' | 'event') => {
+        setTypeFilter(filter);
+        const url =
+            filter === 'all' ? index.url() : `${index.url()}?type=${filter}`;
+        router.visit(url);
     };
 
     return (
@@ -82,6 +100,33 @@ export default function Page() {
                         <Link href={create.url()}>
                             <Button className="w-auto">Tambah</Button>
                         </Link>
+                    </div>
+
+                    <div className="flex gap-2">
+                        <Button
+                            variant={
+                                typeFilter === 'all' ? 'default' : 'outline'
+                            }
+                            onClick={() => handleFilterChange('all')}
+                        >
+                            Semua
+                        </Button>
+                        <Button
+                            variant={
+                                typeFilter === 'course' ? 'default' : 'outline'
+                            }
+                            onClick={() => handleFilterChange('course')}
+                        >
+                            Course
+                        </Button>
+                        <Button
+                            variant={
+                                typeFilter === 'event' ? 'default' : 'outline'
+                            }
+                            onClick={() => handleFilterChange('event')}
+                        >
+                            Event
+                        </Button>
                     </div>
 
                     <Table>

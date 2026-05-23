@@ -287,20 +287,22 @@ function ModuleEditForm({ module, course }: ModuleEditFormProps) {
                             }}
                         />
 
-                        <div className="flex items-center gap-3">
-                            <input
-                                id="edit-is-preview"
-                                type="checkbox"
-                                checked={data.is_preview}
-                                onChange={(e) =>
-                                    setData('is_preview', e.target.checked)
-                                }
-                                className="h-4 w-4 rounded border-gray-300"
-                            />
-                            <Label htmlFor="edit-is-preview">
-                                Jadikan modul ini sebagai preview
-                            </Label>
-                        </div>
+                        {course.type !== 'event' && (
+                            <div className="flex items-center gap-3">
+                                <input
+                                    id="edit-is-preview"
+                                    type="checkbox"
+                                    checked={data.is_preview}
+                                    onChange={(e) =>
+                                        setData('is_preview', e.target.checked)
+                                    }
+                                    className="h-4 w-4 rounded border-gray-300"
+                                />
+                                <Label htmlFor="edit-is-preview">
+                                    Jadikan modul ini sebagai preview
+                                </Label>
+                            </div>
+                        )}
 
                         <div className="flex flex-wrap justify-end gap-2 border-t pt-4">
                             <Button variant="outline" asChild>

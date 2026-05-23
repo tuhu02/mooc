@@ -202,7 +202,6 @@ class CourseController extends Controller
             );
         }
 
-        // Hitung progress course.
         $totalModules = $course->modules->count();
 
         $completedModules = $member

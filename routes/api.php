@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\LevelController;
 use App\Http\Controllers\Api\AssignmentSubmissionController;
 use App\Http\Controllers\Api\Auth\PendingEmailVerificationController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\EventController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -49,6 +50,9 @@ Route::get('/courses/{course:slug}', [CourseController::class, 'show']);
 Route::get('/courses/{course:slug}/modules/{sort_order}', [CourseController::class, 'learning'])
     ->middleware('api.course.learning.access');
 
+Route::get('/events', [EventController::class, 'index']);
+Route::get('/events/{course:slug}', [EventController::class, 'show']);
+
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/level', [LevelController::class, 'index']);
 
@@ -57,6 +61,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/profile', [ProfileController::class, 'update']);
 
     Route::post('/courses/{course:slug}/enroll', [CourseController::class, 'enroll']);
+
+    Route::post('/events/{course:slug}/enroll', [EventController::class, 'enroll']);
+    Route::get('/events/{course:slug}/modules/{sort_order}', [EventController::class, 'learning'])
+        ->middleware('api.event.enrolled');
 
     Route::post('/assignments/{assignment}/submissions', [AssignmentSubmissionController::class, 'store']);
     Route::delete('/assignments/{assignment}/submissions/{submission}', [AssignmentSubmissionController::class, 'destroy']);

@@ -29,6 +29,7 @@ import { Pencil, Trash2, GripVertical } from 'lucide-react';
 
 type CourseModulesTableProps = {
     modules: CourseModule[];
+    courseType?: string;
     getEditHref: (module: CourseModule) => string;
     onDelete: (moduleId: number) => void;
     onDragEnd: (event: DragEndEvent) => void;
@@ -36,6 +37,7 @@ type CourseModulesTableProps = {
 
 export function CourseModulesTable({
     modules,
+    courseType,
     getEditHref,
     onDelete,
     onDragEnd,
@@ -78,6 +80,7 @@ export function CourseModulesTable({
                                 <SortableModuleRow
                                     key={module.id}
                                     module={module}
+                                    courseType={courseType}
                                     getEditHref={getEditHref}
                                     onDelete={onDelete}
                                 />
@@ -92,12 +95,14 @@ export function CourseModulesTable({
 
 type SortableModuleRowProps = {
     module: CourseModule;
+    courseType?: string;
     getEditHref: (module: CourseModule) => string;
     onDelete: (moduleId: number) => void;
 };
 
 function SortableModuleRow({
     module,
+    courseType,
     getEditHref,
     onDelete,
 }: SortableModuleRowProps) {
@@ -136,7 +141,7 @@ function SortableModuleRow({
             <TableCell>
                 <div className="flex items-center gap-2">
                     {module.title}
-                    {module.is_preview && (
+                    {module.is_preview && courseType !== 'event' && (
                         <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
                             Preview
                         </span>

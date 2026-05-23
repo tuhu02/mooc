@@ -17,9 +17,21 @@ class CourseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $courses = Course::with(['mentor.user', 'categories'])->latest()->orderBy('id', 'desc')->cursorPaginate(10);
+        $query = Course::with(['mentor.user', 'categories']);
+
+        if ($request->has('type') && $request->get('type') !== '') {
+            $type = $request->get('type');
+            if ($type === 'course') {
+                // 'course' maps to 'default' in the database
+                $query->where('type', 'default');
+            } else {
+                $query->where('type', $type);
+            }
+        }
+
+        $courses = fn() => $query->latest()->orderBy('id', 'desc')->cursorPaginate(10);
 
         return Inertia::render('admin/courses/index', [
             'courses' => fn() => $courses,
