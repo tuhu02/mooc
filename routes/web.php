@@ -41,9 +41,9 @@
         Route::middleware(['auth', MemberMiddleware::class])->group(function () {
             Route::get('dashboard', function () {
                 return Inertia::render('member/dashboard');
-            })->name('dashboard');
+            })->middleware('verified')->name('dashboard');
 
-            Route::post('courses/{course:slug}/enroll', [CourseController::class, 'enroll'])->name('courses.enroll');
+            Route::post('courses/{course:slug}/enroll', [CourseController::class, 'enroll'])->middleware('verified')->name('courses.enroll');
             Route::post('events/{course:slug}/enroll', [EventController::class, 'enroll'])->name('events.enroll');
             Route::post('assignments/{assignment}/submissions', [AssignmentSubmissionController::class, 'store'])->name('assignments.submissions.store');
             Route::delete('assignments/{assignment}/submissions/{submission}', [AssignmentSubmissionController::class, 'destroy'])->name('assignments.submissions.destroy');

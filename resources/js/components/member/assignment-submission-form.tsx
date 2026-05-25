@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,12 +24,31 @@ export default function AssignmentSubmissionForm({
     submission,
     onSuccess,
 }: Props) {
-    const { data, setData, post, processing, errors, reset, setError, clearErrors } =
-        useForm({
-            file: null as File | null,
-        });
+    const [successMessage, setSuccessMessage] = useState(false);
+    const {
+        data,
+        setData,
+        post,
+        processing,
+        errors,
+        reset,
+        setError,
+        clearErrors,
+    } = useForm({
+        file: null as File | null,
+    });
 
     const maxBytes = 10 * 1024 * 1024;
+
+    // Auto close modal after success message is shown
+    useEffect(() => {
+        if (successMessage) {
+            const timer = setTimeout(() => {
+                onSuccess?.();
+            }, 1500);
+            return () => clearTimeout(timer);
+        }
+    }, [successMessage, onSuccess]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selected = e.target.files?.[0] ?? null;
@@ -48,7 +68,7 @@ export default function AssignmentSubmissionForm({
             forceFormData: true,
             onSuccess: () => {
                 reset();
-                onSuccess?.();
+                setSuccessMessage(true);
             },
         });
     };
@@ -59,6 +79,14 @@ export default function AssignmentSubmissionForm({
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
+            {successMessage && (
+                <div className="rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm">
+                    <p className="font-medium text-green-800">
+                        ✓ Tugas berhasil dikumpulkan!
+                    </p>
+                </div>
+            )}
+
             {submission && statusPresentation ? (
                 <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm">
                     <p className="font-medium text-slate-800">
@@ -93,12 +121,17 @@ export default function AssignmentSubmissionForm({
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
-                <Button type="submit" disabled={processing || !data.file}>
-                    {processing
-                        ? 'Mengirim...'
-                        : submission
-                          ? 'Update File'
-                          : 'Kirim Assignment'}
+                <Button
+                    type="submit"
+                    disabled={processing || !data.file || successMessage}
+                >
+                    {successMessage
+                        ? 'Menutup modal...'
+                        : processing
+                          ? 'Mengirim...'
+                          : submission
+                            ? 'Update File'
+                            : 'Kirim Assignment'}
                 </Button>
             </div>
         </form>

@@ -36,7 +36,7 @@ export default function MemberLearningLayout({
                     >
                         {sidebar}
                     </aside>
-
+                        
                     <main
                         className={cn(
                             'flex min-w-0 flex-1 flex-col',

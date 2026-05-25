@@ -28,7 +28,7 @@ export default function CTASection({ auth, canRegister = true }: Props) {
     };
 
     return (
-        <section className="bg-black py-24 text-white dark:bg-white dark:text-black">
+        <section className="bg-black py-24 mb-10 text-white dark:bg-white dark:text-black">
             <div className="mx-auto max-w-5xl px-4 text-center md:px-8">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
@@ -41,7 +41,7 @@ export default function CTASection({ auth, canRegister = true }: Props) {
                     }}
                 >
                     <p className="mb-4 text-sm font-semibold tracking-[0.2em] text-slate-300 uppercase dark:text-slate-600">
-                        Mulai Sekarang
+                        Mulai Sekarang  
                     </p>
                     <h2 className="mx-auto max-w-3xl text-3xl leading-tight font-bold md:text-5xl">
                         Bangun Keahlian Digital Anda Hari Ini

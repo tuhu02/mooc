@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Models\Member;
+use App\Models\Mentor;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
-use App\Http\Resources\UserResource;
 
 class RegisterController extends Controller
 {
@@ -19,6 +22,9 @@ class RegisterController extends Controller
                 'email' => 'required|string|email|max:255|unique:users,email',
                 'password' => 'required|string|min:8|confirmed',
                 'institution' => 'required|string|max:50',
+
+                // dari radio button Member / Mentor
+                'role' => 'required|string|in:member,mentor',
             ]);
         } catch (ValidationException $e) {
             Log::warning('Registration validation failed', [
@@ -26,15 +32,36 @@ class RegisterController extends Controller
                 'ip' => $request->ip(),
                 'user_agent' => $request->userAgent(),
             ]);
+
             throw $e;
         }
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-            'institution' => $request->institution,
-        ]);
+        $user = DB::transaction(function () use ($request) {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
+                'institution' => $request->institution,
+            ]);
+
+            if ($request->role === 'member') {
+                Member::create([
+                    'user_id' => $user->id,
+                    'institution' => $request->institution,
+                    'gender' => $request->gender,
+                    'date_of_birth' => $request->date_of_birth,
+                ]);
+            }
+
+            if ($request->role === 'mentor') {
+                Mentor::create([
+                    'user_id' => $user->id,
+                    'institution' => $request->institution,
+                ]);
+            }
+
+            return $user;
+        });
 
         $user->sendEmailVerificationNotification();
 

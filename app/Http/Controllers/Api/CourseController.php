@@ -106,6 +106,12 @@ class CourseController extends Controller
             ], 404);
         }
 
+        if (! $user->hasVerifiedEmail()) {
+            return response()->json([
+                'message' => 'Verifikasi email terlebih dahulu sebelum mendaftar kursus.',
+            ], 403);
+        }
+
         $isEnrolled = $member->courses()
             ->where('course_id', $course->id)
             ->exists();
@@ -188,7 +194,6 @@ class CourseController extends Controller
             ], 403);
         }
 
-        // Simpan progress ketika member membuka modul.
         if ($member && $isEnrolled) {
             ModuleProgress::updateOrCreate(
                 [
