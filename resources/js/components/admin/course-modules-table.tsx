@@ -9,7 +9,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
-import type { CourseModule } from '@/types/course-modules';
+import type { CourseModule } from '@/types';
 import {
     DndContext,
     PointerSensor,

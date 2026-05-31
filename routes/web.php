@@ -12,6 +12,7 @@
     use App\Http\Controllers\Web\Member\AssignmentSubmissionController;
     use App\Http\Controllers\Web\Member\CourseController;
     use App\Http\Controllers\Web\Member\EventController;
+    use App\Http\Controllers\Web\Member\DashboardController as MemberDashboardController;
     use App\Http\Controllers\Web\WelcomeController;
     use App\Http\Middleware\AdminMiddleware;
     use App\Http\Middleware\MentorMiddleware;
@@ -34,14 +35,16 @@
             ->middleware('course.learning.access')
             ->name('courses.learning');
 
+        Route::get('courses/{course:slug}/completion', [CourseController::class, 'completion'])
+            ->middleware(['auth', MemberMiddleware::class])
+            ->name('courses.completion');
+
         Route::get('events/{course:slug}/modules/{sort_order?}', [EventController::class, 'learning'])
             ->middleware('event.learning.access')
             ->name('events.learning');
 
         Route::middleware(['auth', MemberMiddleware::class])->group(function () {
-            Route::get('dashboard', function () {
-                return Inertia::render('member/dashboard');
-            })->middleware('verified')->name('dashboard');
+            Route::get('dashboard', [MemberDashboardController::class, 'index'])->middleware('verified')->name('dashboard');
 
             Route::post('courses/{course:slug}/enroll', [CourseController::class, 'enroll'])->middleware('verified')->name('courses.enroll');
             Route::post('events/{course:slug}/enroll', [EventController::class, 'enroll'])->name('events.enroll');

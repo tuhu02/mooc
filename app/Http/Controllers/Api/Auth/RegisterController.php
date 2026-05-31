@@ -23,7 +23,6 @@ class RegisterController extends Controller
                 'password' => 'required|string|min:8|confirmed',
                 'institution' => 'required|string|max:50',
 
-                // dari radio button Member / Mentor
                 'role' => 'required|string|in:member,mentor',
             ]);
         } catch (ValidationException $e) {
@@ -66,6 +65,8 @@ class RegisterController extends Controller
         $user->sendEmailVerificationNotification();
 
         $token = $user->createToken('auth-token')->plainTextToken;
+
+        $user->load('member');
 
         return response()->json([
             'message' => 'Registration successful. Please check your email for the OTP code to verify your account.',

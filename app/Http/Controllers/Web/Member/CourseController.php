@@ -41,6 +41,16 @@ class CourseController extends Controller
                     $categoryQuery->where('categories.id', $request->category_id);
                 });
             })
+            ->when($request->filled('enrolled') && Auth::check(), function ($query) use ($request) {
+                $memberId = Auth::user()?->member?->id;
+                if (!$memberId) return;
+
+                if ($request->enrolled === '1') {
+                    $query->whereHas('members', fn($q) => $q->where('member_id', $memberId));
+                } elseif ($request->enrolled === '0') {
+                    $query->whereDoesntHave('members', fn($q) => $q->where('member_id', $memberId));
+                }
+            })
             ->orderBy('id', 'desc')
             ->cursorPaginate(6)
             ->through(fn(Course $course) => (new CourseResource($course))->resolve())
@@ -251,6 +261,49 @@ class CourseController extends Controller
             ],
 
             'completedModuleIds' => $completedIds->values(),
+        ]);
+    }
+
+    public function completion(Course $course)
+    {
+        $user = Auth::user();
+        $member = $user?->member;
+
+        if (!$member) {
+            return redirect()->route('member.courses.show', $course->slug);
+        }
+
+        $isEnrolled = $member->courses()->where('course_id', $course->id)->exists();
+
+        if (!$isEnrolled) {
+            return redirect()->route('member.courses.show', $course->slug);
+        }
+
+        $course->load([
+            'modules' => fn($query) => $query
+                ->orderBy('sort_order')
+                ->orderBy('id'),
+        ])->loadCount(['modules', 'members']);
+
+        $completedIds = ModuleProgress::where('member_id', $member->id)
+            ->where('course_id', $course->id)
+            ->whereNotNull('completed_at')
+            ->pluck('module_id');
+
+        $totalModules = $course->modules->count();
+        $completedCount = $completedIds->count();
+
+        $progressPercentage = $totalModules > 0
+            ? round(($completedCount / $totalModules) * 100)
+            : 0;
+
+        return Inertia::render('member/course-completion', [
+            'course' => (new LearningCourseResource($course, $isEnrolled))->resolve(),
+            'progress' => [
+                'completed' => $completedCount,
+                'total' => $totalModules,
+                'percentage' => $progressPercentage,
+            ],
         ]);
     }
 }

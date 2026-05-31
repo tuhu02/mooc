@@ -54,79 +54,79 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 isActive: url.startsWith('/admin/admins'),
                 items: [
                     {
-                        title: 'All Admins',
+                        title: 'Semua Admin',
                         url: '/admin/admins',
                         isActive: url === '/admin/admins',
                     },
                     {
-                        title: 'Add Admins',
+                        title: 'Tambah Admin',
                         url: '/admin/admins/create',
                         isActive: url === '/admin/admins/create',
                     },
                 ],
             },
             {
-                title: 'Members',
+                title: 'Member',
                 url: '/admin/members',
                 icon: Users,
                 isActive: url.startsWith('/admin/members'),
                 items: [
                     {
-                        title: 'All Members',
+                        title: 'Semua Members',
                         url: '/admin/members',
                         isActive: url === '/admin/members',
                     },
                     {
-                        title: 'Add Member',
+                        title: 'Tambah Member',
                         url: '/admin/members/create',
                         isActive: url === '/admin/members/create',
                     },
                 ],
             },
             {
-                title: 'Mentors',
+                title: 'Mentor',
                 url: '/admin/mentors',
                 icon: UserCheck,
                 isActive: url.startsWith('/admin/mentors'),
                 items: [
                     {
-                        title: 'All Mentor',
+                        title: 'Semua Mentor',
                         url: '/admin/mentors',
                         isActive: url === '/admin/mentors',
                     },
                     {
-                        title: 'Add Mentor',
+                        title: 'Tambah Mentor',
                         url: '/admin/mentors/create',
                         isActive: url === '/admin/roles/create',
                     },
                 ],
             },
             {
-                title: 'Category',
+                title: 'Kategori',
                 url: '/admin/categories',
                 icon: GalleryVerticalEnd,
                 isActive: url.startsWith('/admin/categories'),
                 items: [
                     {
-                        title: 'All Category',
+                        title: 'Semua Kategori',
                         url: '/admin/categories',
                         isActive: url === '/admin/categories',
                     },
                     {
-                        title: 'Add Category',
+                        title: 'Tambah Kategori',
                         url: '/admin/categories/create',
                         isActive: url === '/admin/categories/create',
                     },
                 ],
             },
             {
-                title: 'Courses',
+                title: 'Kursus',
                 url: '/admin/courses',
                 icon: BookOpen,
                 isActive: url.startsWith('/admin/courses'),
                 items: [
                     {
-                        title: 'All Courses',
+                        title: 'Semua Kursus',
                         url: '/admin/courses',
                         isActive: url === '/admin/courses',
                     },
@@ -138,18 +138,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 ],
             },
             {
-                title: 'Roles',
+                title: 'Role',
                 url: '/admin/roles',
                 icon: Shield,
                 isActive: url.startsWith('/admin/roles'),
                 items: [
                     {
-                        title: 'All Roles',
+                        title: 'Semua Role',
                         url: '/admin/roles',
                         isActive: url === '/admin/roles',
                     },
                     {
-                        title: 'Add Roles',
+                        title: 'Tambah Roles',
                         url: '/admin/roles/create',
                         isActive: url === '/admin/roles/create',
                     },

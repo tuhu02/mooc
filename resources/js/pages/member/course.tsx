@@ -1,11 +1,16 @@
-import { BreadcrumbItem, Category, Course, CursorPagination } from '@/types';
+import {
+    BreadcrumbItem,
+    Category,
+    Course,
+    CourseProps,
+    CursorPagination,
+} from '@/types';
 import AppLayout from '@/layouts/member-layout';
 import { Head, Link } from '@inertiajs/react';
 import { Badge } from '@/components/ui/badge';
 import { PaginationComponent } from '@/components/member/pagination-component';
 import member from '@/routes/member';
 import { BookOpen, Users } from 'lucide-react';
-
 import {
     Card,
     CardAction,
@@ -13,14 +18,8 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-
 import { useState } from 'react';
-import { router } from '@inertiajs/react';
-
-type Props = {
-    courses: CursorPagination<Course>;
-    categories: Category[];
-};
+import { router, usePage } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -29,7 +28,11 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function search({ courses, categories }: Props) {
+export default function search({ courses, categories }: CourseProps) {
+    // Ambil auth dari shared props Inertia
+    const { auth } = usePage<{ auth: { user: any | null } }>().props;
+    const isLoggedIn = !!auth?.user;
+
     const levelLabel: Record<'Beginner' | 'Intermediate' | 'Advanced', string> =
         {
             Beginner: 'Pemula',
@@ -40,18 +43,35 @@ export default function search({ courses, categories }: Props) {
     const [level, setLevel] = useState(() => {
         return new URLSearchParams(window.location.search).get('level') ?? '';
     });
+
     const [topic, setTopic] = useState(() => {
         return (
             new URLSearchParams(window.location.search).get('category_id') ?? ''
         );
     });
 
-    const applyFilter = (newLevel: string, newTopic: string) => {
+    // State baru untuk filter enrollment — hanya aktif jika login
+    const [enrolled, setEnrolled] = useState(() => {
+        if (!isLoggedIn) return '';
+        return (
+            new URLSearchParams(window.location.search).get('enrolled') ?? ''
+        );
+    });
+
+    const applyFilter = (
+        newLevel: string,
+        newTopic: string,
+        newEnrolled: string,
+    ) => {
         router.get(
             member.courses.index.url({
                 query: {
                     ...(newLevel ? { level: newLevel } : {}),
                     ...(newTopic ? { category_id: newTopic } : {}),
+                    // Hanya kirim param enrolled jika user login
+                    ...(isLoggedIn && newEnrolled
+                        ? { enrolled: newEnrolled }
+                        : {}),
                 },
             }),
             {},
@@ -66,22 +86,27 @@ export default function search({ courses, categories }: Props) {
     const handleLevelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const value = e.target.value;
         setLevel(value);
-
-        applyFilter(value, topic);
+        applyFilter(value, topic, enrolled);
     };
 
     const handleTopicChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const value = e.target.value;
         setTopic(value);
+        applyFilter(level, value, enrolled);
+    };
 
-        applyFilter(level, value);
+    // Handler baru untuk filter enrollment
+    const handleEnrolledChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value;
+        setEnrolled(value);
+        applyFilter(level, topic, value);
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Course" />
-
             <div className="flex flex-1 flex-col gap-6 overflow-x-hidden p-4 md:p-8">
+                {/* Hero section — tidak berubah */}
                 <section className="relative left-1/2 -mt-4 flex h-64 w-screen -translate-x-1/2 items-center justify-center overflow-hidden bg-white md:-mt-8">
                     <div
                         className="absolute inset-0 z-0 opacity-10"
@@ -90,7 +115,6 @@ export default function search({ courses, categories }: Props) {
                             backgroundSize: '40px 40px',
                         }}
                     ></div>
-
                     <div className="relative z-10 flex flex-col items-center gap-6 px-4 text-center">
                         <h1 className="max-w-2xl text-xl leading-relaxed font-bold text-slate-800">
                             Kembangkan keahlianmu dengan kursus online dari
@@ -100,6 +124,7 @@ export default function search({ courses, categories }: Props) {
                     </div>
                 </section>
 
+                {/* Filter section */}
                 <section className="mb-5 flex scroll-mt-20 flex-col gap-4 md:flex-row md:items-end">
                     <div className="flex-1">
                         <label className="mb-2 block text-sm font-medium text-gray-700">
@@ -148,8 +173,27 @@ export default function search({ courses, categories }: Props) {
                             <option>Langganan</option>
                         </select>
                     </div>
+
+                    {/* Filter enrollment — hanya tampil jika sudah login */}
+                    {isLoggedIn && (
+                        <div className="flex-1">
+                            <label className="mb-2 block text-sm font-medium text-gray-700">
+                                Status Kelas
+                            </label>
+                            <select
+                                value={enrolled}
+                                onChange={handleEnrolledChange}
+                                className="w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-blue-500 focus:ring-blue-500"
+                            >
+                                <option value="">Semua Kelas</option>
+                                <option value="1">Sudah Bergabung</option>
+                                <option value="0">Belum Bergabung</option>
+                            </select>
+                        </div>
+                    )}
                 </section>
 
+                {/* Course grid */}
                 <div className="grid grid-cols-3 gap-6">
                     {courses.data.map((item) => (
                         <Link

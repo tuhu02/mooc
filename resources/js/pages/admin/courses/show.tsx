@@ -1,7 +1,7 @@
 import AdminLayout from '@/layouts/admin-layout';
 import { useEffect, useState } from 'react';
 import { router, usePage, Link } from '@inertiajs/react';
-import type { CourseModule, CourseShowPageProps } from '@/types/course-modules';
+import type { CourseModule, CourseShowPageProps } from '@/types';
 import { Button } from '@/components/ui/button';
 import {
     Card,

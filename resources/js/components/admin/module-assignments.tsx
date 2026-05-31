@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/select';
 import MDEditor from '@uiw/react-md-editor';
 import { Plus } from 'lucide-react';
-import type { AssignmentForm } from '@/types/course-modules';
+import type { ModuleAssignmentForm as AssignmentForm } from '@/types';
 
 interface ModuleAssignmentsProps {
     prefix: 'create' | 'edit';

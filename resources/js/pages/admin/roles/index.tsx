@@ -61,7 +61,7 @@ export default function Page() {
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator className="hidden md:block" />
                                 <BreadcrumbItem>
-                                    <BreadcrumbPage>All Roles</BreadcrumbPage>
+                                    <BreadcrumbPage>Semua Role</BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
                         </Breadcrumb>
@@ -69,13 +69,13 @@ export default function Page() {
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                     <div className="flex justify-between">
-                        <h1 className="text-xl font-semibold">Manage Role</h1>
+                        <h1 className="text-xl font-semibold">Manajemen Role</h1>
                         <Link href={create.url()}>
                             <Button className="w-auto">Tambah</Button>
                         </Link>
                     </div>
                     <Table>
-                        <TableCaption>A list of Roles</TableCaption>
+                        <TableCaption>Daftar Role</TableCaption>
                         <TableHeader>
                             <TableRow>
                                 <TableHead>Name</TableHead>

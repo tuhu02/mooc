@@ -7,7 +7,7 @@ import MDEditor from '@uiw/react-md-editor';
 import VideoPlayer from '@/components/member/video-player';
 import AssignmentSubmissionForm from '@/components/member/assignment-submission-form';
 import { memberAssignmentStatusPresentation } from '@/lib/member-assignment-status';
-import type { Assignment, Props, Submission } from '@/types/course-learning';
+import type { CourseLearningAssignment as Assignment, CourseLearningPageProps as Props, CourseLearningSubmission as Submission } from '@/types';
 import ModuleBottomNavigation from '@/components/member/module-bottom-navigation';
 
 function assignmentCardHint(submission: Submission | null | undefined): string {

@@ -14,4 +14,23 @@ class ModuleProgress extends Model
         'course_id',
         'completed_at',
     ];
+
+    protected $casts = [
+        'completed_at' => 'datetime',
+    ];
+
+    public function member()
+    {
+        return $this->belongsTo(Member::class);
+    }
+
+    public function module()
+    {
+        return $this->belongsTo(Module::class);
+    }
+
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
+    }
 }

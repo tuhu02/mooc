@@ -11,7 +11,7 @@ import {
     X,
 } from 'lucide-react';
 import { useState } from 'react';
-import type { ModuleAttachmentsProps } from '@/types/course-modules';
+import type { ModuleAttachmentsProps } from '@/types';
 
 export function ModuleAttachments({
     prefix,

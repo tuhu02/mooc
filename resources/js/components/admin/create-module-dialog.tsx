@@ -8,7 +8,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import type { CreateCourseModuleForm } from '@/types/course-modules';
+import type { CreateCourseModuleForm } from '@/types';
 import { ModuleFormFields } from './module-form-fields';
 import { ModuleAssignments } from './module-assignments';
 import { ModuleAttachments } from './module-attachments';

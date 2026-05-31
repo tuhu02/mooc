@@ -1,7 +1,7 @@
 import AdminLayout from '@/layouts/admin-layout';
 import { useState, type FormEvent } from 'react';
 import { Link, useForm, usePage } from '@inertiajs/react';
-import type { CreateCourseModuleForm } from '@/types/course-modules';
+import type { CreateCourseModuleForm } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

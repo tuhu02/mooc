@@ -62,7 +62,7 @@ export default function Page() {
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator className="hidden md:block" />
                                 <BreadcrumbItem>
-                                    <BreadcrumbPage>All Members</BreadcrumbPage>
+                                    <BreadcrumbPage>Semua Member</BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
                         </Breadcrumb>
@@ -71,14 +71,14 @@ export default function Page() {
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                     <div className="flex justify-between">
                         <h1 className="text-xl font-semibold">
-                            Manage Members
+                            Manajemen Member
                         </h1>
                         <Link href={create.url()}>
                             <Button className="w-auto">Tambah</Button>
                         </Link>
                     </div>
                     <Table>
-                        <TableCaption>A list of Users</TableCaption>
+                        <TableCaption>Daftar Member</TableCaption>
                         <TableHeader>
                             <TableRow>
                                 <TableHead>Name</TableHead>

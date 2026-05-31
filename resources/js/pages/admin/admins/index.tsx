@@ -68,13 +68,13 @@ export default function Page() {
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                     <div className="flex justify-between">
-                        <h1 className="text-xl font-semibold">Manage Admins</h1>
+                        <h1 className="text-xl font-semibold">Manajemen Admin</h1>
                         <Link href={create.url()}>
                             <Button className="w-auto">Tambah</Button>
                         </Link>
                     </div>
                     <Table>
-                        <TableCaption>A list of Admins</TableCaption>
+                        <TableCaption>Daftar Admin</TableCaption>
                         <TableHeader>
                             <TableRow>
                                 <TableHead>Name</TableHead>

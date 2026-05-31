@@ -94,7 +94,7 @@ export default function Page() {
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                     <div className="flex justify-between">
                         <h1 className="text-xl font-semibold">
-                            Manage Courses
+                            Manajemen Kursus
                         </h1>
 
                         <Link href={create.url()}>
@@ -117,7 +117,7 @@ export default function Page() {
                             }
                             onClick={() => handleFilterChange('course')}
                         >
-                            Course
+                            Kursus
                         </Button>
                         <Button
                             variant={
