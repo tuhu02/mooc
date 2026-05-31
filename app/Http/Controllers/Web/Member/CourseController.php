@@ -19,6 +19,7 @@ class CourseController extends Controller
     public function index(Request $request)
     {
         $search = trim((string) $request->input('q', ''));
+        $memberId = Auth::user()?->member?->id;
 
         $courses = fn() => Course::query()
             ->with('categories')
@@ -53,7 +54,7 @@ class CourseController extends Controller
             })
             ->orderBy('id', 'desc')
             ->cursorPaginate(6)
-            ->through(fn(Course $course) => (new CourseResource($course))->resolve())
+            ->through(fn(Course $course) => (new CourseResource($course, $memberId))->resolve())
             ->withQueryString();
 
         return Inertia::render('member/course', [
@@ -209,9 +210,9 @@ class CourseController extends Controller
 
         $completedIds = $member
             ? ModuleProgress::where('member_id', $member->id)
-                ->where('course_id', $course->id)
-                ->whereNotNull('completed_at')
-                ->pluck('module_id')
+            ->where('course_id', $course->id)
+            ->whereNotNull('completed_at')
+            ->pluck('module_id')
             : collect();
 
         $totalModules = $course->modules->count();

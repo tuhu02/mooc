@@ -158,7 +158,7 @@ export default function CourseLearningPage({
                     <button
                         onClick={() => setSidebarOpen(!sidebarOpen)}
                         className={`fixed top-20 z-40 flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white shadow-lg transition-all duration-300 hover:bg-slate-700 ${
-                            sidebarOpen ? 'left-[296px]' : 'left-4'
+                            sidebarOpen ? 'left-74' : 'left-4'
                         }`}
                         title={sidebarOpen ? 'Tutup daftar modul' : 'Buka daftar modul'}
                     >

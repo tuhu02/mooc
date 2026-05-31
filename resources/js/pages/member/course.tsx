@@ -10,7 +10,7 @@ import { Head, Link } from '@inertiajs/react';
 import { Badge } from '@/components/ui/badge';
 import { PaginationComponent } from '@/components/member/pagination-component';
 import member from '@/routes/member';
-import { BookOpen, Users } from 'lucide-react';
+import { BookOpen, Users, CheckCircle } from 'lucide-react';
 import {
     Card,
     CardAction,
@@ -50,7 +50,6 @@ export default function search({ courses, categories }: CourseProps) {
         );
     });
 
-    // State baru untuk filter enrollment — hanya aktif jika login
     const [enrolled, setEnrolled] = useState(() => {
         if (!isLoggedIn) return '';
         return (
@@ -68,7 +67,6 @@ export default function search({ courses, categories }: CourseProps) {
                 query: {
                     ...(newLevel ? { level: newLevel } : {}),
                     ...(newTopic ? { category_id: newTopic } : {}),
-                    // Hanya kirim param enrolled jika user login
                     ...(isLoggedIn && newEnrolled
                         ? { enrolled: newEnrolled }
                         : {}),
@@ -95,7 +93,6 @@ export default function search({ courses, categories }: CourseProps) {
         applyFilter(level, value, enrolled);
     };
 
-    // Handler baru untuk filter enrollment
     const handleEnrolledChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const value = e.target.value;
         setEnrolled(value);
@@ -106,7 +103,6 @@ export default function search({ courses, categories }: CourseProps) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Course" />
             <div className="flex flex-1 flex-col gap-6 overflow-x-hidden p-4 md:p-8">
-                {/* Hero section — tidak berubah */}
                 <section className="relative left-1/2 -mt-4 flex h-64 w-screen -translate-x-1/2 items-center justify-center overflow-hidden bg-white md:-mt-8">
                     <div
                         className="absolute inset-0 z-0 opacity-10"
@@ -124,7 +120,6 @@ export default function search({ courses, categories }: CourseProps) {
                     </div>
                 </section>
 
-                {/* Filter section */}
                 <section className="mb-5 flex scroll-mt-20 flex-col gap-4 md:flex-row md:items-end">
                     <div className="flex-1">
                         <label className="mb-2 block text-sm font-medium text-gray-700">
@@ -174,7 +169,6 @@ export default function search({ courses, categories }: CourseProps) {
                         </select>
                     </div>
 
-                    {/* Filter enrollment — hanya tampil jika sudah login */}
                     {isLoggedIn && (
                         <div className="flex-1">
                             <label className="mb-2 block text-sm font-medium text-gray-700">
@@ -193,7 +187,6 @@ export default function search({ courses, categories }: CourseProps) {
                     )}
                 </section>
 
-                {/* Course grid */}
                 <div className="grid grid-cols-3 gap-6">
                     {courses.data.map((item) => (
                         <Link
@@ -202,6 +195,15 @@ export default function search({ courses, categories }: CourseProps) {
                         >
                             <Card className="relative mx-auto w-full max-w-sm pt-0 transition hover:-translate-y-1 hover:shadow-lg">
                                 <div className="absolute inset-0 z-30 aspect-video bg-black/35" />
+                                {item.progress &&
+                                    item.progress.percentage === 100 && (
+                                        <div className="absolute top-3 right-3 z-40 flex items-center gap-1 rounded-full bg-green-500 px-3 py-1 text-white">
+                                            <CheckCircle className="h-4 w-4" />
+                                            <span className="text-xs font-semibold">
+                                                Selesai
+                                            </span>
+                                        </div>
+                                    )}
                                 <img
                                     src={
                                         item.thumbnail
@@ -259,6 +261,7 @@ export default function search({ courses, categories }: CourseProps) {
                                         {item.description}
                                     </CardDescription>
                                 </CardHeader>
+
                                 <div className="flex items-center gap-2 px-6 pb-4 text-sm text-slate-600">
                                     <BookOpen className="h-4 w-4" />
                                     <span>{item.modules_count ?? 0} Modul</span>

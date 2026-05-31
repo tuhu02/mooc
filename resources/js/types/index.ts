@@ -103,6 +103,11 @@ export type Course = {
     mentor?: Mentor;
     categories?: Category[];
     type: 'default' | 'event';
+    progress?: {
+        completed: number;
+        total: number;
+        percentage: number;
+    } | null;
 };
 
 export type Module = {

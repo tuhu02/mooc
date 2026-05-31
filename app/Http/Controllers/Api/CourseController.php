@@ -20,6 +20,7 @@ class CourseController extends Controller
         ]);
 
         $search = trim((string) $request->input('q', ''));
+        $memberId = $request->user()?->member?->id;
 
         $courses = Course::query()
             ->with('categories')
@@ -47,7 +48,7 @@ class CourseController extends Controller
 
         return response()->json([
             'message' => 'Data Course Berhasil Diambil',
-            'courses' => CourseResource::collection($courses->items()),
+            'courses' => collect($courses->items())->map(fn($course) => new CourseResource($course, $memberId)),
             'meta' => [
                 'next_cursor' => $courses->nextCursor()?->encode(),
                 'previous_cursor' => $courses->previousCursor()?->encode(),
@@ -59,6 +60,7 @@ class CourseController extends Controller
     public function show(Request $request, Course $course)
     {
         $member = $request->user()?->member;
+        $memberId = $member?->id;
 
         $course->load([
             'categories',
@@ -90,7 +92,7 @@ class CourseController extends Controller
 
         return response()->json([
             'message' => 'Detail course berhasil diambil.',
-            'course' => new CourseResource($course),
+            'course' => new CourseResource($course, $memberId),
             'is_enrolled' => $isEnrolled,
         ]);
     }
