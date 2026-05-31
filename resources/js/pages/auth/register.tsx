@@ -1,5 +1,4 @@
 import { Form, Head } from '@inertiajs/react';
-import { useState } from 'react';
 import InputError from '@/components/member/input-error';
 import TextLink from '@/components/member/text-link';
 import { Button } from '@/components/ui/button';
@@ -11,10 +10,6 @@ import { login } from '@/routes';
 import { store } from '@/routes/register';
 
 export default function Register() {
-    const [accountType, setAccountType] = useState<'member' | 'mentor'>(
-        'member',
-    );
-
     return (
         <AuthLayout
             title="Create an account"
@@ -63,47 +58,6 @@ export default function Register() {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label id="type-label">Register as</Label>
-                                <div
-                                    role="radiogroup"
-                                    aria-labelledby="type-label"
-                                    className="flex items-center gap-6"
-                                >
-                                    <label className="flex items-center gap-2 text-sm">
-                                        <input
-                                            type="radio"
-                                            name="type"
-                                            value="member"
-                                            checked={accountType === 'member'}
-                                            onChange={() =>
-                                                setAccountType('member')
-                                            }
-                                            className="h-4 w-4"
-                                            tabIndex={3}
-                                        />
-
-                                        <span>Member</span>
-                                    </label>
-
-                                    <label className="flex items-center gap-2 text-sm">
-                                        <input
-                                            type="radio"
-                                            name="type"
-                                            value="mentor"
-                                            checked={accountType === 'mentor'}
-                                            onChange={() =>
-                                                setAccountType('mentor')
-                                            }
-                                            className="h-4 w-4"
-                                            tabIndex={3}
-                                        />
-                                        <span>Mentor</span>
-                                    </label>
-                                </div>
-                                <InputError message={errors.type} />
-                            </div>
-
-                            <div className="grid gap-2">
                                 <Label htmlFor="institution">Institution</Label>
                                 <Input
                                     id="institution"
@@ -120,7 +74,7 @@ export default function Register() {
                                     id="password"
                                     type="password"
                                     required
-                                    tabIndex={4}
+                                    tabIndex={3}
                                     autoComplete="new-password"
                                     name="password"
                                     placeholder="Password"
@@ -136,7 +90,7 @@ export default function Register() {
                                     id="password_confirmation"
                                     type="password"
                                     required
-                                    tabIndex={5}
+                                    tabIndex={4}
                                     autoComplete="new-password"
                                     name="password_confirmation"
                                     placeholder="Confirm password"

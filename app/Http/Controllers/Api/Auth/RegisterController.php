@@ -22,8 +22,6 @@ class RegisterController extends Controller
                 'email' => 'required|string|email|max:255|unique:users,email',
                 'password' => 'required|string|min:8|confirmed',
                 'institution' => 'required|string|max:50',
-
-                'role' => 'required|string|in:member,mentor',
             ]);
         } catch (ValidationException $e) {
             Log::warning('Registration validation failed', [
@@ -43,21 +41,12 @@ class RegisterController extends Controller
                 'institution' => $request->institution,
             ]);
 
-            if ($request->role === 'member') {
-                Member::create([
-                    'user_id' => $user->id,
-                    'institution' => $request->institution,
-                    'gender' => $request->gender,
-                    'date_of_birth' => $request->date_of_birth,
-                ]);
-            }
-
-            if ($request->role === 'mentor') {
-                Mentor::create([
-                    'user_id' => $user->id,
-                    'institution' => $request->institution,
-                ]);
-            }
+            Member::create([
+                'user_id' => $user->id,
+                'institution' => $request->institution,
+                'gender' => $request->gender,
+                'date_of_birth' => $request->date_of_birth,
+            ]);
 
             return $user;
         });
@@ -69,7 +58,7 @@ class RegisterController extends Controller
         $user->load('member');
 
         return response()->json([
-            'message' => 'Registration successful. Please check your email for the OTP code to verify your account.',
+            'message' => 'Registrasi berhasil. Silakan cek email Anda untuk kode OTP verifikasi akun.',
             'token' => $token,
             'user' => new UserResource($user),
         ]);
