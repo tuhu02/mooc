@@ -9,6 +9,7 @@ use App\Http\Resources\LearningCourseResource;
 use App\Http\Resources\ModuleNavigationResource;
 use App\Models\Category;
 use App\Models\Course;
+use App\Models\Member;
 use App\Models\ModuleProgress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -305,6 +306,45 @@ class CourseController extends Controller
                 'total' => $totalModules,
                 'percentage' => $progressPercentage,
             ],
+        ]);
+    }
+
+
+    public function myCourses()
+    {
+        $user = auth()->user();
+        $member = Member::where('user_id', $user->id)->first();
+
+        $courses = $member->courses()
+            ->with(['mentor.user', 'categories'])
+            ->withCount('modules')
+            ->get()
+            ->map(function ($course) use ($member) {
+                $totalModules = $course->modules_count;
+                $completedModules = ModuleProgress::where('member_id', $member->id)
+                    ->where('course_id', $course->id)
+                    ->whereNotNull('completed_at')
+                    ->count();
+
+                $progress = $totalModules > 0
+                    ? round(($completedModules / $totalModules) * 100)
+                    : 0;
+
+                return [
+                    'id'        => $course->id,
+                    'title'     => $course->title,
+                    'slug'      => $course->slug,
+                    'thumbnail' => $course->thumbnail ? asset('storage/' . $course->thumbnail) : null,
+                    'mentor'    => $course->mentor?->user?->name ?? 'N/A',
+                    'category'  => $course->categories->first()?->name ?? 'General',
+                    'progress'  => $progress,
+                    'lessons'   => $completedModules . ' of ' . $totalModules,
+                    'completed' => $progress === 100,
+                ];
+            });
+
+        return Inertia::render('member/my-courses', [
+            'courses' => $courses,
         ]);
     }
 }

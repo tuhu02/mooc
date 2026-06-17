@@ -1,10 +1,9 @@
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import AppLayout from '@/layouts/member-layout';
 import type { BreadcrumbItem } from '@/types';
 import { dashboard } from '@/routes/member';
 import {
     BookOpen,
-    TimerIcon,
     Award,
     TrendingUp,
     ChevronRight,
@@ -77,7 +76,8 @@ export default function Dashboard({
                     </p>
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-4">
+                <div className="grid gap-4 md:grid-cols-3">
+                    {' '}
                     {stats.map((stat, i) => (
                         <div
                             key={i}
@@ -91,9 +91,6 @@ export default function Dashboard({
                                 )}
                                 {stat.icon === 'CheckCircle2' && (
                                     <CheckCircle2 className="h-5 w-5 text-green-600" />
-                                )}
-                                {stat.icon === 'TimerIcon' && (
-                                    <TimerIcon className="h-5 w-5 text-purple-600" />
                                 )}
                                 {stat.icon === 'TrendingUp' && (
                                     <TrendingUp className="h-5 w-5 text-yellow-600" />
@@ -121,7 +118,7 @@ export default function Dashboard({
                                     </p>
                                 </div>
                                 <Button variant="outline" size="sm">
-                                    Lihat Semua
+                                    <Link href="/member/my-courses">Lihat Semua</Link>
                                 </Button>
                             </div>
 

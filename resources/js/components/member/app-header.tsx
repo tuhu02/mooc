@@ -52,7 +52,35 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Tentang',
+        href: '/about',
+    },
+    {
+        title: 'FAQ',
         href: '',
+    },
+];
+
+// ✅ TAMBAHKAN: nav item khusus user login
+const authNavItems: NavItem[] = [
+    {
+        title: 'Dashboard',
+        href: dashboard(),
+    },
+    {
+        title: 'Kursus',
+        href: member.courses.index(),
+    },
+    {
+        title: 'Kursus Saya', // ✅ TAMBAHKAN
+        href: '/member/my-courses', // ✅ TAMBAHKAN
+    },
+    {
+        title: 'Event',
+        href: '/member/events',
+    },
+    {
+        title: 'Tentang',
+        href: '/about',
     },
     {
         title: 'FAQ',
@@ -73,15 +101,15 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
 
     const isCurrentSection = (basePath: string): boolean => {
         if (!basePath) return false;
-
         return currentUrl === basePath || currentUrl.startsWith(basePath + '/');
     };
 
     const [keyword, setKeyword] = useState('');
     const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
 
+    // ✅ DIUBAH: gunakan authNavItems jika login, mainNavItems tanpa Dashboard jika tidak
     const navItems = user
-        ? mainNavItems
+        ? authNavItems
         : mainNavItems.filter((item) => item.title !== 'Dashboard');
 
     const handleSearch = (event: FormEvent<HTMLFormElement>) => {
@@ -128,18 +156,24 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                 <div className="flex h-full flex-1 flex-col space-y-4 p-4">
                                     <div className="flex h-full flex-col justify-between text-sm">
                                         <div className="flex flex-col space-y-4">
-                                            {mainNavItems.map((item) => (
-                                                <Link
-                                                    key={item.title}
-                                                    href={item.href}
-                                                    className="flex items-center space-x-2 font-medium"
-                                                >
-                                                    {item.icon && (
-                                                        <item.icon className="h-5 w-5" />
-                                                    )}
-                                                    <span>{item.title}</span>
-                                                </Link>
-                                            ))}
+                                            {navItems.map(
+                                                (
+                                                    item, // ✅ DIUBAH: mainNavItems → navItems
+                                                ) => (
+                                                    <Link
+                                                        key={item.title}
+                                                        href={item.href}
+                                                        className="flex items-center space-x-2 font-medium"
+                                                    >
+                                                        {item.icon && (
+                                                            <item.icon className="h-5 w-5" />
+                                                        )}
+                                                        <span>
+                                                            {item.title}
+                                                        </span>
+                                                    </Link>
+                                                ),
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -192,6 +226,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                         </NavigationMenu>
                     </div>
 
+                    {/* ... sisa kode tidak berubah */}
                     <div className="ml-auto flex items-center space-x-2">
                         <div className="relative flex items-center space-x-1">
                             <Button

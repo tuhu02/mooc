@@ -56,7 +56,7 @@ export default function EventPage({ events }: Props) {
                                     className="relative z-20 aspect-video w-full object-cover"
                                 />
                                 <CardHeader className="gap-2">
-                                    <div className="flex flex-wrap gap-1.5">
+                                    <div className="flex h-7 flex-wrap gap-1.5 overflow-hidden">
                                         {item.categories &&
                                         item.categories.length > 0 ? (
                                             <>
@@ -66,7 +66,7 @@ export default function EventPage({ events }: Props) {
                                                         <Badge
                                                             key={category.id}
                                                             variant="secondary"
-                                                            className="px-3 py-1"
+                                                            className="line-clamp-1 px-3 py-1"
                                                         >
                                                             {category.name}
                                                         </Badge>
@@ -74,7 +74,7 @@ export default function EventPage({ events }: Props) {
                                                 {item.categories.length > 2 && (
                                                     <Badge
                                                         variant="secondary"
-                                                        className="px-3 py-1"
+                                                        className="line-clamp-1 px-3 py-1"
                                                     >
                                                         +
                                                         {item.categories
@@ -85,10 +85,10 @@ export default function EventPage({ events }: Props) {
                                             </>
                                         ) : null}
                                     </div>
-                                    <CardTitle className="line-clamp-2 text-lg font-bold">
+                                    <CardTitle className="line-clamp-2 min-h-14 text-lg font-bold">
                                         {item.title}
                                     </CardTitle>
-                                    <CardDescription className="line-clamp-2 min-h-[40px]">
+                                    <CardDescription className="line-clamp-2 min-h-10">
                                         {item.description}
                                     </CardDescription>
                                 </CardHeader>

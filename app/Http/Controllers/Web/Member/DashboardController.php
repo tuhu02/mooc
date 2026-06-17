@@ -41,7 +41,6 @@ class DashboardController extends Controller
                 ];
             });
 
-        // Get recent activities (from module progress and assignments)
         $activities = ModuleProgress::where('member_id', $member->id)
             ->whereNotNull('completed_at')
             ->with('module')
@@ -58,7 +57,6 @@ class DashboardController extends Controller
                 ];
             });
 
-        // Get learning stats
         $totalEnrolled = $member->courses()->count();
         $totalCompleted = ModuleProgress::where('member_id', $member->id)
             ->whereNotNull('completed_at')
@@ -85,12 +83,6 @@ class DashboardController extends Controller
                     'value' => $totalCompleted,
                     'icon' => 'CheckCircle2',
                     'color' => 'bg-green-100',
-                ],
-                [
-                    'label' => 'Learning Time',
-                    'value' => '-- h',
-                    'icon' => 'TimerIcon',
-                    'color' => 'bg-purple-100',
                 ],
                 [
                     'label' => 'Progress',

@@ -196,14 +196,21 @@ export default function search({ courses, categories }: CourseProps) {
                             <Card className="relative mx-auto w-full max-w-sm pt-0 transition hover:-translate-y-1 hover:shadow-lg">
                                 <div className="absolute inset-0 z-30 aspect-video bg-black/35" />
                                 {item.progress &&
-                                    item.progress.percentage === 100 && (
-                                        <div className="absolute top-3 right-3 z-40 flex items-center gap-1 rounded-full bg-green-500 px-3 py-1 text-white">
-                                            <CheckCircle className="h-4 w-4" />
-                                            <span className="text-xs font-semibold">
-                                                Selesai
-                                            </span>
-                                        </div>
-                                    )}
+                                item.progress.percentage === 100 ? (
+                                    <div className="absolute top-3 right-3 z-40 flex items-center gap-1 rounded-full bg-green-500 px-3 py-1 text-white">
+                                        <CheckCircle className="h-4 w-4" />
+                                        <span className="text-xs font-semibold">
+                                            Selesai
+                                        </span>
+                                    </div>
+                                ) : item.progress &&
+                                  item.progress.percentage > 0 ? (
+                                    <div className="absolute top-3 right-3 z-40 flex items-center gap-1 rounded-full bg-blue-500 px-3 py-1 text-white">
+                                        <span className="text-xs font-semibold">
+                                            Sedang Berlangsung
+                                        </span>
+                                    </div>
+                                ) : null}
                                 <img
                                     src={
                                         item.thumbnail

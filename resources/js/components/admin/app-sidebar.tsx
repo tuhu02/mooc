@@ -131,7 +131,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         isActive: url === '/admin/courses',
                     },
                     {
-                        title: 'Add Course',
+                        title: 'Tambah Kursus',
                         url: '/admin/courses/create',
                         isActive: url === '/admin/courses/create',
                     },

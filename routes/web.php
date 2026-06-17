@@ -22,6 +22,9 @@
 
     Route::get('/', WelcomeController::class)->name('welcome');
 
+    Route::get('/about', function () {
+        return Inertia::render('member/about');
+    });
 
     // Route Member
     Route::prefix('member')->name('member.')->group(function () {
@@ -45,7 +48,7 @@
 
         Route::middleware(['auth', MemberMiddleware::class])->group(function () {
             Route::get('dashboard', [MemberDashboardController::class, 'index'])->middleware('verified')->name('dashboard');
-
+            Route::get('my-courses', [CourseController::class, 'myCourses'])->name('courses.my');
             Route::post('courses/{course:slug}/enroll', [CourseController::class, 'enroll'])->middleware('verified')->name('courses.enroll');
             Route::post('events/{course:slug}/enroll', [EventController::class, 'enroll'])->name('events.enroll');
             Route::post('assignments/{assignment}/submissions', [AssignmentSubmissionController::class, 'store'])->name('assignments.submissions.store');

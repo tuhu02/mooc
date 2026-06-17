@@ -16,12 +16,10 @@ export default function CourseCompletionPage({ course, progress }: CourseComplet
 
     const moduleSidebar = (
         <div className="flex h-full flex-col">
-            {/* Header */}
             <div className="border-b border-slate-100 px-4 py-4">
                 <p className="text-md font-semibold text-muted-foreground">
                     Daftar Modul
                 </p>
-                {/* Progress bar */}
                 <div className="mt-3">
                     <div className="mb-1.5 flex items-center justify-between">
                         <span className="text-xs text-slate-500">
@@ -40,7 +38,6 @@ export default function CourseCompletionPage({ course, progress }: CourseComplet
                 </div>
             </div>
 
-            {/* Module list */}
             <div className="flex-1 overflow-y-auto py-2">
                 {allModules.map((module, index) => (
                     <Link
@@ -61,7 +58,6 @@ export default function CourseCompletionPage({ course, progress }: CourseComplet
                                 : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                         }`}
                     >
-                        {/* Thumbnail */}
                         <div
                             className={`relative h-10 w-14 shrink-0 overflow-hidden rounded-md border ${
                                 module.is_locked
@@ -82,13 +78,11 @@ export default function CourseCompletionPage({ course, progress }: CourseComplet
                                     </span>
                                 </div>
                             )}
-                            {/* Lock overlay */}
                             {module.is_locked && (
                                 <div className="absolute inset-0 flex items-center justify-center bg-white/60">
                                     <Lock className="h-3.5 w-3.5 text-slate-500" />
                                 </div>
                             )}
-                            {/* Completed checkmark */}
                             {!module.is_locked && (
                                 <div className="absolute inset-0 flex items-center justify-center bg-emerald-500/20">
                                     <CheckCircle2 className="h-4 w-4 text-emerald-600" />
@@ -96,7 +90,6 @@ export default function CourseCompletionPage({ course, progress }: CourseComplet
                             )}
                         </div>
 
-                        {/* Title */}
                         <span className="min-w-0 flex-1 truncate font-medium leading-snug">
                             {module.title}
                         </span>
@@ -120,7 +113,7 @@ export default function CourseCompletionPage({ course, progress }: CourseComplet
                     <button
                         onClick={() => setSidebarOpen(!sidebarOpen)}
                         className={`fixed top-20 z-40 flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white shadow-lg transition-all duration-300 hover:bg-slate-700 ${
-                            sidebarOpen ? 'left-[296px]' : 'left-4'
+                            sidebarOpen ? 'left-74' : 'left-4'
                         }`}
                         title={sidebarOpen ? 'Tutup daftar modul' : 'Buka daftar modul'}
                     >
@@ -137,20 +130,16 @@ export default function CourseCompletionPage({ course, progress }: CourseComplet
                         }`}
                     >
                         <div className="w-full max-w-4xl px-4 pb-28 pt-8 sm:px-8">
-                            {/* Completion Hero */}
-                            <div className="relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-br from-sky-500 via-sky-600 to-indigo-700 p-8 text-white shadow-xl sm:p-12">
-                                {/* Decorative circles */}
+                            <div className="relative mb-8 overflow-hidden rounded-2xl bg-linear-to-br from-sky-500 via-sky-600 to-indigo-700 p-8 text-white shadow-xl sm:p-12">
                                 <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/10" />
                                 <div className="pointer-events-none absolute -bottom-10 -left-10 h-48 w-48 rounded-full bg-white/10" />
                                 <div className="pointer-events-none absolute bottom-8 right-12 h-24 w-24 rounded-full bg-white/5" />
 
                                 <div className="relative z-10 flex flex-col items-center text-center">
-                                    {/* Trophy Icon */}
                                     <div className="mb-5 flex h-24 w-24 items-center justify-center rounded-full bg-white/20 shadow-inner backdrop-blur-sm ring-4 ring-white/30">
                                         <Trophy className="h-12 w-12 text-yellow-300 drop-shadow-md" />
                                     </div>
 
-                                    {/* Stars */}
                                     <div className="mb-4 flex items-center gap-1">
                                         {[...Array(5)].map((_, i) => (
                                             <Star
@@ -216,7 +205,6 @@ export default function CourseCompletionPage({ course, progress }: CourseComplet
                                 </div>
                             </div>
 
-                            {/* Progress Bar full */}
                             <div className="mb-8 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
                                 <div className="mb-3 flex items-center justify-between">
                                     <p className="text-sm font-semibold text-slate-700">
@@ -228,13 +216,12 @@ export default function CourseCompletionPage({ course, progress }: CourseComplet
                                 </div>
                                 <div className="h-3 w-full overflow-hidden rounded-full bg-slate-100">
                                     <div
-                                        className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-700"
+                                        className="h-full rounded-full bg-linear-to-r from-emerald-400 to-emerald-500 transition-all duration-700"
                                         style={{ width: `${progress.percentage}%` }}
                                     />
                                 </div>
                             </div>
 
-                            {/* Action Buttons */}
                             <div className="flex flex-col gap-3 sm:flex-row">
                                 <Link
                                     href={`/member/courses/${course.slug}`}
