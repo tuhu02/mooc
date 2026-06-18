@@ -1,5 +1,5 @@
 import { Link, router, usePage } from '@inertiajs/react';
-import { Menu, Search } from 'lucide-react';
+import { Menu, Search, LogIn, UserPlus } from 'lucide-react';
 import { Breadcrumbs } from '@/components/member/breadcrumbs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -143,39 +143,91 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
 
                             <SheetContent
                                 side="left"
-                                className="flex h-full w-64 flex-col items-stretch justify-between bg-sidebar"
+                                className="flex h-full w-72 flex-col items-stretch justify-between bg-white dark:bg-neutral-950"
                             >
                                 <SheetTitle className="sr-only">
                                     Navigation Menu
                                 </SheetTitle>
 
-                                <SheetHeader className="flex justify-start text-left">
+                                <SheetHeader className="flex justify-start border-b border-neutral-200 px-4 pb-4 text-left dark:border-neutral-800">
                                     <AppLogoIcon className="h-6 w-6 fill-current text-black dark:text-white" />
                                 </SheetHeader>
 
-                                <div className="flex h-full flex-1 flex-col space-y-4 p-4">
-                                    <div className="flex h-full flex-col justify-between text-sm">
-                                        <div className="flex flex-col space-y-4">
-                                            {navItems.map(
-                                                (
-                                                    item, // ✅ DIUBAH: mainNavItems → navItems
-                                                ) => (
-                                                    <Link
-                                                        key={item.title}
-                                                        href={item.href}
-                                                        className="flex items-center space-x-2 font-medium"
-                                                    >
-                                                        {item.icon && (
-                                                            <item.icon className="h-5 w-5" />
-                                                        )}
-                                                        <span>
-                                                            {item.title}
-                                                        </span>
+                                <div className="flex h-full flex-1 flex-col justify-between overflow-y-auto">
+                                    <nav className="flex flex-col space-y-1 p-3">
+                                        {navItems.map(
+                                            (
+                                                item, // ✅ DIUBAH: mainNavItems → navItems
+                                            ) => (
+                                                <Link
+                                                    key={item.title}
+                                                    href={item.href}
+                                                    className={cn(
+                                                        'flex items-center space-x-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                                                        isCurrentSection(toUrl(item.href))
+                                                            ? 'bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-white'
+                                                            : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800/50 dark:hover:text-white',
+                                                    )}
+                                                >
+                                                    {item.icon && (
+                                                        <item.icon className="h-5 w-5" />
+                                                    )}
+                                                    <span>
+                                                        {item.title}
+                                                    </span>
+                                                </Link>
+                                            ),
+                                        )}
+                                    </nav>
+
+                                    {/* Mobile Auth Buttons */}
+                                    {!user && (
+                                        <div className="border-t border-neutral-200 p-4 dark:border-neutral-800">
+                                            <div className="flex flex-col gap-2">
+                                                <Button asChild variant="outline" className="w-full justify-center gap-2">
+                                                    <Link href={login().url}>
+                                                        <LogIn className="h-4 w-4" />
+                                                        Masuk
                                                     </Link>
-                                                ),
-                                            )}
+                                                </Button>
+                                                <Button asChild className="w-full justify-center gap-2">
+                                                    <Link href={register().url}>
+                                                        <UserPlus className="h-4 w-4" />
+                                                        Daftar
+                                                    </Link>
+                                                </Button>
+                                            </div>
                                         </div>
-                                    </div>
+                                    )}
+
+                                    {/* Mobile User Info */}
+                                    {user && (
+                                        <div className="border-t border-neutral-200 p-4 dark:border-neutral-800">
+                                            <div className="flex items-center gap-3">
+                                                <Avatar className="size-9 overflow-hidden rounded-full">
+                                                    <AvatarImage
+                                                        src={
+                                                            user.member?.avatar
+                                                                ? `/storage/${user.member.avatar}`
+                                                                : ''
+                                                        }
+                                                        alt={user.name ?? 'User'}
+                                                    />
+                                                    <AvatarFallback className="rounded-full bg-neutral-200 text-sm text-black dark:bg-neutral-700 dark:text-white">
+                                                        {getInitials(user.name ?? 'User')}
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="truncate text-sm font-medium text-neutral-900 dark:text-white">
+                                                        {user.name}
+                                                    </p>
+                                                    <p className="truncate text-xs text-neutral-500">
+                                                        {user.email}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </SheetContent>
                         </Sheet>
@@ -313,7 +365,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         ) : (
-                            <>
+                            <div className="hidden items-center space-x-2 lg:flex">
                                 <Link
                                     href={login().url}
                                     className="px-2 text-sm font-medium text-slate-700 hover:text-slate-900"
@@ -328,7 +380,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                 >
                                     <Link href={register().url}>Daftar</Link>
                                 </Button>
-                            </>
+                            </div>
                         )}
                     </div>
                 </div>

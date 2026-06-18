@@ -120,7 +120,7 @@ export default function search({ courses, categories }: CourseProps) {
                     </div>
                 </section>
 
-                <section className="mb-5 flex scroll-mt-20 flex-col gap-4 md:flex-row md:items-end">
+                <section className="mb-5 flex scroll-mt-20 flex-col gap-3 sm:gap-4 md:flex-row md:items-end">
                     <div className="flex-1">
                         <label className="mb-2 block text-sm font-medium text-gray-700">
                             Tingkat
@@ -187,39 +187,41 @@ export default function search({ courses, categories }: CourseProps) {
                     )}
                 </section>
 
-                <div className="grid grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
                     {courses.data.map((item) => (
                         <Link
                             href={`/member/courses/${item.slug}`}
                             key={item.id}
                         >
-                            <Card className="relative mx-auto w-full max-w-sm pt-0 transition hover:-translate-y-1 hover:shadow-lg">
-                                <div className="absolute inset-0 z-30 aspect-video bg-black/35" />
-                                {item.progress &&
-                                item.progress.percentage === 100 ? (
-                                    <div className="absolute top-3 right-3 z-40 flex items-center gap-1 rounded-full bg-green-500 px-3 py-1 text-white">
-                                        <CheckCircle className="h-4 w-4" />
-                                        <span className="text-xs font-semibold">
-                                            Selesai
-                                        </span>
-                                    </div>
-                                ) : item.progress &&
-                                  item.progress.percentage > 0 ? (
-                                    <div className="absolute top-3 right-3 z-40 flex items-center gap-1 rounded-full bg-blue-500 px-3 py-1 text-white">
-                                        <span className="text-xs font-semibold">
-                                            Sedang Berlangsung
-                                        </span>
-                                    </div>
-                                ) : null}
-                                <img
-                                    src={
-                                        item.thumbnail
-                                            ? `/storage/${item.thumbnail}`
-                                            : 'https://avatar.vercel.sh/shadcn1'
-                                    }
-                                    alt={item.title}
-                                    className="relative z-20 aspect-video w-full object-cover"
-                                />
+                            <Card className="relative w-full overflow-hidden pt-0 transition hover:-translate-y-1 hover:shadow-lg">
+                                <div className="relative overflow-hidden">
+                                    <div className="absolute inset-0 z-30 bg-black/35" />
+                                    {item.progress &&
+                                    item.progress.percentage === 100 ? (
+                                        <div className="absolute top-3 right-3 z-40 flex items-center gap-1 rounded-full bg-green-500 px-3 py-1 text-white">
+                                            <CheckCircle className="h-4 w-4" />
+                                            <span className="text-xs font-semibold">
+                                                Selesai
+                                            </span>
+                                        </div>
+                                    ) : item.progress &&
+                                      item.progress.percentage > 0 ? (
+                                        <div className="absolute top-3 right-3 z-40 flex items-center gap-1 rounded-full bg-blue-500 px-3 py-1 text-white">
+                                            <span className="text-xs font-semibold">
+                                                Sedang Berlangsung
+                                            </span>
+                                        </div>
+                                    ) : null}
+                                    <img
+                                        src={
+                                            item.thumbnail
+                                                ? `/storage/${item.thumbnail}`
+                                                : 'https://avatar.vercel.sh/shadcn1'
+                                        }
+                                        alt={item.title}
+                                        className="aspect-video w-full object-cover"
+                                    />
+                                </div>
                                 <CardHeader className="gap-2">
                                     <CardAction className="flex items-center gap-2">
                                         {item.level && (
